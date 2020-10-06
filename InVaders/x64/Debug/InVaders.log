@@ -1,0 +1,2 @@
+﻿  stdafx.cpp
+D:\gameDev\InVaders\InVaders\stdafx.h(7,9): fatal error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory

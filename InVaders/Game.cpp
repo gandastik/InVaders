@@ -3,8 +3,8 @@
 
 void Game::initWindow()
 {
-	this->window.create(sf::VideoMode(800, 600), "SFML", sf::Style::Close | sf::Style::Titlebar);
-	this->window.setFramerateLimit(144);
+	this->window.create(sf::VideoMode(800, 600), "GAME", sf::Style::Close | sf::Style::Titlebar);
+	this->window.setFramerateLimit(60);
 }
 
 void Game::initPlayer()
@@ -28,6 +28,16 @@ void Game::updatePlayer()
 	this->player->update();
 }
 
+void Game::updateCollision()
+{
+	//Collision bottom of screen
+	if (this->player->getPosition().y + this->player->getGlobalBounds().height > this->window.getSize().y)
+	{
+		this->player->resetVelocityY();
+		this->player->setPosition(this->player->getPosition().x, this->window.getSize().y - this->player->getGlobalBounds().height);
+	}
+}
+
 void Game::update()
 {
 	//polling window events
@@ -37,10 +47,22 @@ void Game::update()
 			window.close();
 		if (this->ev.type == sf::Event::KeyPressed && this->ev.key.code == sf::Keyboard::Escape)
 			window.close();
+		if (this->ev.type == sf::Event::KeyReleased &&
+			(this->ev.key.code == sf::Keyboard::W ||
+				this->ev.key.code == sf::Keyboard::A ||
+				this->ev.key.code == sf::Keyboard::S ||
+				this->ev.key.code == sf::Keyboard::D )
+			)
+		{
+			this->player->restAnimationTimer();
+		}
+
 	}
 
 	this->updatePlayer();
-}
+
+	this->updateCollision();
+} 
 
 void Game::renderPlayer()
 {

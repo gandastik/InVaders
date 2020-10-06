@@ -1,17 +1,2 @@
-﻿  Player.cpp
-D:\gameDev\InVaders\InVaders\Player.cpp(71,35): warning C4244: '+=': conversion from 'float' to 'T', possible loss of data
-          with
-          [
-              T=int
-          ]
-D:\gameDev\InVaders\InVaders\Player.cpp(84,35): warning C4244: '+=': conversion from 'float' to 'T', possible loss of data
-          with
-          [
-              T=int
-          ]
-D:\gameDev\InVaders\InVaders\Player.cpp(87,31): warning C4244: '=': conversion from 'float' to 'T', possible loss of data
-          with
-          [
-              T=int
-          ]
+﻿  TileMap.cpp
   InVaders.vcxproj -> D:\gameDev\InVaders\Debug\InVaders.exe
