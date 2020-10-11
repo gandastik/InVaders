@@ -2,6 +2,11 @@
 #include<ctime>
 #include<iostream>
 #include<time.h>
+#include<fstream>
+#include<sstream>
+#include<stack>
+#include<map>
+#include<vector>
 
 //sfml
 #include<SFML/Graphics.hpp>

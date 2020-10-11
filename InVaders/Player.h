@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+
 enum PLAYER_ANIMATION_STATE {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLING};
 
 class Player
@@ -14,6 +16,7 @@ private:
 	sf::IntRect currentFrame;
 	bool animationSwitch;
 
+
 	//Physics
 	sf::Vector2f velocity;
 	float velocityMax;
@@ -23,7 +26,7 @@ private:
 	float gravity;
 	float velocityMaxY;
 
-	//Core
+	//Initializations
 	void initVariables();
 	void initTexture();
 	void initSprite();
@@ -31,6 +34,7 @@ private:
 	void initPhysics();
 
 public:
+	//Constructors / Destructors
 	Player();
 	virtual ~Player();
 

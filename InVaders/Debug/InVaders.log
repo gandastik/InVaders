@@ -1,2 +1,12 @@
-﻿  TileMap.cpp
-  InVaders.vcxproj -> D:\gameDev\InVaders\Debug\InVaders.exe
+﻿  Game.cpp
+  GameState.cpp
+  Player.cpp
+D:\kk\Code\InVaders\InVaders\Player.cpp(111,41): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  main.cpp
+  Generating Code...
+D:\kk\Code\InVaders\InVaders\Player.cpp(65): warning C4172: returning address of local variable or temporary: anim_switch
+  InVaders.vcxproj -> D:\kk\Code\InVaders\Debug\InVaders.exe
