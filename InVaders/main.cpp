@@ -7,11 +7,7 @@ int main()
 
 	Game game;
 
-	while (game.getWindow().isOpen())
-	{
-		game.update();
-		game.render();
-	}
+	game.run();
 
 	//End of Application
 	return 0;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 
+//Initialize Functions
 void Player::initVariables()
 {
 	this->animationState = IDLE;
@@ -37,6 +38,7 @@ void Player::initPhysics()
 	this->velocityMaxY = 15.f;
 }
 
+//Constructors / Destructors
 Player::Player()
 {
 	this->initVariables();
@@ -51,10 +53,11 @@ Player::~Player()
 
 }
 
+//Accessors
 const bool& Player::getAnimationSwitch()
 {
 	bool anim_switch = this->animationSwitch;
-	
+
 	if (this->animationSwitch)
 	{
 		this->animationSwitch = false;
@@ -72,6 +75,7 @@ const sf::FloatRect Player::getGlobalBounds() const
 	return this->sprite.getGlobalBounds();
 }
 
+//Modifiers
 void Player::setPosition(const float x, const float y)
 {
 	this->sprite.setPosition(x, y);
@@ -82,6 +86,7 @@ void Player::resetVelocityY()
 	this->velocity.y = 0.f;
 }
 
+//Functions
 void Player::restAnimationTimer()
 {
 	this->animationTimer.restart();
@@ -92,9 +97,8 @@ void Player::move(const float dir_x, const float dir_y)
 {
 	//Accelearation
 	this->velocity.x += dir_x * this->acceleration;
-	//this->velocity.y += dir_y * this->acceleration; Gravity
 
-	//Limit Velocity
+	//Limit Max Velocity
 	if (std::abs(this->velocity.x) > this->velocityMax)
 	{
 		this->velocity.x = this->velocityMax * ((this->velocity.x < 0) ? -1.f : 1.f);
@@ -113,7 +117,7 @@ void Player::updatePhysics()
 	//Deceleration
 	this->velocity *= this->drag;
 		
-	//Limit deceleration
+	//Limit min Velocity
 	if (std::abs(this->velocity.x) < this->velocityMin)
 	{
 		this->velocity.x = 0.f;
@@ -139,10 +143,10 @@ void Player::updateMovement()
 		this->move(1.f, 0.f);
 		this->animationState = MOVING_RIGHT;
 	}
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) //TOP
-	//{
-	//	this->sprite.move(0.f, -3.f);
-	//}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) //TOP
+	{
+		//this->move(0.f, -1.f);
+	}
 	//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) //DOWN
 	//{
 	//	this->sprite.move(0.f, 3.f);
@@ -155,11 +159,11 @@ void Player::updateAnimation()
 	{
 		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.2f || this->getAnimationSwitch())
 		{
-			this->currentFrame.top = 0.f;
-			this->currentFrame.width = 30.f;
-			this->currentFrame.height = 38.f;
-			this->currentFrame.left += 30.f;
-			if (this->currentFrame.left >= 90.f)
+			this->currentFrame.top = 0;
+			this->currentFrame.width = 30;
+			this->currentFrame.height = 38;
+			this->currentFrame.left += 30;
+			if (this->currentFrame.left >= 90)
 			{
 				this->currentFrame.left = 0;
 			}
@@ -171,13 +175,13 @@ void Player::updateAnimation()
 	{
 		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.1f || this->getAnimationSwitch())
 		{
-			this->currentFrame.top = 44.f;
-			this->currentFrame.width = 40.f;
-			this->currentFrame.height = 40.f;
-			this->currentFrame.left += 40.f;
-			if (this->currentFrame.left >= 320.f)
+			this->currentFrame.top = 40;
+			this->currentFrame.width = 40;
+			this->currentFrame.height = 40;
+			this->currentFrame.left += 40;
+			if (this->currentFrame.left >= 320)
 			{
-				this->currentFrame.left = 40.f;
+				this->currentFrame.left = 0;
 			}
 			this->animationTimer.restart();
 			this->sprite.setTextureRect(this->currentFrame);
@@ -189,13 +193,13 @@ void Player::updateAnimation()
 	{
 		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.1f || this->getAnimationSwitch())
 		{
-			this->currentFrame.top = 44.f;
-			this->currentFrame.width = 40.f;
-			this->currentFrame.height = 40.f;
-			this->currentFrame.left += 40.f;
-			if (this->currentFrame.left >= 320.f)
+			this->currentFrame.top = 44;
+			this->currentFrame.width = 40;
+			this->currentFrame.height = 40;
+			this->currentFrame.left += 40;
+			if (this->currentFrame.left >= 320)
 			{
-				this->currentFrame.left = 40.f;
+				this->currentFrame.left = 40;
 			}
 			this->animationTimer.restart();
 			this->sprite.setTextureRect(this->currentFrame);

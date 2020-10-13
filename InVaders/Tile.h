@@ -3,7 +3,7 @@ class Tile
 {
 private:
 	sf::Sprite sprite;
-	bool damaging;
+	const bool damaging;
 
 
 public:
