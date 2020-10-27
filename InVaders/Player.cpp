@@ -17,9 +17,15 @@ void Player::initSprite()
 {
 	this->sprite.setTexture(this->textureSheet);
 	this->currentFrame = sf::IntRect(0, 0, 0, 0);
-
+	
 	this->sprite.setTextureRect(this->currentFrame);
 	this->sprite.setScale(2.5f, 2.5f);
+
+	//Idle
+	this->idleCurrentFrame = sf::IntRect(0, 0, 30, 38);
+
+	//Shooting
+	this->shootingCurrentFrame = sf::IntRect(0, 0, 54, 37);
 }
 
 void Player::initAnimation()
@@ -30,12 +36,23 @@ void Player::initAnimation()
 
 void Player::initPhysics()
 {
-	this->velocityMax = 20.f;
+	this->velocityMax = 3000.f;
 	this->velocityMin = 1.f;
-	this->acceleration = 3.3f;
-	this->drag = 0.87f;
-	this->gravity = 4.f;
-	this->velocityMaxY = 15.f;
+	this->acceleration = 60.f;
+	this->drag = 0.90f;
+	this->gravity = 900.f;
+	this->velocityMaxY = 1000.f;
+	this->onGround = false;
+	this->isFaceRight = true;
+
+	//Jump
+	this->jumpForce = 250.f;
+	this->gravityAcceleration = 9.8f;
+	this->speedValue = 0;
+	this->mass = 50.f;
+	this->isJumping = false;
+	this->jumpCooldownMax = 50.f;
+	this->jumpCooldown = this->jumpCooldownMax;
 }
 
 //Constructors / Destructors
@@ -75,6 +92,16 @@ const sf::FloatRect Player::getGlobalBounds() const
 	return this->sprite.getGlobalBounds();
 }
 
+sf::Sprite Player::getSprite()
+{
+	return this->sprite;
+}
+
+short Player::getAnimationState()
+{
+	return this->animationState;
+}
+
 //Modifiers
 void Player::setPosition(const float x, const float y)
 {
@@ -86,6 +113,14 @@ void Player::resetVelocityY()
 	this->velocity.y = 0.f;
 }
 
+
+
+void Player::setOnGround()
+{
+	this->onGround = true;
+	this->isJumping = false;
+}
+
 //Functions
 void Player::restAnimationTimer()
 {
@@ -93,11 +128,10 @@ void Player::restAnimationTimer()
 	this->animationSwitch = true;
 }
 
-void Player::move(const float dir_x, const float dir_y)
+void Player::move(const float& dt, const float dir_x, const float dir_y)
 {
 	//Accelearation
 	this->velocity.x += dir_x * this->acceleration;
-
 	//Limit Max Velocity
 	if (std::abs(this->velocity.x) > this->velocityMax)
 	{
@@ -105,18 +139,51 @@ void Player::move(const float dir_x, const float dir_y)
 	}
 }
 
-void Player::updatePhysics()
+void Player::jump(const float& dt)
+{
+	this->speedValue -= this->gravityAcceleration * dt;
+	this->sprite.move(0, -speedValue);
+}
+
+const bool& Player::getIsFaceRight()
+{
+	return this->isFaceRight;
+}
+
+const bool Player::canJump()
+{
+	if (this->jumpCooldown >= this->jumpCooldownMax)
+	{
+		this->jumpCooldown = 0.f;
+		return true;
+	}
+	return false;
+}
+
+void Player::updateJumpCooldown()
+{
+	if (this->jumpCooldown < this->jumpCooldownMax)
+	{
+		this->jumpCooldown += 0.5f;
+	}
+}
+
+void Player::updatePhysics(const float& dt)
 {
 	//Gravity
-	this->velocity.y += 1.0 * this->gravity;
+	if (!this->onGround)
+	{
+		this->velocity.y += 1.0 * this->gravity;
+	}
 	if (std::abs(this->velocity.y) > this->velocityMaxY)
 	{
-		this->velocity.y = this->velocityMaxY * ((this->velocity.y < 0) ? -1.f : 1.f);
+		if (this->velocity.y > 0.f) this->velocity.y = this->velocityMaxY;
+		if (this->velocity.y < 0.f) this->velocity.y = -this->velocityMaxY;
 	}
 
 	//Deceleration
 	this->velocity *= this->drag;
-		
+	
 	//Limit min Velocity
 	if (std::abs(this->velocity.x) < this->velocityMin)
 	{
@@ -126,31 +193,49 @@ void Player::updatePhysics()
 	{
 		this->velocity.y = 0.f;
 	}
+	//std::cout << this->sprite.getPosition().x << " " << this->sprite.getPosition().y << std::endl;
+	//std::cout << velocity.x << " " << this->speedValue << " " << this->onGround << " " << this->isJumping << "\n";
+	//std::cout << dt << "\n";
+	
+	if (this->isJumping) {
+		this->jump(dt);
+	}
 
-	this->sprite.move(this->velocity);
+	this->sprite.move(this->velocity * dt);
 }
 
-void Player::updateMovement()
+void Player::updateMovement(const float& dt)
 {
 	this->animationState = IDLE;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) //LEFT
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) //LEFT
 	{
-		this->move(-1.f, 0.f);
+		this->move(dt, -1.f, 0.f);
 		this->animationState = MOVING_LEFT;
+		this->isFaceRight = false;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) //RIGHT
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) //RIGHT
 	{
-		this->move(1.f, 0.f);
+		this->move(dt, 1.f, 0.f);
 		this->animationState = MOVING_RIGHT;
+		this->isFaceRight = true;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) //TOP
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && this->isJumping == false && canJump()) //JUMP
 	{
-		//this->move(0.f, -1.f);
+		//this->move(dt, 0.f, -1.f);
+		//this->onGround = false;
+		//this->animationState = JUMPING;
+		this->speedValue = this->jumpForce / this->mass;
+		this->isJumping = true;
 	}
+	
 	//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) //DOWN
 	//{
 	//	this->sprite.move(0.f, 3.f);
 	//}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		this->animationState = SHOOTING;
+	}
 }
 
 void Player::updateAnimation()
@@ -159,29 +244,29 @@ void Player::updateAnimation()
 	{
 		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.2f || this->getAnimationSwitch())
 		{
-			this->currentFrame.top = 0;
-			this->currentFrame.width = 30;
-			this->currentFrame.height = 38;
-			this->currentFrame.left += 30;
-			if (this->currentFrame.left >= 90)
+			this->idleCurrentFrame.top = 0;
+			this->idleCurrentFrame.width = 30;
+			this->idleCurrentFrame.height = 38;
+			this->idleCurrentFrame.left += 30;
+			if (this->idleCurrentFrame.left >= 90)
 			{
-				this->currentFrame.left = 0;
+				this->idleCurrentFrame.left = 0;
 			}
 			this->animationTimer.restart();
-			this->sprite.setTextureRect(this->currentFrame);
+			this->sprite.setTextureRect(this->idleCurrentFrame);
 		}
 	}
 	else if (this->animationState == MOVING_RIGHT)
 	{
 		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.1f || this->getAnimationSwitch())
 		{
-			this->currentFrame.top = 40;
-			this->currentFrame.width = 40;
-			this->currentFrame.height = 40;
-			this->currentFrame.left += 40;
-			if (this->currentFrame.left >= 320)
+			this->currentFrame.top = 42;
+			this->currentFrame.width = 39;
+			this->currentFrame.height = 39;
+			this->currentFrame.left += 39;
+			if (this->currentFrame.left >= 312)
 			{
-				this->currentFrame.left = 0;
+				this->currentFrame.left = 39;
 			}
 			this->animationTimer.restart();
 			this->sprite.setTextureRect(this->currentFrame);
@@ -193,13 +278,13 @@ void Player::updateAnimation()
 	{
 		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.1f || this->getAnimationSwitch())
 		{
-			this->currentFrame.top = 44;
-			this->currentFrame.width = 40;
-			this->currentFrame.height = 40;
-			this->currentFrame.left += 40;
-			if (this->currentFrame.left >= 320)
+			this->currentFrame.top = 42;
+			this->currentFrame.width = 39;
+			this->currentFrame.height = 39;
+			this->currentFrame.left += 39;
+			if (this->currentFrame.left >= 312)
 			{
-				this->currentFrame.left = 40;
+				this->currentFrame.left = 39;
 			}
 			this->animationTimer.restart();
 			this->sprite.setTextureRect(this->currentFrame);
@@ -207,20 +292,46 @@ void Player::updateAnimation()
 		this->sprite.setScale(-2.5f, 2.5f);
 		this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
 	}
+	else if (this->animationState == SHOOTING)
+	{
+		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.001f || this->getAnimationSwitch())
+		{
+			this->shootingCurrentFrame.top = 100;
+			this->shootingCurrentFrame.width = 54;
+			this->shootingCurrentFrame.height = 37;
+			for (int i = 0; i < 10; i++)
+			{
+				this->shootingCurrentFrame.left += 54;
+				if (this->shootingCurrentFrame.left >= 215)
+				{
+					this->shootingCurrentFrame.left = 0;
+					this->shootingCurrentFrame.top = 147;
+				}
+				this->sprite.setTextureRect(this->shootingCurrentFrame);
+			}
+		}			
+		this->animationTimer.restart();
+	}
 	else
 	{
 		this->animationTimer.restart();
 	}
 }
 
-void Player::update()
+void Player::resetAnimationState()
 {
-	this->updateMovement();
-	this->updateAnimation();
-	this->updatePhysics();
+	this->animationState = IDLE;
 }
 
-void Player::render(sf::RenderTarget& target)
+void Player::update(const float& dt)
 {
-	target.draw(this->sprite);
+	this->updateMovement(dt);
+	this->updatePhysics(dt);
+	this->updateAnimation();
+	this->updateJumpCooldown();
+}
+
+void Player::render(sf::RenderTarget* target)
+{
+	target->draw(this->sprite);
 }
