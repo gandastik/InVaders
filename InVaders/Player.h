@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "Collider.h"
 
 enum PLAYER_ANIMATION_STATE {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLING, SHOOTING};
 
@@ -67,14 +68,17 @@ public:
 	void resetVelocityY();
 
 	//Functions
+	void onCollision(sf::Vector2f direction);
 	void jump(const float& dt);
-	void setOnGround();
+	void setOnGround(int temp);
+	void setIsJumping();
 	void restAnimationTimer();
 	void move(const float& dt,const float dir_x, const float dir_y);
 	void updatePhysics(const float& dt);
 	void updateMovement(const float& dt);
 	void updateAnimation();
 	void resetAnimationState();
+	Collider getCollider();
 	void update(const float& dt);
 	void render(sf::RenderTarget* target);
 };

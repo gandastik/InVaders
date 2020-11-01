@@ -1,4 +1,38 @@
 ﻿  Game.cpp
-D:\gameDev\InVaders\InVaders\Game.cpp(31,1): fatal error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "stdafx.h"' to your source?
+D:\kk\Code\InVaders\InVaders\Game.cpp(104,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\Game.cpp(105,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\Game.cpp(106,78): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\Game.cpp(106,52): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\Game.cpp(223,20): warning C4018: '<': signed/unsigned mismatch
+D:\kk\Code\InVaders\InVaders\Game.cpp(348,20): warning C4018: '<': signed/unsigned mismatch
   main.cpp
-D:\gameDev\InVaders\InVaders\main.cpp(17,1): fatal error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "stdafx.h"' to your source?
+  Generating code
+  0 of 838 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  InVaders.vcxproj -> D:\kk\Code\InVaders\Release\InVaders.exe

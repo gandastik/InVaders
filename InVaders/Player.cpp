@@ -40,18 +40,18 @@ void Player::initPhysics()
 	this->velocityMin = 1.f;
 	this->acceleration = 60.f;
 	this->drag = 0.90f;
-	this->gravity = 900.f;
+	this->gravity = 90.f;
 	this->velocityMaxY = 1000.f;
 	this->onGround = false;
 	this->isFaceRight = true;
 
 	//Jump
-	this->jumpForce = 250.f;
+	this->jumpForce = 450.f;
 	this->gravityAcceleration = 9.8f;
 	this->speedValue = 0;
-	this->mass = 50.f;
+	this->mass = 45.f;
 	this->isJumping = false;
-	this->jumpCooldownMax = 50.f;
+	this->jumpCooldownMax = 35.f;
 	this->jumpCooldown = this->jumpCooldownMax;
 }
 
@@ -115,9 +115,17 @@ void Player::resetVelocityY()
 
 
 
-void Player::setOnGround()
+void Player::setOnGround(int temp)
 {
-	this->onGround = true;
+	if (temp == 1)
+	{
+		this->onGround = true;
+	}
+	else this->onGround = false;
+}
+
+void Player::setIsJumping()
+{
 	this->isJumping = false;
 }
 
@@ -136,6 +144,30 @@ void Player::move(const float& dt, const float dir_x, const float dir_y)
 	if (std::abs(this->velocity.x) > this->velocityMax)
 	{
 		this->velocity.x = this->velocityMax * ((this->velocity.x < 0) ? -1.f : 1.f);
+	}
+}
+
+void Player::onCollision(sf::Vector2f direction)
+{
+	if (direction.x < 0.f)
+	{
+		//Collision on the left
+		this->velocity.x = 0.f;
+	}
+	else if(direction.x > 0.f)
+	{
+		//Collision on the right
+		this->velocity.x = 0.f;
+	}
+	if (direction.y < 0.f)
+	{
+		//Collision on the bottom
+		this->onGround = true;
+		this->isJumping = false;
+	}
+	else if (direction.y > 0.f)
+	{
+		//Collision on the top
 	}
 }
 
@@ -171,10 +203,9 @@ void Player::updateJumpCooldown()
 void Player::updatePhysics(const float& dt)
 {
 	//Gravity
-	if (!this->onGround)
-	{
+	if(!this->onGround)
 		this->velocity.y += 1.0 * this->gravity;
-	}
+
 	if (std::abs(this->velocity.y) > this->velocityMaxY)
 	{
 		if (this->velocity.y > 0.f) this->velocity.y = this->velocityMaxY;
@@ -194,7 +225,7 @@ void Player::updatePhysics(const float& dt)
 		this->velocity.y = 0.f;
 	}
 	//std::cout << this->sprite.getPosition().x << " " << this->sprite.getPosition().y << std::endl;
-	//std::cout << velocity.x << " " << this->speedValue << " " << this->onGround << " " << this->isJumping << "\n";
+	//std::cout << "Y velocity = " << this->velocity.y << " " << this->speedValue << " " << this->onGround << " " << this->isJumping << "\n";
 	//std::cout << dt << "\n";
 	
 	if (this->isJumping) {
@@ -323,12 +354,19 @@ void Player::resetAnimationState()
 	this->animationState = IDLE;
 }
 
+Collider Player::getCollider()
+{
+	return Collider(this->sprite);
+}
+
 void Player::update(const float& dt)
 {
 	this->updateMovement(dt);
 	this->updatePhysics(dt);
 	this->updateAnimation();
 	this->updateJumpCooldown();
+
+	//std::cout << this->sprite.getPosition().x << " " << this->sprite.getPosition().y << std::endl;
 }
 
 void Player::render(sf::RenderTarget* target)
