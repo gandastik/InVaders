@@ -1,6 +1,33 @@
 #include "stdafx.h"
 #include "MainMenuState.h"
 
+void MainMenuState::initMusic()
+{
+	this->bg_music.openFromFile("Resources/Sound Effects/intro.ogg");
+	this->bg_music.setLoop(true);
+	this->bg_music.setVolume(10.f);
+	this->bg_music.play();
+}
+
+//Initializer Functions
+void MainMenuState::initVariables()
+{
+
+}
+
+void MainMenuState::initBackground()
+{
+	this->background.setSize(sf::Vector2f(static_cast<float>(this->window->getSize().x)
+		, static_cast<float>(this->window->getSize().y)));
+
+	if (!this->backgroundTexture.loadFromFile("Resources/bg1.png"))
+	{
+		std::cout << "ERROR::MAIN_MENU_STATE::FAILED TO LOAD BACKGROUND TO TEXTURE" << std::endl;
+	}
+
+	this->background.setTexture(&this->backgroundTexture);
+}
+
 void MainMenuState::initFonts()
 {
 	if (!this->font.loadFromFile("Fonts/Montserrat-Black.otf"))
@@ -28,22 +55,22 @@ void MainMenuState::initKeybinds()
 
 void MainMenuState::initButtons()
 {
-	this->buttons["GAME_STATE"] = new Button(100, 100, 150, 50, &this->font, "NEW GAME",
-		sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
-	this->buttons["EXIT_STATE"] = new Button(100, 300, 150, 50, &this->font, "QUIT",
-		sf::Color(100, 100, 100, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+	this->buttons["GAME_STATE"] = new Button(this->window->getSize().x / 2.f - 75, 200, 150, 50, &this->font, "NEW GAME",
+		sf::Color(70, 70, 70, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x / 2.f - 75, 400, 150, 50, &this->font, "QUIT",
+		sf::Color(100, 100, 100, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
 
 }
 
 MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states)
 	:State(window, supportedKeys, states)
 {
+	this->initVariables();
+	this->initBackground();
 	this->initFonts();
 	this->initKeybinds();
 	this->initButtons();
-
-	this->background.setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
-	this->background.setFillColor(sf::Color::Black);
+	this->initMusic();
 } 
 
 MainMenuState::~MainMenuState()
@@ -72,6 +99,7 @@ void MainMenuState::updateButtons()
 	if (this->buttons["GAME_STATE"]->isPressed())
 	{
 		this->states->push(new GameState(this->window, this->supportedKeys, this->states));
+		this->bg_music.stop();
 	}
 
 	//Quit
@@ -94,7 +122,7 @@ void MainMenuState::update(const float& dt)
 
 	
 	
-	std::cout << this->mousePosView.x << " " << this->mousePosView.y << std::endl;
+	//std::cout << this->mousePosView.x << " " << this->mousePosView.y << std::endl;
 }
 
 void MainMenuState::renderButtons(sf::RenderTarget* target)

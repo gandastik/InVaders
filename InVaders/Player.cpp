@@ -5,6 +5,7 @@
 void Player::initVariables()
 {
 	this->animationState = IDLE;
+	this->hp = 10.f;
 }
 
 void Player::initTexture()
@@ -34,13 +35,21 @@ void Player::initAnimation()
 	this->animationSwitch = true;
 }
 
+void Player::initSoundEffects()
+{
+	if (!this->gunshot.loadFromFile("Resources/Sound Effects/gun4.wav"))
+		std::cout << "ERROR::PLAYER::COULD NOT LOAD FROM FILE GUN1" << std::endl;
+	this->gunshotSound.setBuffer(gunshot);
+	this->gunshotSound.setVolume(30.f);
+}
+
 void Player::initPhysics()
 {
 	this->velocityMax = 3000.f;
 	this->velocityMin = 1.f;
 	this->acceleration = 60.f;
 	this->drag = 0.90f;
-	this->gravity = 90.f;
+	this->gravity = 55.f;
 	this->velocityMaxY = 1000.f;
 	this->onGround = false;
 	this->isFaceRight = true;
@@ -49,9 +58,9 @@ void Player::initPhysics()
 	this->jumpForce = 450.f;
 	this->gravityAcceleration = 9.8f;
 	this->speedValue = 0;
-	this->mass = 45.f;
+	this->mass = 65.f;
 	this->isJumping = false;
-	this->jumpCooldownMax = 35.f;
+	this->jumpCooldownMax = 45.f;
 	this->jumpCooldown = this->jumpCooldownMax;
 }
 
@@ -62,6 +71,7 @@ Player::Player()
 	this->initTexture();
 	this->initSprite();
 	this->initAnimation();
+	this->initSoundEffects();
 	this->initPhysics();
 }
 
@@ -102,6 +112,26 @@ short Player::getAnimationState()
 	return this->animationState;
 }
 
+const bool& Player::getIsFaceRight()
+{
+	return this->isFaceRight;
+}
+
+int Player::getHp()
+{
+	return this->hp;
+}
+
+const bool Player::canJump()
+{
+	if (this->jumpCooldown >= this->jumpCooldownMax)
+	{
+		this->jumpCooldown = 0.f;
+		return true;
+	}
+	return false;
+}
+
 //Modifiers
 void Player::setPosition(const float x, const float y)
 {
@@ -113,7 +143,10 @@ void Player::resetVelocityY()
 	this->velocity.y = 0.f;
 }
 
-
+void Player::takeDmg(int dmg)
+{
+	this->hp -= dmg;
+}
 
 void Player::setOnGround(int temp)
 {
@@ -177,26 +210,13 @@ void Player::jump(const float& dt)
 	this->sprite.move(0, -speedValue);
 }
 
-const bool& Player::getIsFaceRight()
-{
-	return this->isFaceRight;
-}
 
-const bool Player::canJump()
-{
-	if (this->jumpCooldown >= this->jumpCooldownMax)
-	{
-		this->jumpCooldown = 0.f;
-		return true;
-	}
-	return false;
-}
 
-void Player::updateJumpCooldown()
+void Player::updateJumpCooldown(const float &dt)
 {
 	if (this->jumpCooldown < this->jumpCooldownMax)
 	{
-		this->jumpCooldown += 0.5f;
+		this->jumpCooldown += 50.f * dt;
 	}
 }
 
@@ -225,7 +245,7 @@ void Player::updatePhysics(const float& dt)
 		this->velocity.y = 0.f;
 	}
 	//std::cout << this->sprite.getPosition().x << " " << this->sprite.getPosition().y << std::endl;
-	//std::cout << "Y velocity = " << this->velocity.y << " " << this->speedValue << " " << this->onGround << " " << this->isJumping << "\n";
+	//std::cout << "Y velocity = " << this->velocity.y << " " << this->speedValue << "\n";
 	//std::cout << dt << "\n";
 	
 	if (this->isJumping) {
@@ -250,6 +270,10 @@ void Player::updateMovement(const float& dt)
 		this->animationState = MOVING_RIGHT;
 		this->isFaceRight = true;
 	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) //CROUCH
+	{
+		this->animationState = CROUCH;
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && this->isJumping == false && canJump()) //JUMP
 	{
 		//this->move(dt, 0.f, -1.f);
@@ -265,11 +289,17 @@ void Player::updateMovement(const float& dt)
 	//}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		this->animationState = SHOOTING;
+		if (this->shootCooldown.getElapsedTime().asSeconds() >= 0.25f)
+		{
+			this->animationState = SHOOTING;
+			this->gunshotSound.play();
+			this->shootCooldown.restart();
+		}
+		
 	}
 }
 
-void Player::updateAnimation()
+void Player::updateAnimation(const float &dt)
 {
 	if (this->animationState == IDLE)
 	{
@@ -323,14 +353,14 @@ void Player::updateAnimation()
 		this->sprite.setScale(-2.5f, 2.5f);
 		this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
 	}
-	else if (this->animationState == SHOOTING)
+	else if (this->animationState == SHOOTING )
 	{
-		if (this->animationTimer.getElapsedTime().asSeconds() >= 0.001f || this->getAnimationSwitch())
-		{
+		/*if (this->animationTimer.getElapsedTime().asSeconds() >= 0.01f || this->getAnimationSwitch())
+		{*/
 			this->shootingCurrentFrame.top = 100;
 			this->shootingCurrentFrame.width = 54;
 			this->shootingCurrentFrame.height = 37;
-			for (int i = 0; i < 10; i++)
+			for (float i = 0; i < 10; i ++)
 			{
 				this->shootingCurrentFrame.left += 54;
 				if (this->shootingCurrentFrame.left >= 215)
@@ -340,9 +370,10 @@ void Player::updateAnimation()
 				}
 				this->sprite.setTextureRect(this->shootingCurrentFrame);
 			}
-		}			
-		this->animationTimer.restart();
+		/*}			
+		this->animationTimer.restart();*/
 	}
+
 	else
 	{
 		this->animationTimer.restart();
@@ -363,8 +394,8 @@ void Player::update(const float& dt)
 {
 	this->updateMovement(dt);
 	this->updatePhysics(dt);
-	this->updateAnimation();
-	this->updateJumpCooldown();
+	this->updateAnimation(dt);
+	this->updateJumpCooldown(dt);
 
 	//std::cout << this->sprite.getPosition().x << " " << this->sprite.getPosition().y << std::endl;
 }

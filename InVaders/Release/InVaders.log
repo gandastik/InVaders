@@ -28,11 +28,9 @@ D:\kk\Code\InVaders\InVaders\Game.cpp(106,52): warning C4244: 'argument': conver
               T=float
           ]
 D:\kk\Code\InVaders\InVaders\Game.cpp(223,20): warning C4018: '<': signed/unsigned mismatch
-D:\kk\Code\InVaders\InVaders\Game.cpp(348,20): warning C4018: '<': signed/unsigned mismatch
-  main.cpp
   Generating code
-  0 of 838 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  3 of 834 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   InVaders.vcxproj -> D:\kk\Code\InVaders\Release\InVaders.exe

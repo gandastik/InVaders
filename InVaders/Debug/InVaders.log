@@ -1,5 +1,5 @@
-﻿  MainMenuState.cpp
-D:\kk\Code\InVaders\InVaders\MainMenuState.cpp(45,78): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+﻿  GameState.cpp
+D:\kk\Code\InVaders\InVaders\GameState.cpp(85,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=unsigned int
@@ -8,7 +8,7 @@ D:\kk\Code\InVaders\InVaders\MainMenuState.cpp(45,78): warning C4244: 'argument'
           [
               T=float
           ]
-D:\kk\Code\InVaders\InVaders\MainMenuState.cpp(45,57): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(86,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=unsigned int
@@ -17,4 +17,26 @@ D:\kk\Code\InVaders\InVaders\MainMenuState.cpp(45,57): warning C4244: 'argument'
           [
               T=float
           ]
+D:\kk\Code\InVaders\InVaders\GameState.cpp(87,84): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\GameState.cpp(87,57): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\GameState.cpp(188,20): warning C4018: '<': signed/unsigned mismatch
+D:\kk\Code\InVaders\InVaders\GameState.cpp(327,20): warning C4018: '<': signed/unsigned mismatch
+  MainMenuState.cpp
+  Generating Code...
   InVaders.vcxproj -> D:\kk\Code\InVaders\Debug\InVaders.exe

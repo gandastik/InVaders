@@ -8,7 +8,7 @@ private:
 	sf::Sprite body;
 
 public:
-	Platform(sf::Texture *texture, sf::Vector2f position);
+	Platform(sf::Texture* texture, sf::Vector2f position);
 	~Platform();
 
 	Collider getCollider();

@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Collider.h"
+
 class Bullet
 {
 private:
@@ -15,12 +18,15 @@ public:
 
 	//Accessor
 	const sf::FloatRect getBounds() const;
+	sf::Sprite getSprite();
+	bool isIntersects(sf::FloatRect other);
 
 	//Modifiers
 	void flipSprite();
 
 	//Functions
 	void update();
+	Collider getCollider();
 	void render(sf::RenderTarget* target);
 
 };

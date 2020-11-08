@@ -26,6 +26,18 @@ const sf::FloatRect Bullet::getBounds() const
 	return this->shape.getGlobalBounds();
 }
 
+sf::Sprite Bullet::getSprite()
+{
+	return this->shape;
+}
+
+bool Bullet::isIntersects(sf::FloatRect other)
+{
+	if (this->shape.getGlobalBounds().intersects(other))
+		return true;
+	return false;
+}
+
 void Bullet::flipSprite()
 {
 	this->shape.setScale(-1.f, 1.f);
@@ -35,6 +47,11 @@ void Bullet::flipSprite()
 void Bullet::update()
 {
 	this->shape.move(this->movementSpeed * this->direction);
+}
+
+Collider Bullet::getCollider()
+{
+	return Collider(this->shape);
 }
 
 void Bullet::render(sf::RenderTarget* target)

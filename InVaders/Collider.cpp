@@ -58,7 +58,7 @@ bool Collider::checkCollision(Collider other,sf::Vector2f& direction, float push
 			if (delta_x > 0.0f)
 			{
 				move(intersectX * (1.0f - push), 0.f);
-				other.move(0.f, intersectY * push * 0.2f); //if collide with the left side -> move up
+				other.move(- intersectX * push, 0.f); //if collide with the left side -> move up
 
 				direction.x = 1.f;
 				direction.y = 0.f;

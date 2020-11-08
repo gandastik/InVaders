@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "Collider.h"
 
-enum PLAYER_ANIMATION_STATE {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLING, SHOOTING};
+enum PLAYER_ANIMATION_STATE {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLING, SHOOTING, CROUCH};
 
 class Player
 {
@@ -12,14 +12,24 @@ private:
 	sf::Texture textureSheet;
 	sf::Clock animationTimer;
 
+	//Status
+	int hp;
+
+
 	//Animation
 	short animationState;
 	sf::IntRect currentFrame;
 	bool animationSwitch;
 	sf::IntRect idleCurrentFrame;
 	sf::IntRect shootingCurrentFrame;
-
 	bool isFaceRight;
+	sf::Clock shootAnimTimer;
+	sf::Clock shootCooldown;
+	
+	//sound effects
+	sf::SoundBuffer gunshot;
+	sf::Sound gunshotSound;
+	
 	
 
 	//Physics
@@ -41,13 +51,14 @@ private:
 	const bool canJump();
 	float jumpCooldown;
 	float jumpCooldownMax;
-	void updateJumpCooldown();
+	void updateJumpCooldown(const float &dt);
 	
 	//Initializations
 	void initVariables();
 	void initTexture();
 	void initSprite();
 	void initAnimation();
+	void initSoundEffects();
 	void initPhysics();
 
 public:
@@ -62,10 +73,12 @@ public:
 	sf::Sprite getSprite();
 	short getAnimationState();
 	const bool& getIsFaceRight();
+	int getHp();
 
 	//Modifiers
 	void setPosition(const float x, const float y);
 	void resetVelocityY();
+	void takeDmg(int dmg);
 
 	//Functions
 	void onCollision(sf::Vector2f direction);
@@ -76,7 +89,7 @@ public:
 	void move(const float& dt,const float dir_x, const float dir_y);
 	void updatePhysics(const float& dt);
 	void updateMovement(const float& dt);
-	void updateAnimation();
+	void updateAnimation(const float &dt);
 	void resetAnimationState();
 	Collider getCollider();
 	void update(const float& dt);
