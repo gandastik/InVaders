@@ -34,6 +34,7 @@ void GameState::initPlatform()
 
 void GameState::initVariables()
 {
+	this->score = 0;
 }
 
 void GameState::initBackground()
@@ -53,6 +54,16 @@ void GameState::initMusic()
 	this->bg_music.play();
 }
 
+void GameState::initSoundEffects()
+{
+	if (!this->pickUpItemsfx.loadFromFile("Resources/Sound Effects/pick_up_item.wav"))
+	{
+		std::cout << "ERROR::GAMESTATE::COULD NOT LOAD FROM FILE SOUNDEFFECTS" << std::endl;
+	}
+	this->pickUpItemSound.setBuffer(this->pickUpItemsfx);
+	this->pickUpItemSound.setVolume(10.f);
+}
+
 void GameState::initTexture()
 {
 	this->textures["BULLET"] = new sf::Texture;
@@ -65,8 +76,10 @@ void GameState::initTexture()
 	this->textures["PLATFORM2"]->loadFromFile("Texture/platform2.png");
 	this->textures["PLATFORM3"] = new sf::Texture;
 	this->textures["PLATFORM3"]->loadFromFile("Texture/platform3.png");
-	this->textures["ENEMY1"] = new sf::Texture;
-	this->textures["ENEMY1"]->loadFromFile("Texture/Enemy/enemy.png");
+	this->textures["ENEMY"] = new sf::Texture;
+	this->textures["ENEMY"]->loadFromFile("Texture/Enemy/enemy.png");
+	this->textures["HEALTH"] = new sf::Texture;
+	this->textures["HEALTH"]->loadFromFile("Texture/healthPack.png");
 }
 
 void GameState::initPlayer()
@@ -76,15 +89,16 @@ void GameState::initPlayer()
 
 void GameState::initEnemy()
 {
-	this->enemies.push_back(new Enemy(this->textures["ENEMY1"], 900.f, 520.f));
-	this->enemies.push_back(new Enemy(this->textures["ENEMY1"], 1248.f, 535.f));
+	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1280.f, 520.f));
+	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1258.f, 535.f));
 }
 
 void GameState::initView()
 {
+	this->view = new sf::View(sf::FloatRect(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f, this->window->getSize().x, this->window->getSize().y));
 	this->viewPos.x = this->window->getSize().x / 2;
 	this->viewPos.y = this->window->getSize().y / 2;
-	this->view.setSize(sf::Vector2f(this->window->getSize().x, this->window->getSize().y));
+	this->view->setSize(sf::Vector2f(this->window->getSize().x, this->window->getSize().y));
 	this->currentCamera = this->window->getSize().x - 50.f;
 	this->moveCamera = false;
 	this->nextViewPos = viewPos.x;
@@ -101,16 +115,27 @@ void GameState::initGUI()
 	this->hpBarOutline.setOutlineThickness(2.f);
 	this->hpBarOutline.setOutlineColor(sf::Color::Black);
 	this->hpBarOutline.setFillColor(sf::Color::Transparent);
+
+	if (!this->scoreFont.loadFromFile("Fonts/04font.ttf"))
+		std::cout << "ERROR::GAME_STATE::COULD NOT LOAD SCOREFONT FROM FILE" << std::endl;
+	this->scoreText.setFont(this->scoreFont);
+	this->scoreText.setString(std::to_string(this->score));
+	this->scoreText.setCharacterSize(30.f);
+	this->scoreText.setFillColor(sf::Color(250, 220, 0, 250));
+	this->scoreText.setOutlineThickness(1.f);
+	this->scoreText.setOutlineColor(sf::Color::Black);
+	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
 }
 
-GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states)
-	: State(window, supportedKeys, states)
+GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view)
+	: State(window, supportedKeys, states, view)
 {
 	this->initTexture();
 	this->initVariables();
 	this->initPlayer();
 	this->initEnemy();
 	this->initMusic();
+	this->initSoundEffects();
 	this->initPlatform();
 	this->initKeybinds();
 	this->initBackground();
@@ -141,12 +166,29 @@ GameState::~GameState()
 	{
 		delete enemy;
 	}
+	//delete Items
+	for (auto* item : this->items)
+	{
+		delete item;
+	}
 }
 
 void GameState::endState()
 {
 	std::cout << "Ending Game State!" << "\n";
 	this->bg_music.stop();
+}
+
+void GameState::spawnEnemies()
+{
+	if (this->player->getPosition().x >= 2640.f && this->player->getPosition().x <= 2642.f)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], 3540.f, 535.f));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], 3160.f, 535.f));
+	}
+
+
 }
 
 void GameState::updateInput(const float& dt)
@@ -180,9 +222,9 @@ void GameState::updateEnemy(const float& dt)
 
 void GameState::updateCollision(const float& dt)
 {
-	if (this->player->getPosition().x < 0)
+	if (this->player->getPosition().x < this->view->getCenter().x - this->window->getSize().x / 2.f)
 	{
-		this->player->setPosition(0.f, this->player->getPosition().y);
+		this->player->setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->player->getPosition().y);
 	}
 	unsigned counter = 0;
 	for (int i = 0; i < this->platforms.size(); i++)
@@ -209,6 +251,20 @@ void GameState::updateCollision(const float& dt)
 		}
 	}
 	counter++;
+	unsigned itemCounter = 0;
+	for (auto* item : this->items)
+	{
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < 10)
+		{
+			delete this->items.at(itemCounter);
+			this->player->heal(1);
+			this->items.erase(this->items.begin() + itemCounter);
+			this->pickUpItemSound.play();
+			--itemCounter;
+		}
+		++itemCounter;
+	}
+	
 }
 
 void GameState::updateBullet()
@@ -219,7 +275,7 @@ void GameState::updateBullet()
 		bullet->update();
 
 		//bullet culling (right screen)
-		if (bullet->getBounds().left + bullet->getBounds().width > this->nextViewPos * 2.f - 100.f)
+		if (bullet->getBounds().left + bullet->getBounds().width > this->view->getCenter().x + this->window->getSize().x / 2.f)
 		{
 			//delete bullet
 			delete this->bullets.at(counter);
@@ -227,7 +283,8 @@ void GameState::updateBullet()
 			--counter;
 			//std::cout << this->bullets.size() << std::endl;
 		}
-		if (bullet->getBounds().left < 0.f)
+		//bullet culling (left screen)
+		if (bullet->getBounds().left < this->view->getCenter().x - this->window->getSize().x / 2.f)
 		{
 			delete this->bullets.at(counter);
 			this->bullets.erase(this->bullets.begin() + counter);
@@ -242,8 +299,13 @@ void GameState::updateBullet()
 			{
 				std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
-				if (enemy->getHp() == 0)
+				//if enemy's hp is 0
+				if (enemy->getHp() <= 0)
 				{
+					enemy->deathAnimation();
+					this->score += enemy->getPoint();
+					if(enemy->getIsDrop())
+						this->items.push_back(new Item(this->textures["HEALTH"], enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 20.f));
 					delete this->enemies.at(temp);
 					this->enemies.erase(this->enemies.begin() + temp);
 				}
@@ -260,9 +322,12 @@ void GameState::updateBullet()
 
 void GameState::updateGUI()
 {
-	this->hpBarOutline.setPosition(this->view.getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view.getCenter().y - this->window->getSize().y / 2.f + 10.f);
-	this->hpBar.setPosition(this->view.getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view.getCenter().y - this->window->getSize().y / 2.f + 10.f);
+	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
+	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
 	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 20.f, 20.f));
+
+	this->scoreText.setString(std::to_string(this->score));
+	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
 }
 
 void GameState::update(const float& dt)
@@ -281,8 +346,8 @@ void GameState::update(const float& dt)
 		}
 	}
 	
-
-	if (this->player->getPosition().x + this->player->getGlobalBounds().width > this->currentCamera)
+	//Move screen when all the enemies in the screen is dead
+	if (this->player->getPosition().x + this->player->getGlobalBounds().width > this->currentCamera && this->enemies.size() == 0)
 	{
 		this->currentCamera += this->window->getSize().x - 100;
 		this->moveCamera = true;
@@ -292,23 +357,25 @@ void GameState::update(const float& dt)
 	if (this->viewPos.x < this->nextViewPos && this->moveCamera) this->viewPos.x += 300.f * dt;
 	else this->moveCamera = false;
 
-	this->window->setView(this->view);
+	this->window->setView(*this->view);
 	this->updateMousePosition();
 	this->updateInput(dt);
 	this->updateCollision(dt);
 	this->updateBullet();
 	this->updatePlayer(dt);
+	this->spawnEnemies();
 	this->updateEnemy(dt);
-
-	if (this->player->getHp() <= 0)
-	{
-		this->quit = true;
-	}
 
 	this->updateGUI();
 
-	this->view.setCenter(this->viewPos);
+	this->view->setCenter(this->viewPos);
 
+	if (this->player->getHp() <= 0)
+	{
+		this->states->pop();
+		this->states->push(new GameOverState(this->window, this->supportedKeys, this->states, this->view));
+		this->bg_music.stop();
+	}
 	//std::cout << this->mousePosView.x << " " << this->mousePosView.y << std::endl;
 }
 
@@ -317,13 +384,20 @@ void GameState::renderPlayer()
 	this->player->render(this->window);
 }
 
+void GameState::renderGUI()
+{
+	this->window->draw(this->hpBarOutline);
+	this->window->draw(this->hpBar);
+	this->window->draw(this->scoreText);
+}
+
 void GameState::render(sf::RenderTarget* target)
 {
 	if (!target)
 	{
 		target = this->window;
 	}
-	//render item
+	//render
 	for (int i = 0; i < this->platforms.size(); i++)
 	{
 		Platform* platform = this->platforms[i];
@@ -344,6 +418,10 @@ void GameState::render(sf::RenderTarget* target)
 		enemy->render(this->window);
 	}
 
-	this->window->draw(this->hpBarOutline);
-	this->window->draw(this->hpBar);
+	for (auto* item : this->items)
+	{
+		item->render(this->window);
+	}
+
+	this->renderGUI();
 }

@@ -14,7 +14,8 @@ private:
 
 	//Status
 	int hp;
-
+	sf::Clock takeDmgTimer;
+	float takeDmgTime;
 
 	//Animation
 	short animationState;
@@ -29,9 +30,9 @@ private:
 	//sound effects
 	sf::SoundBuffer gunshot;
 	sf::Sound gunshotSound;
+	sf::SoundBuffer takeDmgsfx;
+	sf::Sound takeDmgSound;
 	
-	
-
 	//Physics
 	sf::Vector2f velocity;
 	float velocityMax;
@@ -52,7 +53,7 @@ private:
 	float jumpCooldown;
 	float jumpCooldownMax;
 	void updateJumpCooldown(const float &dt);
-	
+
 	//Initializations
 	void initVariables();
 	void initTexture();
@@ -79,6 +80,7 @@ public:
 	void setPosition(const float x, const float y);
 	void resetVelocityY();
 	void takeDmg(int dmg);
+	void heal(int x);
 
 	//Functions
 	void onCollision(sf::Vector2f direction);
@@ -87,12 +89,14 @@ public:
 	void setIsJumping();
 	void restAnimationTimer();
 	void move(const float& dt,const float dir_x, const float dir_y);
+	void updateColor();
 	void updatePhysics(const float& dt);
 	void updateMovement(const float& dt);
 	void updateAnimation(const float &dt);
 	void resetAnimationState();
 	Collider getCollider();
 	void update(const float& dt);
+	//Render
 	void render(sf::RenderTarget* target);
 };
 

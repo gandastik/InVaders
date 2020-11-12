@@ -26,7 +26,7 @@ private:
 	void initKeybinds();
 	void initButtons();
 public:
-	MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states);
+	MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view);
 	virtual ~MainMenuState();
 
 	//Functions

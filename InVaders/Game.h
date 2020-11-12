@@ -14,6 +14,7 @@ private:
 	sf::Event ev;
 	std::vector<sf::VideoMode> VideoModes;
 	sf::VideoMode windowBounds;
+	sf::View view;
 
 	//Delta time
 	sf::Clock dtClock;

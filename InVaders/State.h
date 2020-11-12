@@ -14,6 +14,8 @@ protected:
 	std::map<std::string, int> keybinds;
 	bool quit;
 
+	sf::View* view;
+
 	sf::Vector2i mousePosScreen;
 	sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;
@@ -24,8 +26,7 @@ protected:
 	virtual void initKeybinds() = 0;
 
 public:
-	State(sf::RenderWindow *window, std::map<std::string,int>* supportedKeys, std::stack<State*>* states);
-	virtual ~State();
+	State(sf::RenderWindow *window, std::map<std::string,int>* supportedKeys, std::stack<State*>* states, sf::View* view);	virtual ~State();
 
 	const bool& getQuit() const;
 

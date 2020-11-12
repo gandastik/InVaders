@@ -1,18 +1,20 @@
 #include "stdafx.h"
 #include "MainMenuState.h"
 
+
+
+//Initializer Functions
+void MainMenuState::initVariables()
+{
+
+}
+
 void MainMenuState::initMusic()
 {
 	this->bg_music.openFromFile("Resources/Sound Effects/intro.ogg");
 	this->bg_music.setLoop(true);
 	this->bg_music.setVolume(10.f);
 	this->bg_music.play();
-}
-
-//Initializer Functions
-void MainMenuState::initVariables()
-{
-
 }
 
 void MainMenuState::initBackground()
@@ -30,7 +32,7 @@ void MainMenuState::initBackground()
 
 void MainMenuState::initFonts()
 {
-	if (!this->font.loadFromFile("Fonts/Montserrat-Black.otf"))
+	if (!this->font.loadFromFile("Fonts/04font.ttf"))
 	{
 		std::cout << "ERROR::MAINMENUSTATE::COULD NOT LOAD FONT!" << std::endl;
 	}
@@ -62,8 +64,8 @@ void MainMenuState::initButtons()
 
 }
 
-MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states)
-	:State(window, supportedKeys, states)
+MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view)
+	:State(window, supportedKeys, states, view)
 {
 	this->initVariables();
 	this->initBackground();
@@ -98,7 +100,7 @@ void MainMenuState::updateButtons()
 	//Start
 	if (this->buttons["GAME_STATE"]->isPressed())
 	{
-		this->states->push(new GameState(this->window, this->supportedKeys, this->states));
+		this->states->push(new GameState(this->window, this->supportedKeys, this->states, this->view));
 		this->bg_music.stop();
 	}
 

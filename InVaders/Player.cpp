@@ -41,6 +41,11 @@ void Player::initSoundEffects()
 		std::cout << "ERROR::PLAYER::COULD NOT LOAD FROM FILE GUN1" << std::endl;
 	this->gunshotSound.setBuffer(gunshot);
 	this->gunshotSound.setVolume(30.f);
+
+	if (!this->takeDmgsfx.loadFromFile("Resources/Sound Effects/player_take_dmg.wav"))
+		std::cout << "ERROR::PLAYER::COULD NOT LOAD FROM FILE PLAYER_TAKE_DMG" << std::endl;
+	this->takeDmgSound.setBuffer(this->takeDmgsfx);
+	this->takeDmgSound.setVolume(30.f);
 }
 
 void Player::initPhysics()
@@ -145,7 +150,15 @@ void Player::resetVelocityY()
 
 void Player::takeDmg(int dmg)
 {
+	this->sprite.setColor(sf::Color(255, 0, 0, 127));
+	this->takeDmgSound.play();
 	this->hp -= dmg;
+	this->takeDmgTimer.restart();
+}
+
+void Player::heal(int x)
+{
+	this->hp += x;
 }
 
 void Player::setOnGround(int temp)
@@ -177,6 +190,14 @@ void Player::move(const float& dt, const float dir_x, const float dir_y)
 	if (std::abs(this->velocity.x) > this->velocityMax)
 	{
 		this->velocity.x = this->velocityMax * ((this->velocity.x < 0) ? -1.f : 1.f);
+	}
+}
+
+void Player::updateColor()
+{
+	if (this->takeDmgTimer.getElapsedTime().asSeconds() >= 0.15f)
+	{
+		this->sprite.setColor(sf::Color(255, 255, 255, 255));
 	}
 }
 
@@ -270,10 +291,10 @@ void Player::updateMovement(const float& dt)
 		this->animationState = MOVING_RIGHT;
 		this->isFaceRight = true;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) //CROUCH
-	{
-		this->animationState = CROUCH;
-	}
+	//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) //CROUCH
+	//{
+	//	this->animationState = CROUCH;
+	//}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && this->isJumping == false && canJump()) //JUMP
 	{
 		//this->move(dt, 0.f, -1.f);
@@ -360,7 +381,7 @@ void Player::updateAnimation(const float &dt)
 			this->shootingCurrentFrame.top = 100;
 			this->shootingCurrentFrame.width = 54;
 			this->shootingCurrentFrame.height = 37;
-			for (float i = 0; i < 10; i ++)
+			for (int i = 0; i < 10; i ++)
 			{
 				this->shootingCurrentFrame.left += 54;
 				if (this->shootingCurrentFrame.left >= 215)
@@ -395,8 +416,8 @@ void Player::update(const float& dt)
 	this->updateMovement(dt);
 	this->updatePhysics(dt);
 	this->updateAnimation(dt);
+	this->updateColor();
 	this->updateJumpCooldown(dt);
-
 	//std::cout << this->sprite.getPosition().x << " " << this->sprite.getPosition().y << std::endl;
 }
 

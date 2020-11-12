@@ -6,26 +6,32 @@
 #include "Platform.h"
 #include "MainMenuState.h"
 #include "Enemy.h"
+#include "GameOverState.h"
+#include "Item.h"
 
 class GameState :
 	public State
 {
 private:
 	sf::Event gameEvent;
-
+	
 	//Resources
 	sf::Music bg_music;
+	sf::SoundBuffer pickUpItemsfx;
+	sf::Sound pickUpItemSound;
 
 	//GUI
 	sf::RectangleShape hpBarOutline;
 	sf::RectangleShape hpBar;
+	sf::Font scoreFont;
+	sf::Text scoreText;
+	int score;
 
 	//Background
 	sf::Sprite background;
 	sf::Texture backgroundTexture;
 
 	//View
-	sf::View view;
 	sf::Vector2f viewPos;
 	float currentCamera;
 	bool moveCamera;
@@ -42,6 +48,9 @@ private:
 	std::vector<Bullet*> bullets;
 	sf::Clock shootTimer;
 
+	//Items
+	std::vector<Item*> items;
+
 	//Platform
 	std::vector<Platform*> platforms;
 	sf::Vector2f direction;
@@ -51,6 +60,7 @@ private:
 	void initVariables();
 	void initBackground();
 	void initMusic();
+	void initSoundEffects();
 	void initTexture();
 	void initPlayer();
 	void initEnemy();
@@ -60,11 +70,12 @@ private:
 
 public:
 	//Constructure & Destructure
-	GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states);
+	GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view);
 	virtual ~GameState();
 
 	//Functions
 	void endState();
+	void spawnEnemies();
 	
 	//Update
 	void updateInput(const float& dt);
@@ -77,6 +88,8 @@ public:
 	
 	//Render
 	void renderPlayer();
+	
+	void renderGUI();
 	void render(sf::RenderTarget* target = nullptr);
 };
 
