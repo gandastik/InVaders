@@ -42,6 +42,7 @@ private:
 
 	//Enemy
 	std::vector<Enemy*> enemies;
+	int checkPoint;
 
 	//Bullets
 	std::map<std::string, sf::Texture*> textures;
@@ -82,7 +83,8 @@ public:
 	void updatePlayer(const float& dt);
 	void updateEnemy(const float& dt);
 	void updateCollision(const float& dt);
-	void updateBullet();
+	void updateItemsCollision(const float& dt);
+	void updateBullet(const float& dt);
 	void updateGUI();
 	void update(const float& dt);
 	

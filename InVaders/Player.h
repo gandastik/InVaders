@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "Collider.h"
+#include "AnimationComponent.h"
 
 enum PLAYER_ANIMATION_STATE {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLING, SHOOTING, CROUCH};
 
@@ -17,16 +18,16 @@ private:
 	sf::Clock takeDmgTimer;
 	float takeDmgTime;
 
+
 	//Animation
+	AnimationComponent* animationComponent;
 	short animationState;
-	sf::IntRect currentFrame;
-	bool animationSwitch;
-	sf::IntRect idleCurrentFrame;
-	sf::IntRect shootingCurrentFrame;
 	bool isFaceRight;
 	sf::Clock shootAnimTimer;
 	sf::Clock shootCooldown;
+	bool isShooting;
 	
+
 	//sound effects
 	sf::SoundBuffer gunshot;
 	sf::Sound gunshotSound;
@@ -58,7 +59,7 @@ private:
 	void initVariables();
 	void initTexture();
 	void initSprite();
-	void initAnimation();
+	void initAnimationComponent();
 	void initSoundEffects();
 	void initPhysics();
 
@@ -68,7 +69,6 @@ public:
 	virtual ~Player();
 
 	//Accessors
-	const bool& getAnimationSwitch();
 	const sf::Vector2f getPosition() const;
 	const sf::FloatRect getGlobalBounds() const;
 	sf::Sprite getSprite();
@@ -82,18 +82,19 @@ public:
 	void takeDmg(int dmg);
 	void heal(int x);
 
+	//Components
+	void creatAnimationComponent();
+
 	//Functions
 	void onCollision(sf::Vector2f direction);
 	void jump(const float& dt);
 	void setOnGround(int temp);
 	void setIsJumping();
-	void restAnimationTimer();
 	void move(const float& dt,const float dir_x, const float dir_y);
 	void updateColor();
 	void updatePhysics(const float& dt);
 	void updateMovement(const float& dt);
 	void updateAnimation(const float &dt);
-	void resetAnimationState();
 	Collider getCollider();
 	void update(const float& dt);
 	//Render

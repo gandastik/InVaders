@@ -35,6 +35,7 @@ void GameState::initPlatform()
 void GameState::initVariables()
 {
 	this->score = 0;
+	this->checkPoint = 1;
 }
 
 void GameState::initBackground()
@@ -50,7 +51,7 @@ void GameState::initMusic()
 {
 	this->bg_music.openFromFile("Resources/Sound Effects/bg_music.ogg");
 	this->bg_music.setLoop(true);
-	this->bg_music.setVolume(10.f);
+	this->bg_music.setVolume(5.f);
 	this->bg_music.play();
 }
 
@@ -89,8 +90,8 @@ void GameState::initPlayer()
 
 void GameState::initEnemy()
 {
-	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1280.f, 520.f));
-	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1258.f, 535.f));
+	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1150.f, 100.f));
+	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1250.f, 100.f));
 }
 
 void GameState::initView()
@@ -196,7 +197,7 @@ void GameState::updateInput(const float& dt)
 	this->checkForQuit();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		if (this->shootTimer.getElapsedTime().asSeconds() >= 0.25f)
+		if (this->shootTimer.getElapsedTime().asSeconds() >= 0.4f)
 		{
 			if (this->player->getIsFaceRight())
 				this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPosition().x + this->player->getGlobalBounds().width, this->player->getPosition().y + this->player->getGlobalBounds().height / 2.f - 20.f, 1.f, 0.f, 10.f));
@@ -214,18 +215,32 @@ void GameState::updatePlayer(const float& dt)
 
 void GameState::updateEnemy(const float& dt)
 {
+	int temp = 0;
 	for (auto* enemy : this->enemies)
 	{
-		enemy->update(this->player);
+		enemy->update(this->player, dt);
+		if (enemy->getHp() <= 0)
+		{
+			if (enemy->getIsDeath())
+			{
+				delete this->enemies.at(temp);
+				this->enemies.erase(this->enemies.begin() + temp);
+				temp--;
+			}
+		}
+		temp++;
 	}
+	
 }
 
 void GameState::updateCollision(const float& dt)
 {
+	//Check collision between the left side of the window
 	if (this->player->getPosition().x < this->view->getCenter().x - this->window->getSize().x / 2.f)
 	{
 		this->player->setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->player->getPosition().y);
 	}
+	//Check collision between the player and platforms
 	unsigned counter = 0;
 	for (int i = 0; i < this->platforms.size(); i++)
 	{
@@ -251,6 +266,21 @@ void GameState::updateCollision(const float& dt)
 		}
 	}
 	counter++;
+	for (int i = 0; i < this->platforms.size(); i++)
+	{
+		Platform* platform = this->platforms[i];
+		for (auto* enemy : this->enemies)
+		{
+			if (platform->getCollider().checkCollision(enemy->getCollider(), this->direction, 1.f))
+			{
+				enemy->resetVelocityY();
+			}
+		}
+	}
+}
+
+void GameState::updateItemsCollision(const float& dt)
+{
 	unsigned itemCounter = 0;
 	for (auto* item : this->items)
 	{
@@ -264,10 +294,9 @@ void GameState::updateCollision(const float& dt)
 		}
 		++itemCounter;
 	}
-	
 }
 
-void GameState::updateBullet()
+void GameState::updateBullet(const float& dt)
 {
 	unsigned counter = 0;
 	for (auto* bullet : this->bullets)
@@ -291,7 +320,7 @@ void GameState::updateBullet()
 			--counter;
 			//std::cout << this->bullets.size() << std::endl;
 		}
-		int temp = 0;
+		//int temp = 0;
 		//check if bullet hit the enemy(ies)
 		for (auto* enemy : this->enemies)
 		{
@@ -299,21 +328,24 @@ void GameState::updateBullet()
 			{
 				std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
-				//if enemy's hp is 0
-				if (enemy->getHp() <= 0)
+				////if enemy's hp is 0
+				if (enemy->getHp() == 0)
 				{
-					enemy->deathAnimation();
 					this->score += enemy->getPoint();
 					if(enemy->getIsDrop())
 						this->items.push_back(new Item(this->textures["HEALTH"], enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 20.f));
-					delete this->enemies.at(temp);
-					this->enemies.erase(this->enemies.begin() + temp);
+				//	if (enemy->getIsDeath())
+				//	{
+				//		delete this->enemies.at(temp);
+				//		this->enemies.erase(this->enemies.begin() + temp);
+				//		temp--;
+				//	}
 				}
 				delete this->bullets.at(counter);
 				this->bullets.erase(this->bullets.begin() + counter);
 				--counter;
 			}
-			temp++;
+			//temp++;
 		}
 
 	}
@@ -334,7 +366,7 @@ void GameState::update(const float& dt)
 {
 	while (this->window->pollEvent(this->gameEvent))
 	{
-		if (sf::Event::KeyReleased && (this->gameEvent.key.code == sf::Keyboard::A ||
+		/*if (sf::Event::KeyReleased && (this->gameEvent.key.code == sf::Keyboard::A ||
 			this->gameEvent.key.code == sf::Keyboard::D ||
 			this->gameEvent.key.code == sf::Keyboard::Right ||
 			this->gameEvent.key.code == sf::Keyboard::S ||
@@ -343,7 +375,7 @@ void GameState::update(const float& dt)
 		{
 			this->player->restAnimationTimer();
 			this->player->resetAnimationState();
-		}
+		}*/
 	}
 	
 	//Move screen when all the enemies in the screen is dead
@@ -361,7 +393,8 @@ void GameState::update(const float& dt)
 	this->updateMousePosition();
 	this->updateInput(dt);
 	this->updateCollision(dt);
-	this->updateBullet();
+	this->updateItemsCollision(dt);
+	this->updateBullet(dt);
 	this->updatePlayer(dt);
 	this->spawnEnemies();
 	this->updateEnemy(dt);

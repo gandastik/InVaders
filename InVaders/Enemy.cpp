@@ -9,22 +9,32 @@ void Enemy::initVariables()
 	this->damage = 1;
 	this->points = 5;
 	this->dropChance = 50;
+	this->isDeath = false;
 
 	this->bulletTexture.loadFromFile("Texture/flipped_bullet.png");
-	this->shootCooldownMax = 0.75f; //in seconds
+	this->shootCooldownMax = 1.f; //in seconds
 	this->shootCooldown = this->shootCooldownMax;
+}
+
+void Enemy::initPhysics()
+{
+	this->maxVelocityX = 200.f;
+	this->maxVelocityY = 1000.f;
+	this->speedValue = 50.f;
+	this->gravity = 1500.f;
+	this->drag = 0.95f;
 }
 
 void Enemy::initSoundEffects()
 {
-	if(!this->gunshot.loadFromFile("Resources/Sound Effects/gun1.wav"))
+	if (!this->gunshot.loadFromFile("Resources/Sound Effects/gun1.wav"))
 	{
 		std::cout << "ERROR::ENEMY::COULD NOT LOAD SOUND EFFECTS GUN" << std::endl;
 	}
 	this->gunShotSound.setBuffer(this->gunshot);
 	this->gunShotSound.setVolume(15.f);
 
-	if(!this->takeDmgsfx.loadFromFile("Resources/Sound Effects/enemy_take_dmg.wav"))
+	if (!this->takeDmgsfx.loadFromFile("Resources/Sound Effects/enemy_take_dmg.wav"))
 	{
 		std::cout << "ERROR::ENEMY::COULD NOT LOAD SOUND EFFECTS ENEMY TAKE DMG" << std::endl;
 	}
@@ -34,24 +44,35 @@ void Enemy::initSoundEffects()
 
 void Enemy::initSprite()
 {
-	this->currentFrame = sf::IntRect(0, 0, 42, 37);
-
-	this->sprite.setTextureRect(this->currentFrame);
 	this->sprite.setScale(2.5f, 2.5f);
+}
+
+void Enemy::initAnimationComponent()
+{
+	this->createAnimationComponent();
 }
 
 Enemy::Enemy(sf::Texture* texture, float pos_x, float pos_y)
 {
 	this->sprite.setTexture(*texture);
 	this->sprite.setPosition(pos_x, pos_y);
-	
+	this->texture = *texture;
+
 	this->initPos.x = pos_x;
 	this->initPos.y = pos_y;
 
 	this->initVariables();
+	this->initPhysics();
 	this->initSprite();
 	this->initSoundEffects();
+	this->initAnimationComponent();
 	this->randomItem();
+
+	//Add animations
+	this->animationComponent->addAnimation("IDLE", 10.f, 0, 0, 0, 0, 42, 40);
+	this->animationComponent->addAnimation("DEATH", 5.f, 0, 1, 10, 1, 30, 40);
+	this->animationComponent->addAnimation("SHOOTING", 7.f, 0, 2, 4, 2, 61, 40);
+
 }
 
 Enemy::~Enemy()
@@ -89,6 +110,11 @@ bool Enemy::getIsDrop()
 	return this->isDrop;
 }
 
+bool Enemy::getIsDeath()
+{
+	return this->isDeath;
+}
+
 //Modifiers
 void Enemy::takeDmg(int dmg)
 {
@@ -103,16 +129,24 @@ void Enemy::setPosition(float pos_x, float pos_y)
 	this->sprite.setPosition(pos_x, pos_y);
 }
 
-void Enemy::deathAnimation()
+void Enemy::resetVelocityY()
 {
-	this->currentFrame = sf::IntRect(0, 44, 30, 37);
-	this->currentFrame.top = 44;
-	this->currentFrame.width = 30;
-	this->currentFrame.height = 37;
-	for (int i = 0; i < 13; i++)
+	this->velocity.y = 0.f;
+}
+
+void Enemy::createAnimationComponent()
+{
+	this->animationComponent = new AnimationComponent(this->sprite, this->texture);
+}
+
+void Enemy::deathAnimation(const float& dt)
+{
+	if (this->hp <= 0)
 	{
-		this->currentFrame.left += 30;
-		this->sprite.setTextureRect(this->currentFrame);
+		if (this->animationComponent->play("DEATH", dt, true))
+		{
+			this->isDeath = true;
+		}
 	}
 }
 
@@ -126,26 +160,9 @@ void Enemy::randomItem()
 }
 
 //Functions
-void Enemy::move(Player* player)
-{
-	/*if (this->moveLeft)
-		this->sprite.move(-1.f, 0.f);
-	else this->sprite.move(1.f, 0.f);
-
-	if (this->sprite.getPosition().x == this->initPos.x - 100.f)
-		this->moveLeft = false;
-	else if (this->sprite.getPosition().x == this->initPos.x + 100.f)
-		this->moveLeft = true;*/
-
-	if (this->sprite.getPosition().x - player->getPosition().x <= 1000.f && this->sprite.getPosition().x - player->getPosition().x >= 600.f)
-	{
-		this->sprite.move(-1.f, 0.f);
-	}
-
-}
-
 void Enemy::shoot()
 {
+	this->isShooting = true;
 	this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x,
 		this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, 5.f));
 }
@@ -153,6 +170,57 @@ void Enemy::shoot()
 Collider Enemy::getCollider()
 {
 	return Collider(this->sprite);
+}
+
+void Enemy::updatePhysics(const float& dt)
+{
+	this->velocity.y += this->gravity * dt;
+
+	this->velocity *= this->drag;
+
+	if (abs(this->velocity.y) > this->maxVelocityY)
+	{
+		if (this->velocity.y > 0) this->velocity.y = this->maxVelocityY;
+		else this->velocity.y = -this->maxVelocityY;
+	}
+	if (abs(this->velocity.x) > this->maxVelocityX)
+	{
+		if (this->velocity.x > 0) this->velocity.x = this->maxVelocityX;
+		else this->velocity.x = -this->maxVelocityX;
+	}
+
+	//Limit min Velocity
+	if (std::abs(this->velocity.x) < 3.f)
+	{
+		this->velocity.x = 0.f;
+	}
+	if (std::abs(this->velocity.y) < 3.f)
+	{
+		this->velocity.y = 0.f;
+	}
+
+	this->sprite.move(this->velocity * dt);
+}
+
+void Enemy::updateMovement(Player* player, const float& dt)
+{
+	if (this->sprite.getPosition().x - player->getPosition().x <= 1000.f && this->sprite.getPosition().x - player->getPosition().x >= 600.f)
+	{
+		this->velocity.x -= this->speedValue;
+	}
+
+}
+
+void Enemy::updateAnimation(const float& dt)
+{
+	if (this->isShooting)
+	{
+		if (this->animationComponent->play("SHOOTING", dt, true))
+		{
+			this->isShooting = false;
+		}
+	}
+	else this->animationComponent->play("IDLE", dt);
 }
 
 void Enemy::updateColor()
@@ -199,18 +267,18 @@ void Enemy::bulletCollision(Player* player)
 			std::cout << "HIT!!" << std::endl;
 			delete this->bullets.at(counter);
 			this->bullets.erase(this->bullets.begin() + counter);
-			--counter;
-			
 			//Decrease player hp
 			player->takeDmg(1);
 			std::cout << player->getHp() << std::endl;
+
+			--counter;
 		}
 	}
 	counter++;
 }
 
 //Functions
-void Enemy::update(Player* player)
+void Enemy::update(Player* player, const float& dt)
 {
 	this->shootCooldown = this->shootTimer.getElapsedTime().asSeconds();
 
@@ -222,16 +290,20 @@ void Enemy::update(Player* player)
 		this->gunShotSound.play();
 		this->shootTimer.restart();
 	}
-	this->move(player);
+
+	this->updateMovement(player, dt);
+	this->updatePhysics(dt);
 	this->updateBullet();
 	this->updateColor();
+	this->updateAnimation(dt);
+	this->deathAnimation(dt);
 	this->bulletCollision(player);
 }
 
 void Enemy::render(sf::RenderTarget* target)
 {
 	target->draw(this->sprite);
-	
+
 	for (auto* bullet : this->bullets)
 	{
 		bullet->render(target);

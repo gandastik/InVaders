@@ -5,6 +5,7 @@
 #include "Collider.h"
 #include "Collision.h"
 #include "Player.h"
+#include "AnimationComponent.h"
 
 class Enemy
 {
@@ -18,9 +19,19 @@ private:
 	int points;
 	float dropChance;
 	bool isDrop;
+	bool isShooting;
+	bool isDeath;
+
+	//Physics
+	sf::Vector2f velocity;
+	float maxVelocityX;
+	float maxVelocityY;
+	float speedValue;
+	float gravity;
+	float drag;
 
 	//Animations
-	sf::IntRect currentFrame;
+	AnimationComponent* animationComponent;
 
 	sf::Clock takeDmgTimer;
 
@@ -39,9 +50,12 @@ private:
 	sf::SoundBuffer takeDmgsfx;
 	sf::Sound takeDmgSound;
 
+
 	void initVariables();
+	void initPhysics();
 	void initSoundEffects();
 	void initSprite();
+	void initAnimationComponent();
 
 public:
 	//Constructure & Destructure
@@ -54,21 +68,28 @@ public:
 	sf::Vector2f getPosition();
 	sf::FloatRect getGlobalBounds();
 	bool getIsDrop();
+	bool getIsDeath();
 
 	//Modifiers
 	void takeDmg(int dmg);
 	void setPosition(float pos_x, float pos_y);
+	void resetVelocityY();
+
+	//Components
+	void createAnimationComponent();
 
 	//Functions
-	void deathAnimation();
+	void deathAnimation(const float& dt);
 	void randomItem();
-	void move(Player* player);
 	void shoot();
 	Collider getCollider();
+	void updatePhysics(const float& dt);
+	void updateMovement(Player* player, const float& dt);
+	void updateAnimation(const float& dt);
 	void updateColor();
 	void updateBullet();
 	void bulletCollision(Player* player);
-	void update(Player* player);
+	void update(Player* player, const float& dt);
 	void render(sf::RenderTarget* target);
 };
 
