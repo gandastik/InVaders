@@ -12,7 +12,7 @@ class Enemy
 private:
 	sf::Texture texture;
 	sf::Sprite sprite;
-	int type;
+	std::string type;
 	int hp;
 	int hpMax;
 	int damage;
@@ -21,6 +21,8 @@ private:
 	bool isDrop;
 	bool isShooting;
 	bool isDeath;
+
+	bool onGround;
 
 	//Physics
 	sf::Vector2f velocity;
@@ -59,7 +61,7 @@ private:
 
 public:
 	//Constructure & Destructure
-	Enemy(sf::Texture* texture, float pos_x, float pos_y );
+	Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y );
 	~Enemy();
 
 	//Accessors
@@ -74,6 +76,7 @@ public:
 	void takeDmg(int dmg);
 	void setPosition(float pos_x, float pos_y);
 	void resetVelocityY();
+	void setOnGround();
 
 	//Components
 	void createAnimationComponent();
@@ -81,7 +84,7 @@ public:
 	//Functions
 	void deathAnimation(const float& dt);
 	void randomItem();
-	void shoot();
+	void updateShooting(Player* player);
 	Collider getCollider();
 	void updatePhysics(const float& dt);
 	void updateMovement(Player* player, const float& dt);

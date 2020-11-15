@@ -22,7 +22,7 @@ void MainMenuState::initBackground()
 	this->background.setSize(sf::Vector2f(static_cast<float>(this->window->getSize().x)
 		, static_cast<float>(this->window->getSize().y)));
 
-	if (!this->backgroundTexture.loadFromFile("Resources/bg1.png"))
+	if (!this->backgroundTexture.loadFromFile("Resources/wallpaper.jpg"))
 	{
 		std::cout << "ERROR::MAIN_MENU_STATE::FAILED TO LOAD BACKGROUND TO TEXTURE" << std::endl;
 	}
@@ -57,11 +57,10 @@ void MainMenuState::initKeybinds()
 
 void MainMenuState::initButtons()
 {
-	this->buttons["GAME_STATE"] = new Button(this->window->getSize().x / 2.f - 75, 200, 150, 50, &this->font, "NEW GAME",
+	this->buttons["CREATE_NAME"] = new Button(this->window->getSize().x / 2.f - 75, 200, 150, 50, &this->font, "NEW GAME",
 		sf::Color(70, 70, 70, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
 	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x / 2.f - 75, 400, 150, 50, &this->font, "QUIT",
 		sf::Color(100, 100, 100, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
-
 }
 
 MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view)
@@ -98,9 +97,9 @@ void MainMenuState::updateButtons()
 	}
 
 	//Start
-	if (this->buttons["GAME_STATE"]->isPressed())
+	if (this->buttons["CREATE_NAME"]->isPressed())
 	{
-		this->states->push(new GameState(this->window, this->supportedKeys, this->states, this->view));
+		this->states->push(new CreateNameState(this->window, this->supportedKeys, this->states, this->view));
 		this->bg_music.stop();
 	}
 
@@ -118,11 +117,14 @@ void MainMenuState::updateInput(const float& dt)
 
 void MainMenuState::update(const float& dt)
 {
+	while (this->window->pollEvent(this->menuEvent))
+	{
+	
+	}
 	this->updateMousePosition();
 	this->updateInput(dt);
 	this->updateButtons();
 
-	
 	
 	//std::cout << this->mousePosView.x << " " << this->mousePosView.y << std::endl;
 }
@@ -143,4 +145,5 @@ void MainMenuState::render(sf::RenderTarget* target)
 	target->draw(this->background);
 
 	this->renderButtons(target);
+	
 }

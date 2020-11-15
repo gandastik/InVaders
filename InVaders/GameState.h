@@ -42,7 +42,9 @@ private:
 
 	//Enemy
 	std::vector<Enemy*> enemies;
+	sf::Vector2f enemyDirection;
 	int checkPoint;
+	bool done;
 
 	//Bullets
 	std::map<std::string, sf::Texture*> textures;

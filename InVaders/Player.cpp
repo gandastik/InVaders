@@ -70,6 +70,8 @@ Player::Player()
 	this->initSoundEffects();
 	this->initPhysics();
 	this->initAnimationComponent();
+	this->createHitbox(20.f, 0.f, 50 , 100);
+
 
 	this->animationComponent->addAnimation("IDLE", 20.f, 0, 0, 2, 0, 40, 40);
 	this->animationComponent->addAnimation("RUN", 6.f, 1, 1, 8, 1, 40, 40);
@@ -79,12 +81,15 @@ Player::Player()
 Player::~Player()
 {
 	delete this->animationComponent;
+	delete this->hitbox;
 }
 
 //Accessors
 
 const sf::Vector2f Player::getPosition() const
 {
+	if (this->hitbox)
+		return this->hitbox->getPosition();
 	return this->sprite.getPosition();
 }
 
@@ -93,8 +98,10 @@ const sf::FloatRect Player::getGlobalBounds() const
 	return this->sprite.getGlobalBounds();
 }
 
-sf::Sprite Player::getSprite()
+const sf::Sprite& Player::getSprite() const
 {
+	if (this->hitbox)
+		return this->hitbox->getSprite();
 	return this->sprite;
 }
 
@@ -126,7 +133,12 @@ const bool Player::canJump()
 //Modifiers
 void Player::setPosition(const float x, const float y)
 {
-	this->sprite.setPosition(x, y);
+	if (this->hitbox)
+		this->hitbox->setPosition(x, y);
+	else
+	{
+		this->sprite.setPosition(x, y);
+	}	
 }
 
 void Player::resetVelocityY()
@@ -150,6 +162,11 @@ void Player::heal(int x)
 void Player::creatAnimationComponent()
 {
 	this->animationComponent = new AnimationComponent(this->sprite, this->textureSheet);
+}
+
+void Player::createHitbox(float offset_x, float offset_y, float width, float height)
+{
+	this->hitbox = new Hitbox(this->sprite, offset_x, offset_y, width, height);
 }
 
 void Player::setOnGround(int temp)
@@ -265,6 +282,7 @@ void Player::updatePhysics(const float& dt)
 void Player::updateMovement(const float& dt)
 {
 	this->animationState = IDLE;
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) //LEFT
 	{
 		this->move(dt, -1.f, 0.f);
@@ -274,11 +292,8 @@ void Player::updateMovement(const float& dt)
 	{
 		this->move(dt, 1.f, 0.f);
 		this->animationState = MOVING_RIGHT;
+		
 	}
-	//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) //CROUCH
-	//{
-	//	this->animationState = CROUCH;
-	//}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && this->isJumping == false && canJump()) //JUMP
 	{
 		//this->move(dt, 0.f, -1.f);
@@ -286,6 +301,7 @@ void Player::updateMovement(const float& dt)
 		//this->animationState = JUMPING;
 		this->speedValue = this->jumpForce / this->mass;
 		this->isJumping = true;
+		
 	}
 	
 	//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) //DOWN
@@ -316,22 +332,20 @@ void Player::updateAnimation(const float &dt)
 		if (this->animationComponent->play("SHOOT", dt, true))
 			this->isShooting = false;
 	}
-	else if (this->animationState == MOVING_RIGHT)
+	if (this->animationState == MOVING_RIGHT)
 	{
 		this->sprite.setScale(2.5f, 2.5f);
 		this->sprite.setOrigin(0.f, 0.f);
 		this->animationComponent->play("RUN", dt, this->velocity.x, this->velocityMax);
 		this->isFaceRight = true;
 	}
-	else if (this->animationState == MOVING_LEFT)
+	if (this->animationState == MOVING_LEFT)
 	{
 		this->sprite.setScale(-2.5f, 2.5f);
 		this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
 		this->animationComponent->play("RUN", dt, this->velocity.x, this->velocityMax);
 		this->isFaceRight = false;
 	}
-	
-	
 }
 
 Collider Player::getCollider()
@@ -344,6 +358,7 @@ void Player::update(const float& dt)
 	this->updateMovement(dt);
 	this->updatePhysics(dt);
 	this->updateAnimation(dt);
+	this->hitbox->update();
 	
 	this->updateColor();
 	this->updateJumpCooldown(dt);
@@ -353,4 +368,6 @@ void Player::update(const float& dt)
 void Player::render(sf::RenderTarget* target)
 {
 	target->draw(this->sprite);
+	
+	//this->hitbox->render(*target);
 }

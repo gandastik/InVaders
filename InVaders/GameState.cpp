@@ -25,9 +25,14 @@ void GameState::initPlatform()
 	this->platforms.push_back(new Platform(this->textures["PLATFORM1"], sf::Vector2f(-5.f, 610.f)));
 	//Stair
 	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3816.f, 567.f)));
+	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3837.f, 546.f)));
 	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3858.f, 525.f)));
+	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3879.f, 504.f)));
 	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3900.f, 483.f)));
 	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3921.f, 462.f)));
+	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3942.f, 453.f)));
+	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3963.f, 431.f)));
+	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3984.f, 410.f)));
 	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(4005.f, 389.f)));
 	this->platforms.push_back(new Platform(this->textures["PLATFORM3"], sf::Vector2f(3972.f, 388.5f)));
 }
@@ -36,6 +41,7 @@ void GameState::initVariables()
 {
 	this->score = 0;
 	this->checkPoint = 1;
+	this->done = false;
 }
 
 void GameState::initBackground()
@@ -88,15 +94,15 @@ void GameState::initPlayer()
 	this->player = new Player();
 }
 
-void GameState::initEnemy()
-{
-	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1150.f, 100.f));
-	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1250.f, 100.f));
-}
+//void GameState::initEnemy()
+//{
+//	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1150.f, 100.f));
+//	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1250.f, 100.f));
+//}
 
 void GameState::initView()
 {
-	this->view = new sf::View(sf::FloatRect(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f, this->window->getSize().x, this->window->getSize().y));
+	this->view = new sf::View;
 	this->viewPos.x = this->window->getSize().x / 2;
 	this->viewPos.y = this->window->getSize().y / 2;
 	this->view->setSize(sf::Vector2f(this->window->getSize().x, this->window->getSize().y));
@@ -134,7 +140,7 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 	this->initTexture();
 	this->initVariables();
 	this->initPlayer();
-	this->initEnemy();
+	//this->initEnemy();
 	this->initMusic();
 	this->initSoundEffects();
 	this->initPlatform();
@@ -182,14 +188,57 @@ void GameState::endState()
 
 void GameState::spawnEnemies()
 {
-	if (this->player->getPosition().x >= 2640.f && this->player->getPosition().x <= 2642.f)
+	/*
+		note : enemies can only spawn between 500-540 in Y-axis
+		condition : random spawn enemy in X-axis between the center of the screen 
+		and the end of the screen every views move
+	*/
+	//std::cout << this->checkPoint << std::endl;
+	if (this->checkPoint == 1 && !this->done)
 	{
 		std::cout << "DONE" << std::endl;
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], 3540.f, 535.f));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], 3160.f, 535.f));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
 	}
-
-
+	if (this->checkPoint == 2 && !this->done /*&& !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 3 && !this->done /*&& !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 4 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", 4180.f, 300.f));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", 4290.f, 300.f));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 5 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
 }
 
 void GameState::updateInput(const float& dt)
@@ -266,7 +315,8 @@ void GameState::updateCollision(const float& dt)
 		}
 	}
 	counter++;
-	for (int i = 0; i < this->platforms.size(); i++)
+	//Check the collision between enemies and platforms
+	/*for (int i = 0; i < this->platforms.size(); i++)
 	{
 		Platform* platform = this->platforms[i];
 		for (auto* enemy : this->enemies)
@@ -274,9 +324,10 @@ void GameState::updateCollision(const float& dt)
 			if (platform->getCollider().checkCollision(enemy->getCollider(), this->direction, 1.f))
 			{
 				enemy->resetVelocityY();
+				enemy->setOnGround();
 			}
 		}
-	}
+	}*/
 }
 
 void GameState::updateItemsCollision(const float& dt)
@@ -326,14 +377,14 @@ void GameState::updateBullet(const float& dt)
 		{
 			if (bullet->getCollider().checkCollision(enemy->getCollider(), this->direction, 0.f))
 			{
-				std::cout << enemy->getHp() << std::endl;
+				//std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
 				////if enemy's hp is 0
 				if (enemy->getHp() == 0)
 				{
 					this->score += enemy->getPoint();
 					if(enemy->getIsDrop())
-						this->items.push_back(new Item(this->textures["HEALTH"], enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 20.f));
+						this->items.push_back(new Item(this->textures["HEALTH"], enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
 				//	if (enemy->getIsDeath())
 				//	{
 				//		delete this->enemies.at(temp);
@@ -376,18 +427,27 @@ void GameState::update(const float& dt)
 			this->player->restAnimationTimer();
 			this->player->resetAnimationState();
 		}*/
+		/*if (this->gameEvent.type == sf::Event::TextEntered)
+		{
+			if (this->gameEvent.text.unicode < 128)
+				std::cout << "Text entered: " << static_cast<char>(this->gameEvent.text.unicode) << std::endl;
+
+		}*/
 	}
-	
 	//Move screen when all the enemies in the screen is dead
 	if (this->player->getPosition().x + this->player->getGlobalBounds().width > this->currentCamera && this->enemies.size() == 0)
 	{
 		this->currentCamera += this->window->getSize().x - 100;
 		this->moveCamera = true;
 		this->nextViewPos += this->window->getSize().x - 100;
+		this->done = false;
 	}
 
 	if (this->viewPos.x < this->nextViewPos && this->moveCamera) this->viewPos.x += 300.f * dt;
 	else this->moveCamera = false;
+	
+
+	this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();
@@ -396,7 +456,7 @@ void GameState::update(const float& dt)
 	this->updateItemsCollision(dt);
 	this->updateBullet(dt);
 	this->updatePlayer(dt);
-	this->spawnEnemies();
+	
 	this->updateEnemy(dt);
 
 	this->updateGUI();
@@ -444,8 +504,6 @@ void GameState::render(sf::RenderTarget* target)
 		bullet->render(this->window);
 	}
 
-	this->renderPlayer();
-
 	for (auto* enemy : this->enemies)
 	{
 		enemy->render(this->window);
@@ -455,6 +513,8 @@ void GameState::render(sf::RenderTarget* target)
 	{
 		item->render(this->window);
 	}
+
+	this->renderPlayer();
 
 	this->renderGUI();
 }

@@ -99,13 +99,18 @@ void Game::update(const float& dt)
 {
 	//std::cout << this->currentCamera << " " << this->viewPos.x << std::endl;
 	//polling window events
-	while (this->window->pollEvent(this->ev)) 
-	{
-		if (this->ev.type == sf::Event::Closed)
-			window->close();
-		/*if (this->ev.type == sf::Event::KeyPressed && this->ev.key.code == sf::Keyboard::Escape)
-			window->close();*/
-	}
+	//while (this->window->pollEvent(this->ev)) 
+	//{
+	//	if (this->ev.type == sf::Event::Closed)
+	//		window->close();
+	//	if (this->ev.type == sf::Event::TextEntered)
+	//	{
+	//		if (this->ev.text.unicode < 128)
+	//			std::cout << "Text entered: " << static_cast<char>(this->ev.text.unicode) << std::endl;
+	//	}
+	//	/*if (this->ev.type == sf::Event::KeyPressed && this->ev.key.code == sf::Keyboard::Escape)
+	//		window->close();*/
+	//}
 	if (!this->states.empty())
 	{
 		this->states.top()->update(this->dt);

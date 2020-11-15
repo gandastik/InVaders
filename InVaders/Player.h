@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "Collider.h"
 #include "AnimationComponent.h"
+#include "Hitbox.h"
 
 enum PLAYER_ANIMATION_STATE {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLING, SHOOTING, CROUCH};
 
@@ -18,6 +19,8 @@ private:
 	sf::Clock takeDmgTimer;
 	float takeDmgTime;
 
+	//Hitbox
+	Hitbox* hitbox;
 
 	//Animation
 	AnimationComponent* animationComponent;
@@ -26,7 +29,6 @@ private:
 	sf::Clock shootAnimTimer;
 	sf::Clock shootCooldown;
 	bool isShooting;
-	
 
 	//sound effects
 	sf::SoundBuffer gunshot;
@@ -71,7 +73,7 @@ public:
 	//Accessors
 	const sf::Vector2f getPosition() const;
 	const sf::FloatRect getGlobalBounds() const;
-	sf::Sprite getSprite();
+	const sf::Sprite& getSprite() const;
 	short getAnimationState();
 	const bool& getIsFaceRight();
 	int getHp();
@@ -84,6 +86,7 @@ public:
 
 	//Components
 	void creatAnimationComponent();
+	void createHitbox(float offset_x, float offset_y, float width, float height);
 
 	//Functions
 	void onCollision(sf::Vector2f direction);

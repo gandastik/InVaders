@@ -16,6 +16,9 @@ private:
 	sf::VideoMode windowBounds;
 	sf::View view;
 
+	sf::String input;
+	sf::Text text;
+
 	//Delta time
 	sf::Clock dtClock;
 	float dt;

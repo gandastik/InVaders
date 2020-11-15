@@ -3,11 +3,14 @@
 #include "State.h"
 #include "Button.h"
 #include "GameState.h"
+#include "CreateNameState.h"
 
 class MainMenuState :
 	public State
 {
 private:
+	sf::Event menuEvent;
+
 	sf::Texture backgroundTexture;
 	sf::RectangleShape background;
 	sf::Font font;
@@ -16,9 +19,7 @@ private:
 
 	sf::Music bg_music;
 
-	
-
-	//Functions
+	//Initializer
 	void initVariables();
 	void initMusic();
 	void initBackground();
