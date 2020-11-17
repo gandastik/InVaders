@@ -32,7 +32,7 @@ void Collider::move(float dx, float dy)
 	body.move(dx, dy);
 }
 
-bool Collider::checkCollision(Collider other,sf::Vector2f& direction, float push)
+bool Collider::checkCollision(Collider other, sf::Vector2f& direction, float push)
 {
 	sf::Vector2f otherPosition = other.getPosition();
 	sf::Vector2f otherHalfSize = other.getHalfSize();

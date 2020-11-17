@@ -23,6 +23,7 @@ private:
 	bool isDeath;
 
 	bool onGround;
+	bool isFaceLeft;
 
 	//Physics
 	sf::Vector2f velocity;

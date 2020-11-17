@@ -17,9 +17,7 @@ private:
 	
 	//Resources
 	sf::Music bg_music;
-	sf::SoundBuffer pickUpItemsfx;
-	sf::Sound pickUpItemSound;
-
+	
 	//GUI
 	sf::RectangleShape hpBarOutline;
 	sf::RectangleShape hpBar;
@@ -53,6 +51,10 @@ private:
 
 	//Items
 	std::vector<Item*> items;
+	std::map<std::string, sf::SoundBuffer*> soundEffects;
+	
+	sf::Sound pickUpItemSound;
+	sf::Sound pickUpBonusItemSound;
 
 	//Platform
 	std::vector<Platform*> platforms;
@@ -66,7 +68,7 @@ private:
 	void initSoundEffects();
 	void initTexture();
 	void initPlayer();
-	void initEnemy();
+	void initItem();
 	void initView();
 	void initGUI();
 	void initKeybinds();

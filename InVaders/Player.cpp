@@ -7,6 +7,7 @@ void Player::initVariables()
 	this->animationState = IDLE;
 	this->hp = 10.f;
 	this->isShooting = false;
+	this->shootCD = 0.4f;
 }
 
 void Player::initTexture()
@@ -45,18 +46,18 @@ void Player::initPhysics()
 	this->velocityMin = 1.f;
 	this->acceleration = 50.f;
 	this->drag = 0.90f;
-	this->gravity = 9800.f;
+	this->gravity = 7500.f;
 	this->velocityMaxY = 1000.f;
 	this->onGround = false;
 	this->isFaceRight = true;
 
 	//Jump
-	this->jumpForce = 450.f;
+	this->jumpForce = 400.f;
 	this->gravityAcceleration = 9.81f;
 	this->speedValue = 0;
 	this->mass = 65.f;
 	this->isJumping = false;
-	this->jumpCooldownMax = 45.f;
+	this->jumpCooldownMax = 40.f;
 	this->jumpCooldown = this->jumpCooldownMax;
 }
 
@@ -76,6 +77,7 @@ Player::Player()
 	this->animationComponent->addAnimation("IDLE", 20.f, 0, 0, 2, 0, 40, 40);
 	this->animationComponent->addAnimation("RUN", 6.f, 1, 1, 8, 1, 40, 40);
 	this->animationComponent->addAnimation("SHOOT", 3.f , 0, 2, 9, 2, 54, 40);
+	this->animationComponent->addAnimation("MELEE", 5.f , 0, 4, 5, 4, 54, 40);
 }
 
 Player::~Player()
@@ -120,6 +122,11 @@ int Player::getHp()
 	return this->hp;
 }
 
+const float& Player::getShootCD() const
+{
+	return this->shootCD;
+}
+
 const bool Player::canJump()
 {
 	if (this->jumpCooldown >= this->jumpCooldownMax)
@@ -159,6 +166,19 @@ void Player::heal(int x)
 	this->hp += x;
 }
 
+void Player::reduceShootCD()
+{
+	this->animationComponent->addAnimation("SHOOT", 1.f, 0, 2, 9, 2, 54, 40);
+	this->shootCD = 0.2f;
+	this->BonusState = true;
+	this->shootCDTimer.restart();
+}
+
+void Player::Melee()
+{
+	this->isMelee = true;
+}
+
 void Player::creatAnimationComponent()
 {
 	this->animationComponent = new AnimationComponent(this->sprite, this->textureSheet);
@@ -196,11 +216,30 @@ void Player::move(const float& dt, const float dir_x, const float dir_y)
 	}
 }
 
-void Player::updateColor()
+void Player::resetToNormal(const float& dt)
 {
 	if (this->takeDmgTimer.getElapsedTime().asSeconds() >= 0.15f)
 	{
 		this->sprite.setColor(sf::Color(255, 255, 255, 255));
+	}
+
+	if (this->shootCDTimer.getElapsedTime().asSeconds() >= 5.f && this->BonusState)
+	{
+		if (!isShooting)
+		{
+			this->animationComponent->addAnimation("SHOOT", 3.f, 0, 2, 9, 2, 54, 40);
+			this->shootCD = 0.4f;
+			this->BonusState = false;
+		}
+	}
+}
+
+void Player::meleeAnimation(const float& dt)
+{
+	if (isMelee)
+	{
+		if (this->animationComponent->play("MELEE", dt, true))
+			this->isMelee = false;
 	}
 }
 
@@ -310,7 +349,7 @@ void Player::updateMovement(const float& dt)
 	//}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		if (this->shootCooldown.getElapsedTime().asSeconds() >= 0.4f)
+		if (this->shootCooldown.getElapsedTime().asSeconds() >= this->shootCD)
 		{
 			this->animationState = SHOOTING;
 			this->isShooting = true;
@@ -331,6 +370,11 @@ void Player::updateAnimation(const float &dt)
 	{
 		if (this->animationComponent->play("SHOOT", dt, true))
 			this->isShooting = false;
+	}
+	if (this->isMelee)
+	{
+		if (this->animationComponent->play("MELEE", dt, true))
+			this->isMelee = false;
 	}
 	if (this->animationState == MOVING_RIGHT)
 	{
@@ -360,7 +404,7 @@ void Player::update(const float& dt)
 	this->updateAnimation(dt);
 	this->hitbox->update();
 	
-	this->updateColor();
+	this->resetToNormal(dt);
 	this->updateJumpCooldown(dt);
 	//std::cout << this->sprite.getPosition().x << " " << this->sprite.getPosition().y << std::endl;
 }

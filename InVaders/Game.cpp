@@ -91,6 +91,8 @@ void Game::updateDt()
 {
 	//update dt	valuable with the time it take to update and render one frame
 	this->dt = this->dtClock.restart().asSeconds();
+	if (this->dt > 1.0f / 20)
+		this->dt = 1.f / 20.f;
 	//system("cls");
 	//std::cout << this->dt << "\n";
 }

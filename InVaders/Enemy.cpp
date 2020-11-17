@@ -71,7 +71,7 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 	this->randomItem();
 
 	//Add animations
-	this->animationComponent->addAnimation("IDLE", 10.f, 0, 0, 0, 0, 42, 40);
+	this->animationComponent->addAnimation("IDLE", 30.f, 0, 0, 1, 0, 45, 40);
 	this->animationComponent->addAnimation("DEATH", 5.f, 0, 1, 10, 1, 30, 40);
 	this->animationComponent->addAnimation("SHOOTING", 7.f, 0, 2, 4, 2, 61, 40);
 
@@ -171,8 +171,16 @@ void Enemy::updateShooting(Player* player)
 {
 	if (this->sprite.getPosition().x - player->getPosition().x <= 800.f && this->shootCooldown > this->shootCooldownMax && this->hp > 0 /*&& this->onGround*/)
 	{
-		this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x,
-			this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, 6.f));
+		if (this->isFaceLeft)
+		{
+			this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x,
+				this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, 6.f));
+		}
+		else
+		{
+			this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width,
+				this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, 6.f));
+		}
 		this->isShooting = true;
 		this->gunShotSound.play();
 		this->shootTimer.restart();
@@ -220,11 +228,32 @@ void Enemy::updateMovement(Player* player, const float& dt)
 	{
 		this->velocity.x -= this->speedValue;
 	}
+	if (this->sprite.getPosition().x - player->getPosition().x > 0)
+	{
+		this->isFaceLeft = true;
+	}
+	if (this->sprite.getPosition().x - player->getPosition().x < 0)
+	{
+		this->isFaceLeft = false;
+	}
 
 }
 
 void Enemy::updateAnimation(const float& dt)
 {
+	if (this->isFaceLeft)
+	{
+	this->sprite.setScale(2.5f, 2.5f);
+	this->sprite.setOrigin(0.f, 0.f);
+	this->animationComponent->play("IDLE", dt);
+	}
+	else if (!this->isFaceLeft)
+	{
+	this->sprite.setScale(-2.5f, 2.5f);
+	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
+	this->animationComponent->play("IDLE", dt);
+	}
+	
 	if (this->isShooting)
 	{
 		if (this->animationComponent->play("SHOOTING", dt, true))
@@ -232,7 +261,7 @@ void Enemy::updateAnimation(const float& dt)
 			this->isShooting = false;
 		}
 	}
-	else this->animationComponent->play("IDLE", dt);
+	
 }
 
 void Enemy::updateColor()
@@ -265,14 +294,7 @@ void Enemy::bulletCollision(Player* player)
 			--counter;
 			//std::cout << this->bullets.size() << std::endl;
 		}
-		//Bullet collide with player
-		/*if (Collision::BoundingBoxTest(playerSprite , bullet->getSprite()))
-		{
-			std::cout << "HIT!!" << std::endl;
-			delete this->bullets.at(counter);
-			this->bullets.erase(this->bullets.begin() + counter);
-			--counter;
-		}*/
+
 		//Bullet collide with player
 		if (bullet->isIntersects(player->getSprite().getGlobalBounds()))
 		{

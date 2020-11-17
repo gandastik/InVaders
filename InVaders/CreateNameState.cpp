@@ -101,7 +101,8 @@ void CreateNameState::updateInput(const float& dt)
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("NEW_GAME"))))
 	{
-		this->buttons["GAME_STATE"]->isPressed();
+		this->states->push(new GameState(this->window, this->supportedKeys, this->states, this->view));
+		this->bg_music.stop();
 	}
 }
 

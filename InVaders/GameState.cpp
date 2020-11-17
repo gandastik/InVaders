@@ -59,16 +59,20 @@ void GameState::initMusic()
 	this->bg_music.setLoop(true);
 	this->bg_music.setVolume(5.f);
 	this->bg_music.play();
+	
 }
 
 void GameState::initSoundEffects()
 {
-	if (!this->pickUpItemsfx.loadFromFile("Resources/Sound Effects/pick_up_item.wav"))
-	{
-		std::cout << "ERROR::GAMESTATE::COULD NOT LOAD FROM FILE SOUNDEFFECTS" << std::endl;
-	}
-	this->pickUpItemSound.setBuffer(this->pickUpItemsfx);
+	this->soundEffects["PICKUP_SOUND"] = new sf::SoundBuffer;
+	this->soundEffects["PICKUP_SOUND"]->loadFromFile("Resources/Sound Effects/pick_up_item.wav");
+	this->soundEffects["PICKUP_BONUS_SOUND"] = new sf::SoundBuffer;
+	this->soundEffects["PICKUP_BONUS_SOUND"]->loadFromFile("Resources/Sound Effects/power_up.wav");
+
+	this->pickUpItemSound.setBuffer(*this->soundEffects["PICKUP_SOUND"]);
 	this->pickUpItemSound.setVolume(10.f);
+	this->pickUpBonusItemSound.setBuffer(*this->soundEffects["PICKUP_BONUS_SOUND"]);
+	this->pickUpBonusItemSound.setVolume(10.f);
 }
 
 void GameState::initTexture()
@@ -86,7 +90,9 @@ void GameState::initTexture()
 	this->textures["ENEMY"] = new sf::Texture;
 	this->textures["ENEMY"]->loadFromFile("Texture/Enemy/enemy.png");
 	this->textures["HEALTH"] = new sf::Texture;
-	this->textures["HEALTH"]->loadFromFile("Texture/healthPack.png");
+	this->textures["HEALTH"]->loadFromFile("Texture/Item/healthPack.png");
+	this->textures["BONUS"] = new sf::Texture;
+	this->textures["BONUS"]->loadFromFile("Texture/Item/bonus.png");
 }
 
 void GameState::initPlayer()
@@ -94,11 +100,11 @@ void GameState::initPlayer()
 	this->player = new Player();
 }
 
-//void GameState::initEnemy()
-//{
-//	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1150.f, 100.f));
-//	this->enemies.push_back(new Enemy(this->textures["ENEMY"], 1250.f, 100.f));
-//}
+void GameState::initItem()
+{
+	this->items.push_back(new Item(this->textures["BONUS"], "BONUS", 1146, 553));
+	this->items.push_back(new Item(this->textures["BONUS"], "BONUS", 4554, 553));
+}
 
 void GameState::initView()
 {
@@ -146,6 +152,7 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 	this->initPlatform();
 	this->initKeybinds();
 	this->initBackground();
+	this->initItem();
 	this->initView();
 	this->initGUI();
 }
@@ -177,6 +184,11 @@ GameState::~GameState()
 	for (auto* item : this->items)
 	{
 		delete item;
+	}
+	//delete Sound Effects
+	for (auto& i : this->soundEffects)
+	{
+		delete i.second;
 	}
 }
 
@@ -246,7 +258,7 @@ void GameState::updateInput(const float& dt)
 	this->checkForQuit();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		if (this->shootTimer.getElapsedTime().asSeconds() >= 0.4f)
+		if (this->shootTimer.getElapsedTime().asSeconds() >= this->player->getShootCD())
 		{
 			if (this->player->getIsFaceRight())
 				this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPosition().x + this->player->getGlobalBounds().width, this->player->getPosition().y + this->player->getGlobalBounds().height / 2.f - 20.f, 1.f, 0.f, 10.f));
@@ -315,19 +327,19 @@ void GameState::updateCollision(const float& dt)
 		}
 	}
 	counter++;
-	//Check the collision between enemies and platforms
-	/*for (int i = 0; i < this->platforms.size(); i++)
+	//Check the collision between player and enemies
+	for (auto* enemy : this->enemies)
 	{
-		Platform* platform = this->platforms[i];
-		for (auto* enemy : this->enemies)
+		if (this->player->getGlobalBounds().intersects(enemy->getGlobalBounds()))
 		{
-			if (platform->getCollider().checkCollision(enemy->getCollider(), this->direction, 1.f))
+			this->player->Melee();
+			enemy->takeDmg(3);
+			if (enemy->getHp() == 0)
 			{
-				enemy->resetVelocityY();
-				enemy->setOnGround();
-			}
+				this->score += enemy->getPoint();
+			}	
 		}
-	}*/
+	}
 }
 
 void GameState::updateItemsCollision(const float& dt)
@@ -335,12 +347,20 @@ void GameState::updateItemsCollision(const float& dt)
 	unsigned itemCounter = 0;
 	for (auto* item : this->items)
 	{
-		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < 10)
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < 10 && item->getType() == "HEAL")
 		{
 			delete this->items.at(itemCounter);
 			this->player->heal(1);
 			this->items.erase(this->items.begin() + itemCounter);
 			this->pickUpItemSound.play();
+			--itemCounter;
+		}
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && item->getType() == "BONUS")
+		{
+			delete this->items.at(itemCounter);
+			this->player->reduceShootCD();
+			this->items.erase(this->items.begin() + itemCounter);
+			this->pickUpBonusItemSound.play();
 			--itemCounter;
 		}
 		++itemCounter;
@@ -384,7 +404,7 @@ void GameState::updateBullet(const float& dt)
 				{
 					this->score += enemy->getPoint();
 					if(enemy->getIsDrop())
-						this->items.push_back(new Item(this->textures["HEALTH"], enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
+						this->items.push_back(new Item(this->textures["HEALTH"], "HEAL", enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
 				//	if (enemy->getIsDeath())
 				//	{
 				//		delete this->enemies.at(temp);
@@ -499,6 +519,11 @@ void GameState::render(sf::RenderTarget* target)
 
 	this->window->draw(this->background);
 
+	for (auto* item : this->items)
+	{
+		item->render(this->window);
+	}
+
 	for (auto* bullet : this->bullets)
 	{
 		bullet->render(this->window);
@@ -507,11 +532,6 @@ void GameState::render(sf::RenderTarget* target)
 	for (auto* enemy : this->enemies)
 	{
 		enemy->render(this->window);
-	}
-
-	for (auto* item : this->items)
-	{
-		item->render(this->window);
 	}
 
 	this->renderPlayer();
