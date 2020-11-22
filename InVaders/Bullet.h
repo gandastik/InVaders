@@ -7,6 +7,7 @@ class Bullet
 private:
 
 	sf::Sprite shape;
+	sf::RectangleShape body;
 
 	sf::Vector2f direction;
 	float movementSpeed;
@@ -18,7 +19,7 @@ public:
 
 	//Accessor
 	const sf::FloatRect getBounds() const;
-	sf::Sprite getSprite();
+	sf::Sprite& getSprite();
 	bool isIntersects(sf::FloatRect other);
 
 	//Modifiers

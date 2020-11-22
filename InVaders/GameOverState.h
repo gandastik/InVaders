@@ -17,7 +17,6 @@ private:
 
 	sf::Music bg_music;
 
-
 	//Functions
 	void initVariables();
 	void initMusic();
@@ -26,7 +25,7 @@ private:
 	void initKeybinds();
 	void initButtons();
 public:
-	GameOverState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view);
+	GameOverState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player);
 	virtual ~GameOverState();
 
 	//Functions

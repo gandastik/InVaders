@@ -12,6 +12,7 @@ class Enemy
 private:
 	sf::Texture texture;
 	sf::Sprite sprite;
+	sf::RectangleShape body;
 	std::string type;
 	int hp;
 	int hpMax;

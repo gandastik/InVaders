@@ -7,6 +7,9 @@
 #include<stack>
 #include<map>
 #include<vector>
+#include<algorithm>
+#include<utility>
+#include<string>
 
 //sfml
 #include<SFML/Graphics.hpp>

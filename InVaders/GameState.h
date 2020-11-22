@@ -8,6 +8,7 @@
 #include "Enemy.h"
 #include "GameOverState.h"
 #include "Item.h"
+#include "BossFightState.h"
 
 class GameState :
 	public State
@@ -21,6 +22,8 @@ private:
 	//GUI
 	sf::RectangleShape hpBarOutline;
 	sf::RectangleShape hpBar;
+	sf::RectangleShape BonusItemIcon;
+	int changeColor;
 	sf::Font scoreFont;
 	sf::Text scoreText;
 	int score;
@@ -37,6 +40,7 @@ private:
 
 	//Player
 	Player* player;
+	sf::Clock meleeCooldown;
 
 	//Enemy
 	std::vector<Enemy*> enemies;
@@ -55,10 +59,14 @@ private:
 	
 	sf::Sound pickUpItemSound;
 	sf::Sound pickUpBonusItemSound;
+	sf::Sound meleeSound;
 
 	//Platform
 	std::vector<Platform*> platforms;
 	sf::Vector2f direction;
+
+	//Boss fight
+	sf::RectangleShape door;
 
 	//Initialization
 	void initPlatform();
@@ -75,13 +83,13 @@ private:
 
 public:
 	//Constructure & Destructure
-	GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view);
+	GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player);
 	virtual ~GameState();
 
 	//Functions
 	void endState();
 	void spawnEnemies();
-	
+
 	//Update
 	void updateInput(const float& dt);
 	void updatePlayer(const float& dt);
@@ -89,7 +97,7 @@ public:
 	void updateCollision(const float& dt);
 	void updateItemsCollision(const float& dt);
 	void updateBullet(const float& dt);
-	void updateGUI();
+	void updateGUI(const float& dt);
 	void update(const float& dt);
 	
 	//Render

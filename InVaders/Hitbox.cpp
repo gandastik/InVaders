@@ -22,7 +22,12 @@ const sf::Vector2f& Hitbox::getPosition() const
 	return this->hitbox.getPosition();
 }
 
-const sf::Sprite& Hitbox::getSprite() const
+sf::RectangleShape& Hitbox::getHitbox()
+{
+	return this->hitbox;
+}
+
+sf::Sprite& Hitbox::getSprite()
 {
 	return this->sprite;
 }

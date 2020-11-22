@@ -10,14 +10,16 @@ enum PLAYER_ANIMATION_STATE {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLI
 class Player
 {
 private:
-	sf::Sprite sprite;
+	sf::Sprite* sprite;
 	sf::Texture textureSheet;
 	sf::Clock animationTimer;
 
 	//Status
+	int maxHp;
 	int hp;
 	sf::Clock takeDmgTimer;
 	float takeDmgTime;
+	int score;
 
 	//Event stuff (when pick up items)
 	float shootCD;
@@ -79,11 +81,15 @@ public:
 	//Accessors
 	const sf::Vector2f getPosition() const;
 	const sf::FloatRect getGlobalBounds() const;
-	const sf::Sprite& getSprite() const;
+	sf::Sprite& getSprite();
 	short getAnimationState();
 	const bool& getIsFaceRight();
-	int getHp();
 	const float& getShootCD() const;
+	int getHp();
+	const int& getMaxHp() const;
+	const bool& getBonusState() const;
+	const int& getScore() const;
+	Collider getCollider();
 
 	//Modifiers
 	void setPosition(const float x, const float y);
@@ -92,6 +98,7 @@ public:
 	void heal(int x);
 	void reduceShootCD();
 	void Melee();
+	void addScore(int x);
 
 	//Components
 	void creatAnimationComponent();
@@ -108,7 +115,6 @@ public:
 	void updatePhysics(const float& dt);
 	void updateMovement(const float& dt);
 	void updateAnimation(const float &dt);
-	Collider getCollider();
 	void update(const float& dt);
 	//Render
 	void render(sf::RenderTarget* target);

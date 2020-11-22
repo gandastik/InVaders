@@ -5,8 +5,8 @@
 class Platform
 {
 private:
-	sf::Sprite body;
-
+	sf::Sprite sprite;
+	sf::RectangleShape body;
 public:
 	Platform(sf::Texture* texture, sf::Vector2f position);
 	~Platform();

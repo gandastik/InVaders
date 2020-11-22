@@ -3,9 +3,11 @@
 
 Platform::Platform(sf::Texture* texture, sf::Vector2f position)
 {
+	sprite.setPosition(position);
+	sprite.setTexture(*texture);
+	sprite.setScale(1.f, 1.f);
 	body.setPosition(position);
-	body.setTexture(*texture);
-	body.setScale(1.f, 1.f);
+	body.setSize(sf::Vector2f(texture->getSize()));
 }
 
 Platform::~Platform()
@@ -20,10 +22,10 @@ Collider Platform::getCollider()
 
 void Platform::render(sf::RenderTarget* target)
 {
-	target->draw(body);
+	target->draw(sprite);
 }
 
 sf::Sprite Platform::getSprite()
 {
-	return this->body;
+	return this->sprite;
 }

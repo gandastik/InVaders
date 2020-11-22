@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "State.h"
 
-State::State(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view)
+State::State(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
 {
 	this->window = window;
 	this->supportedKeys = supportedKeys;
 	this->states = states;
 	this->quit = false;
 	this->view = view;
+	this->player = player;
 }
 
 State::~State()

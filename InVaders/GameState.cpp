@@ -42,6 +42,9 @@ void GameState::initVariables()
 	this->score = 0;
 	this->checkPoint = 1;
 	this->done = false;
+	this->changeColor = 255;
+	this->door.setSize(sf::Vector2f(75.f, 182.f));
+	this->door.setPosition(12645.f, 413.f);
 }
 
 void GameState::initBackground()
@@ -59,7 +62,6 @@ void GameState::initMusic()
 	this->bg_music.setLoop(true);
 	this->bg_music.setVolume(5.f);
 	this->bg_music.play();
-	
 }
 
 void GameState::initSoundEffects()
@@ -68,11 +70,16 @@ void GameState::initSoundEffects()
 	this->soundEffects["PICKUP_SOUND"]->loadFromFile("Resources/Sound Effects/pick_up_item.wav");
 	this->soundEffects["PICKUP_BONUS_SOUND"] = new sf::SoundBuffer;
 	this->soundEffects["PICKUP_BONUS_SOUND"]->loadFromFile("Resources/Sound Effects/power_up.wav");
+	this->soundEffects["MELEE_SOUND"] = new sf::SoundBuffer;
+	this->soundEffects["MELEE_SOUND"]->loadFromFile("Resources/Sound Effects/melee.wav");
+
 
 	this->pickUpItemSound.setBuffer(*this->soundEffects["PICKUP_SOUND"]);
 	this->pickUpItemSound.setVolume(10.f);
 	this->pickUpBonusItemSound.setBuffer(*this->soundEffects["PICKUP_BONUS_SOUND"]);
 	this->pickUpBonusItemSound.setVolume(10.f);
+	this->meleeSound.setBuffer(*this->soundEffects["MELEE_SOUND"]);
+	this->meleeSound.setVolume(10.f);
 }
 
 void GameState::initTexture()
@@ -124,15 +131,19 @@ void GameState::initGUI()
 	this->hpBar.setFillColor(sf::Color::Red);
 
 	this->hpBarOutline.setPosition(10.f, 10.f);
-	this->hpBarOutline.setSize(sf::Vector2f(20.f * this->player->getHp(), 20.f));
+	this->hpBarOutline.setSize(sf::Vector2f(20.f * this->player->getMaxHp(), 20.f));
 	this->hpBarOutline.setOutlineThickness(2.f);
 	this->hpBarOutline.setOutlineColor(sf::Color::Black);
 	this->hpBarOutline.setFillColor(sf::Color::Transparent);
 
+	this->BonusItemIcon.setTexture(this->textures["BONUS"]);
+	this->BonusItemIcon.setSize(sf::Vector2f(30.f, 30.f));
+	this->BonusItemIcon.setPosition(20.f, 40.f);
+
 	if (!this->scoreFont.loadFromFile("Fonts/04font.ttf"))
 		std::cout << "ERROR::GAME_STATE::COULD NOT LOAD SCOREFONT FROM FILE" << std::endl;
 	this->scoreText.setFont(this->scoreFont);
-	this->scoreText.setString(std::to_string(this->score));
+	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setCharacterSize(30.f);
 	this->scoreText.setFillColor(sf::Color(250, 220, 0, 250));
 	this->scoreText.setOutlineThickness(1.f);
@@ -140,8 +151,8 @@ void GameState::initGUI()
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
 }
 
-GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view)
-	: State(window, supportedKeys, states, view)
+GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
+	: State(window, supportedKeys, states, view, player)
 {
 	this->initTexture();
 	this->initVariables();
@@ -251,6 +262,32 @@ void GameState::spawnEnemies()
 		this->done = true;
 		this->checkPoint++;
 	}
+	if (this->checkPoint == 6 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 7 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 8 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
 }
 
 void GameState::updateInput(const float& dt)
@@ -296,17 +333,29 @@ void GameState::updateEnemy(const float& dt)
 
 void GameState::updateCollision(const float& dt)
 {
-	//Check collision between the left side of the window
+	//Check collision between the left side of the WINDOW
 	if (this->player->getPosition().x < this->view->getCenter().x - this->window->getSize().x / 2.f)
 	{
 		this->player->setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->player->getPosition().y);
 	}
-	//Check collision between the player and platforms
+	//Check collision between player and the end of the map
+	if (this->player->getPosition().x + this->player->getGlobalBounds().width >= 12909)
+	{
+		this->player->setPosition(12909 - this->player->getGlobalBounds().width, this->player->getPosition().y);
+	}
+	//Check collision between PLAYER and PORTAL DOOR and pressed UP arrow key to go to the next stage!
+	if (this->door.getGlobalBounds().intersects(this->player->getGlobalBounds()) && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		this->states->pop();
+		this->states->push(new BossFightState(this->window, this->supportedKeys, this->states, this->view, this->player));
+		this->bg_music.stop();
+	}
+	//Check collision between the PLAYER and PLATFORMS
 	unsigned counter = 0;
 	for (int i = 0; i < this->platforms.size(); i++)
 	{
 		Platform* platform = this->platforms[i];
-		if (platform->getCollider().checkCollision(this->player->getCollider(), this->direction, 1.f))
+		if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
 		{
 			this->player->onCollision(this->direction);
 			this->player->resetVelocityY();
@@ -317,8 +366,8 @@ void GameState::updateCollision(const float& dt)
 		}
 		for (auto* bullet : this->bullets)
 		{
-			//Bullet collide with platforms
-			if (platform->getCollider().checkCollision(bullet->getCollider(), this->direction, 1.f))
+			//PLAYER'S BULLETS collide with PLATFORMS
+			if (platform->getCollider().checkCollision(bullet->getCollider(), bullet->getSprite(), this->direction, 1.f))
 			{
 				delete this->bullets.at(counter);
 				this->bullets.erase(this->bullets.begin() + counter);
@@ -327,17 +376,22 @@ void GameState::updateCollision(const float& dt)
 		}
 	}
 	counter++;
-	//Check the collision between player and enemies
+	//Check the collision between PLAYER and ENEMIES
 	for (auto* enemy : this->enemies)
 	{
 		if (this->player->getGlobalBounds().intersects(enemy->getGlobalBounds()))
 		{
-			this->player->Melee();
-			enemy->takeDmg(3);
-			if (enemy->getHp() == 0)
+			if(this->meleeCooldown.getElapsedTime().asSeconds() >= 3.f)
 			{
-				this->score += enemy->getPoint();
-			}	
+				this->player->Melee();
+				this->meleeSound.play();
+				this->meleeCooldown.restart();
+				enemy->takeDmg(3);
+				if (enemy->getHp() <= 0)
+				{
+					this->player->addScore(enemy->getPoint());
+				}
+			}
 		}
 	}
 }
@@ -395,14 +449,14 @@ void GameState::updateBullet(const float& dt)
 		//check if bullet hit the enemy(ies)
 		for (auto* enemy : this->enemies)
 		{
-			if (bullet->getCollider().checkCollision(enemy->getCollider(), this->direction, 0.f))
+			if (bullet->getCollider().checkCollision(enemy->getCollider(), bullet->getSprite() ,this->direction, 0.f))
 			{
 				//std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
 				////if enemy's hp is 0
 				if (enemy->getHp() == 0)
 				{
-					this->score += enemy->getPoint();
+					this->player->addScore(enemy->getPoint());
 					if(enemy->getIsDrop())
 						this->items.push_back(new Item(this->textures["HEALTH"], "HEAL", enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
 				//	if (enemy->getIsDeath())
@@ -423,13 +477,16 @@ void GameState::updateBullet(const float& dt)
 	++counter;
 }
 
-void GameState::updateGUI()
+void GameState::updateGUI(const float& dt)
 {
 	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
 	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
 	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 20.f, 20.f));
 
-	this->scoreText.setString(std::to_string(this->score));
+	this->BonusItemIcon.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 20.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 40.f);
+	this->BonusItemIcon.setFillColor(sf::Color(255, 255, 255, this->changeColor-=500*dt));
+
+	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
 }
 
@@ -463,11 +520,11 @@ void GameState::update(const float& dt)
 		this->done = false;
 	}
 
-	if (this->viewPos.x < this->nextViewPos && this->moveCamera) this->viewPos.x += 300.f * dt;
+	if (this->viewPos.x < this->nextViewPos && this->moveCamera && this->viewPos.x < 12270) this->viewPos.x += 300.f * dt;
 	else this->moveCamera = false;
 	
 
-	this->spawnEnemies();
+	//this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();
@@ -479,14 +536,14 @@ void GameState::update(const float& dt)
 	
 	this->updateEnemy(dt);
 
-	this->updateGUI();
+	this->updateGUI(dt);
 
 	this->view->setCenter(this->viewPos);
 
 	if (this->player->getHp() <= 0)
 	{
 		this->states->pop();
-		this->states->push(new GameOverState(this->window, this->supportedKeys, this->states, this->view));
+		this->states->push(new GameOverState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
 	//std::cout << this->mousePosView.x << " " << this->mousePosView.y << std::endl;
@@ -499,8 +556,11 @@ void GameState::renderPlayer()
 
 void GameState::renderGUI()
 {
-	this->window->draw(this->hpBarOutline);
 	this->window->draw(this->hpBar);
+	this->window->draw(this->hpBarOutline);
+	if (this->player->getBonusState())
+		this->window->draw(this->BonusItemIcon);
+	else this->changeColor = 255;
 	this->window->draw(this->scoreText);
 }
 
@@ -533,6 +593,8 @@ void GameState::render(sf::RenderTarget* target)
 	{
 		enemy->render(this->window);
 	}
+
+	this->window->draw(this->door);
 
 	this->renderPlayer();
 

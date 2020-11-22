@@ -4,8 +4,10 @@
 //Initialize Functions
 void Player::initVariables()
 {
+	this->sprite = new sf::Sprite;
 	this->animationState = IDLE;
-	this->hp = 10.f;
+	this->maxHp = 10.f;
+	this->hp = maxHp;
 	this->isShooting = false;
 	this->shootCD = 0.4f;
 }
@@ -18,8 +20,8 @@ void Player::initTexture()
 
 void Player::initSprite()
 {
-	this->sprite.setTexture(this->textureSheet);
-	this->sprite.setScale(2.5f, 2.5f);
+	this->sprite->setTexture(this->textureSheet);
+	this->sprite->setScale(2.5f, 2.5f);
 }
 
 void Player::initAnimationComponent()
@@ -65,19 +67,19 @@ void Player::initPhysics()
 Player::Player()
 {
 	this->initVariables();
+	this->sprite->setPosition(12000, 0);
 	this->initTexture();
 	this->initSprite();
-	//this->initAnimation();
 	this->initSoundEffects();
 	this->initPhysics();
 	this->initAnimationComponent();
-	this->createHitbox(20.f, 0.f, 50 , 100);
+	this->createHitbox(20.f, 80.f, 50 , 20);
 
 
-	this->animationComponent->addAnimation("IDLE", 20.f, 0, 0, 2, 0, 40, 40);
+	this->animationComponent->addAnimation("IDLE", 25.f, 0, 0, 2, 0, 40, 40);
 	this->animationComponent->addAnimation("RUN", 6.f, 1, 1, 8, 1, 40, 40);
 	this->animationComponent->addAnimation("SHOOT", 3.f , 0, 2, 9, 2, 54, 40);
-	this->animationComponent->addAnimation("MELEE", 5.f , 0, 4, 5, 4, 54, 40);
+	this->animationComponent->addAnimation("MELEE", 8.f , 0, 4, 5, 4, 54, 40);
 }
 
 Player::~Player()
@@ -90,21 +92,17 @@ Player::~Player()
 
 const sf::Vector2f Player::getPosition() const
 {
-	if (this->hitbox)
-		return this->hitbox->getPosition();
-	return this->sprite.getPosition();
+	return this->sprite->getPosition();
 }
 
 const sf::FloatRect Player::getGlobalBounds() const
 {
-	return this->sprite.getGlobalBounds();
+	return this->sprite->getGlobalBounds();
 }
 
-const sf::Sprite& Player::getSprite() const
+sf::Sprite& Player::getSprite()
 {
-	if (this->hitbox)
-		return this->hitbox->getSprite();
-	return this->sprite;
+	return *this->sprite;
 }
 
 short Player::getAnimationState()
@@ -122,6 +120,11 @@ int Player::getHp()
 	return this->hp;
 }
 
+const int& Player::getMaxHp() const
+{
+	return this->maxHp;
+}
+
 const float& Player::getShootCD() const
 {
 	return this->shootCD;
@@ -137,15 +140,20 @@ const bool Player::canJump()
 	return false;
 }
 
+const bool& Player::getBonusState() const
+{
+	return this->BonusState;
+}
+
+const int& Player::getScore() const
+{
+	return this->score;
+}
+
 //Modifiers
 void Player::setPosition(const float x, const float y)
 {
-	if (this->hitbox)
-		this->hitbox->setPosition(x, y);
-	else
-	{
-		this->sprite.setPosition(x, y);
-	}	
+	this->sprite->setPosition(x, y);	
 }
 
 void Player::resetVelocityY()
@@ -155,7 +163,7 @@ void Player::resetVelocityY()
 
 void Player::takeDmg(int dmg)
 {
-	this->sprite.setColor(sf::Color(255, 0, 0, 127));
+	this->sprite->setColor(sf::Color(255, 0, 0, 127));
 	this->takeDmgSound.play();
 	this->hp -= dmg;
 	this->takeDmgTimer.restart();
@@ -179,14 +187,19 @@ void Player::Melee()
 	this->isMelee = true;
 }
 
+void Player::addScore(int x)
+{
+	this->score += x;
+}
+
 void Player::creatAnimationComponent()
 {
-	this->animationComponent = new AnimationComponent(this->sprite, this->textureSheet);
+	this->animationComponent = new AnimationComponent(*this->sprite, this->textureSheet);
 }
 
 void Player::createHitbox(float offset_x, float offset_y, float width, float height)
 {
-	this->hitbox = new Hitbox(this->sprite, offset_x, offset_y, width, height);
+	this->hitbox = new Hitbox(*this->sprite, offset_x, offset_y, width, height);
 }
 
 void Player::setOnGround(int temp)
@@ -220,7 +233,7 @@ void Player::resetToNormal(const float& dt)
 {
 	if (this->takeDmgTimer.getElapsedTime().asSeconds() >= 0.15f)
 	{
-		this->sprite.setColor(sf::Color(255, 255, 255, 255));
+		this->sprite->setColor(sf::Color(255, 255, 255, 255));
 	}
 
 	if (this->shootCDTimer.getElapsedTime().asSeconds() >= 5.f && this->BonusState)
@@ -264,13 +277,14 @@ void Player::onCollision(sf::Vector2f direction)
 	else if (direction.y > 0.f)
 	{
 		//Collision on the top
+		//this->velocity.y = 0.f;
 	}
 }
 
 void Player::jump(const float& dt)
 {
 	this->speedValue -= this->gravityAcceleration * dt;
-	this->sprite.move(0, -speedValue);
+	this->sprite->move(0, -speedValue);
 }
 
 
@@ -315,7 +329,7 @@ void Player::updatePhysics(const float& dt)
 		this->jump(dt);
 	}
 
-	this->sprite.move(this->velocity * dt);
+	this->sprite->move(this->velocity * dt);
 }
 
 void Player::updateMovement(const float& dt)
@@ -378,15 +392,15 @@ void Player::updateAnimation(const float &dt)
 	}
 	if (this->animationState == MOVING_RIGHT)
 	{
-		this->sprite.setScale(2.5f, 2.5f);
-		this->sprite.setOrigin(0.f, 0.f);
+		this->sprite->setScale(2.5f, 2.5f);
+		this->sprite->setOrigin(0.f, 0.f);
 		this->animationComponent->play("RUN", dt, this->velocity.x, this->velocityMax);
 		this->isFaceRight = true;
 	}
 	if (this->animationState == MOVING_LEFT)
 	{
-		this->sprite.setScale(-2.5f, 2.5f);
-		this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
+		this->sprite->setScale(-2.5f, 2.5f);
+		this->sprite->setOrigin(this->sprite->getGlobalBounds().width / 2.5f, 0.f);
 		this->animationComponent->play("RUN", dt, this->velocity.x, this->velocityMax);
 		this->isFaceRight = false;
 	}
@@ -394,7 +408,7 @@ void Player::updateAnimation(const float &dt)
 
 Collider Player::getCollider()
 {
-	return Collider(this->sprite);
+	return Collider(this->hitbox->getHitbox());
 }
 
 void Player::update(const float& dt)
@@ -411,7 +425,7 @@ void Player::update(const float& dt)
 
 void Player::render(sf::RenderTarget* target)
 {
-	target->draw(this->sprite);
+	target->draw(*this->sprite);
 	
-	//this->hitbox->render(*target);
+	this->hitbox->render(*target);
 }

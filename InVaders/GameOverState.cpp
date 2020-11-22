@@ -54,18 +54,18 @@ void GameOverState::initKeybinds()
 
 void GameOverState::initButtons()
 {
-	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 125.f, this->view->getCenter().y + 140, 150, 50, &this->font, "NEW GAME",
+	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 75.f, 560 , 150, 50, &this->font, "NEW GAME",
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 }
 
-GameOverState::GameOverState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view)
-	:State(window, supportedKeys, states, view)
+GameOverState::GameOverState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
+	:State(window, supportedKeys, states, view, player)
 {
 	this->initVariables();
 	this->initBackground();
-	this->initButtons();
 	this->initFonts();
 	this->initKeybinds();
+	this->initButtons();
 	this->initMusic();
 }
 
@@ -94,7 +94,7 @@ void GameOverState::updateButtons()
 	//New Game
 	if (this->buttons["GAME_STATE"]->isPressed())
 	{
-		this->states->push(new GameState(this->window, this->supportedKeys, this->states, this->view));
+		this->states->push(new GameState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
 }

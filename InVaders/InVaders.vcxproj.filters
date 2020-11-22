@@ -87,6 +87,9 @@
     <ClCompile Include="CreateNameState.cpp">
       <Filter>States</Filter>
     </ClCompile>
+    <ClCompile Include="BossFightState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -147,6 +150,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="CreateNameState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="BossFightState.h">
       <Filter>States</Filter>
     </ClInclude>
   </ItemGroup>

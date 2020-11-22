@@ -15,6 +15,7 @@ private:
 	std::vector<sf::VideoMode> VideoModes;
 	sf::VideoMode windowBounds;
 	sf::View view;
+	Player* player;
 
 	sf::String input;
 	sf::Text text;

@@ -57,6 +57,7 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 	:type(type)
 {
 	this->sprite.setTexture(*texture);
+	this->body.setSize(sf::Vector2f(texture->getSize()));
 	this->sprite.setPosition(pos_x, pos_y);
 	this->texture = *texture;
 
@@ -189,7 +190,7 @@ void Enemy::updateShooting(Player* player)
 
 Collider Enemy::getCollider()
 {
-	return Collider(this->sprite);
+	return Collider(this->body);
 }
 
 void Enemy::updatePhysics(const float& dt)
@@ -313,7 +314,6 @@ void Enemy::bulletCollision(Player* player)
 void Enemy::update(Player* player, const float& dt)
 {
 	this->shootCooldown = this->shootTimer.getElapsedTime().asSeconds();
-
 
 	this->updateMovement(player, dt);
 	this->updatePhysics(dt);

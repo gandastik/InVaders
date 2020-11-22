@@ -28,7 +28,7 @@ private:
 	void initButtons();
 
 public:
-	CreateNameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view);
+	CreateNameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player);
 	virtual ~CreateNameState();
 
 	//Functions

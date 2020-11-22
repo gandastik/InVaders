@@ -26,7 +26,7 @@ void Game::initWindow()
 
 	config.close();
 
-	this->window = new sf::RenderWindow(this->windowBounds, title, sf::Style::Close);
+	this->window = new sf::RenderWindow(this->windowBounds, title, sf::Style::Close | sf::Style::Resize);
 	this->window->setFramerateLimit(framelate_limit);
 	this->window->setVerticalSyncEnabled(vertical_sync_enabled);
 }
@@ -56,7 +56,7 @@ void Game::initKeys()
 
 void Game::initStates()
 {
-	this->states.push(new MainMenuState(this->window, &this->supportedKeys, &this->states, &this->view));
+	this->states.push(new MainMenuState(this->window, &this->supportedKeys, &this->states, &this->view, this->player));
 }
 
 //Constructors / Destructors
@@ -91,8 +91,8 @@ void Game::updateDt()
 {
 	//update dt	valuable with the time it take to update and render one frame
 	this->dt = this->dtClock.restart().asSeconds();
-	if (this->dt > 1.0f / 20)
-		this->dt = 1.f / 20.f;
+	if (this->dt > 1.0f / 40)
+		this->dt = 1.f / 40.f;
 	//system("cls");
 	//std::cout << this->dt << "\n";
 }
@@ -105,11 +105,6 @@ void Game::update(const float& dt)
 	//{
 	//	if (this->ev.type == sf::Event::Closed)
 	//		window->close();
-	//	if (this->ev.type == sf::Event::TextEntered)
-	//	{
-	//		if (this->ev.text.unicode < 128)
-	//			std::cout << "Text entered: " << static_cast<char>(this->ev.text.unicode) << std::endl;
-	//	}
 	//	/*if (this->ev.type == sf::Event::KeyPressed && this->ev.key.code == sf::Keyboard::Escape)
 	//		window->close();*/
 	//}

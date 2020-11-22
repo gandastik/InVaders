@@ -16,7 +16,8 @@ public:
 
 	//Accessors
 	const sf::Vector2f& getPosition() const;
-	const sf::Sprite& getSprite() const;
+	sf::RectangleShape& getHitbox();
+	sf::Sprite& getSprite();
 
 	//Modifiers
 	void setPosition(sf::Vector2f& position);

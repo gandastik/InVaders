@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "Player.h"
 
 class State
 {
@@ -10,6 +11,7 @@ private:
 protected:
 	std::stack<State*>* states;
 	sf::RenderWindow* window;
+	Player* player;
 	std::map<std::string, int>* supportedKeys;
 	std::map<std::string, int> keybinds;
 	bool quit;
@@ -26,7 +28,8 @@ protected:
 	virtual void initKeybinds() = 0;
 
 public:
-	State(sf::RenderWindow *window, std::map<std::string,int>* supportedKeys, std::stack<State*>* states, sf::View* view);	virtual ~State();
+	State(sf::RenderWindow *window, std::map<std::string,int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player);
+	virtual ~State();
 
 	const bool& getQuit() const;
 

@@ -61,10 +61,12 @@ void MainMenuState::initButtons()
 		sf::Color(70, 70, 70, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
 	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x / 2.f - 75, 400, 150, 50, &this->font, "QUIT",
 		sf::Color(100, 100, 100, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+	this->buttons["SCORE_BOARD"] = new Button(this->window->getSize().x / 2.f - 75, 300, 150, 50, &this->font, "SCORE BOARD",
+		sf::Color(100, 100, 100, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
 }
 
-MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view)
-	:State(window, supportedKeys, states, view)
+MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
+	:State(window, supportedKeys, states, view, player)
 {
 	this->initVariables();
 	this->initBackground();
@@ -99,7 +101,7 @@ void MainMenuState::updateButtons()
 	//Start
 	if (this->buttons["CREATE_NAME"]->isPressed())
 	{
-		this->states->push(new CreateNameState(this->window, this->supportedKeys, this->states, this->view));
+		this->states->push(new CreateNameState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
 

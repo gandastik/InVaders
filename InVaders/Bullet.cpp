@@ -9,6 +9,7 @@ Bullet::Bullet()
 Bullet::Bullet(sf::Texture* texture, float pos_x, float pos_y, float dir_x, float dir_y, float movement_speed)
 {
 	this->shape.setTexture(*texture);
+	this->body.setSize(sf::Vector2f(texture->getSize().x, texture->getSize().y));
 
 	this->shape.setPosition(pos_x, pos_y);
 	this->direction.x = dir_x;
@@ -26,7 +27,7 @@ const sf::FloatRect Bullet::getBounds() const
 	return this->shape.getGlobalBounds();
 }
 
-sf::Sprite Bullet::getSprite()
+sf::Sprite& Bullet::getSprite()
 {
 	return this->shape;
 }
@@ -51,7 +52,7 @@ void Bullet::update()
 
 Collider Bullet::getCollider()
 {
-	return Collider(this->shape);
+	return Collider(this->body);
 }
 
 void Bullet::render(sf::RenderTarget* target)
