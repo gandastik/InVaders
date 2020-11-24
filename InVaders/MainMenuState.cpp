@@ -22,7 +22,7 @@ void MainMenuState::initBackground()
 	this->background.setSize(sf::Vector2f(static_cast<float>(this->window->getSize().x)
 		, static_cast<float>(this->window->getSize().y)));
 
-	if (!this->backgroundTexture.loadFromFile("Resources/wallpaper.jpg"))
+	if (!this->backgroundTexture.loadFromFile("Resources/background.jpg"))
 	{
 		std::cout << "ERROR::MAIN_MENU_STATE::FAILED TO LOAD BACKGROUND TO TEXTURE" << std::endl;
 	}

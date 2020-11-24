@@ -47,6 +47,7 @@ private:
 	//Bullets
 	std::vector<Bullet*> bullets;
 	sf::Texture bulletTexture;
+	sf::Texture BossBulletTexture;
 	sf::Clock shootTimer;
 	float bulletSpeed;
 	float shootCooldown;

@@ -12,6 +12,7 @@ class BossFightState:
 {
 private:
 	sf::Event ev;
+	bool endgame;
 
 	//Resources
 	sf::Music bg_music;
@@ -20,6 +21,8 @@ private:
 	sf::RectangleShape hpBarOutline;
 	sf::RectangleShape hpBar;
 	sf::RectangleShape BonusItemIcon;
+	sf::RectangleShape bossHpBarOutline;
+	sf::RectangleShape bossHpBar;
 	int changeColor;
 	sf::Font scoreFont;
 	sf::Text scoreText;

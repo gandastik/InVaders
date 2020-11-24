@@ -24,6 +24,7 @@ void BossFightState::initVariables()
 {
 	this->score = 0;
 	this->changeColor = 255;
+	this->endgame = false;
 }
 
 void BossFightState::initBackground()
@@ -120,6 +121,16 @@ void BossFightState::initGUI()
 	this->hpBarOutline.setOutlineThickness(2.f);
 	this->hpBarOutline.setOutlineColor(sf::Color::Black);
 	this->hpBarOutline.setFillColor(sf::Color::Transparent);
+
+	this->bossHpBar.setPosition(40.f, this->window->getSize().y - 30.f);
+	this->bossHpBar.setSize(sf::Vector2f(40.f * this->enemies.at(0)->getHp(), 20.f));
+	this->bossHpBar.setFillColor(sf::Color::Red);
+
+	this->bossHpBarOutline.setPosition(40.f, this->window->getSize().y - 30.f);
+	this->bossHpBarOutline.setSize(sf::Vector2f(40.f * this->enemies.at(0)->getHp(), 20.f));
+	this->bossHpBarOutline.setOutlineThickness(2.f);
+	this->bossHpBarOutline.setOutlineColor(sf::Color::Black);
+	this->bossHpBarOutline.setFillColor(sf::Color::Transparent);
 
 	if (!this->scoreFont.loadFromFile("Fonts/04font.ttf"))
 		std::cout << "ERROR::GAME_STATE::COULD NOT LOAD SCOREFONT FROM FILE" << std::endl;
@@ -240,9 +251,7 @@ void BossFightState::updateEnemy(const float& dt)
 		{
 			if (enemy->getIsDeath())
 			{
-				delete this->enemies.at(temp);
-				this->enemies.erase(this->enemies.begin() + temp);
-				temp--;
+				this->endgame = true;
 			}
 		}
 		temp++;
@@ -332,7 +341,7 @@ void BossFightState::updateBullet(const float& dt)
 			//std::cout << this->bullets.size() << std::endl;
 		}
 		//bullet culling (left screen)
-		if (bullet->getBounds().left < this->view->getCenter().x - this->window->getSize().x / 2.f)
+		if (bullet->getBounds().left < this->view->getCenter().x - this->window->getSize().x / 2.f - 50)
 		{
 			delete this->bullets.at(counter);
 			this->bullets.erase(this->bullets.begin() + counter);
@@ -342,7 +351,7 @@ void BossFightState::updateBullet(const float& dt)
 		//bullet collision with the enemy
 		for (auto* enemy : this->enemies)
 		{
-			if (bullet->getBounds().intersects(enemy->getGlobalBounds()))
+			if (bullet->getBounds().intersects(enemy->getGlobalBounds()) && enemy->getIsDeath() == false)
 			{
 				//std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
@@ -376,6 +385,10 @@ void BossFightState::updateGUI(const float& dt)
 	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
 	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 20.f, 20.f));
 
+	this->bossHpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 40.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 30.f);
+	this->bossHpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 40.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 30.f);
+	this->bossHpBar.setSize(sf::Vector2f(this->enemies.at(0)->getHp() * 40.f, 20.f));
+
 	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
 }
@@ -387,9 +400,9 @@ void BossFightState::update(const float& dt)
 
 	}
 	//Move screen when all the enemies in the screen is dead
-	if (this->player->getPosition().x > this->window->getSize().x / 2.f && this->player->getPosition().x <= this->backgroundTexture.getSize().x - this->window->getSize().x / 2.f )
+	if (this->player->getPosition().x > this->window->getSize().x / 2.f && this->player->getPosition().x <= this->backgroundTexture.getSize().x - this->window->getSize().x / 2.f)
 	{
-		this->view->setCenter(this->player->getPosition().x , this->window->getSize().y / 2.f);
+		this->view->setCenter(this->player->getPosition().x, this->window->getSize().y / 2.f);
 	}
 	else if (this->player->getPosition().x > this->backgroundTexture.getSize().x - this->window->getSize().x / 2.f)
 	{
@@ -419,6 +432,7 @@ void BossFightState::update(const float& dt)
 		this->states->push(new GameOverState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
+	
 }
 
 void BossFightState::renderPlayer()
@@ -430,6 +444,9 @@ void BossFightState::renderGUI()
 {
 	this->window->draw(this->hpBar);
 	this->window->draw(this->hpBarOutline);
+	
+	this->window->draw(this->bossHpBar);
+	this->window->draw(this->bossHpBarOutline);
 
 	this->window->draw(this->scoreText);
 }

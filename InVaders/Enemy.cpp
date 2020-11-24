@@ -13,6 +13,7 @@ void Enemy::initVariables()
 	this->onGround = false;
 
 	this->bulletTexture.loadFromFile("Texture/flipped_bullet.png");
+	this->BossBulletTexture.loadFromFile("Texture/boss_scene/bullet.png");
 	this->shootCooldownMax = 2.f; //in seconds
 	this->shootCooldown = this->shootCooldownMax;
 }
@@ -92,11 +93,11 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 		this->hp = hpMax;
 		this->points = rand() % 51 + 30;
 		this->bulletSpeed = 10.f;
-		this->shootCooldownMax = 0.2f;
+		this->shootCooldownMax = 0.5f;
 		this->gunshot.loadFromFile("Resources/Sound Effects/machine_gun.wav");
 		this->animationComponent->addAnimation("IDLE", 30.f, 0, 1, 2, 1, 128, 50);
 		this->animationComponent->addAnimation("RUN", 5.f, 0, 1, 9, 1, 85, 50);
-		this->animationComponent->addAnimation("SHOOTING", 1.f, 0, 3, 7, 3, 128, 50);
+		this->animationComponent->addAnimation("SHOOTING", 3.f, 0, 3, 7, 3, 128, 50);
 		this->animationComponent->addAnimation("DEATH", 10.f, 0, 4, 5, 4, 85, 50);
 	}
 }
@@ -172,7 +173,7 @@ void Enemy::createAnimationComponent()
 
 void Enemy::deathAnimation(const float& dt)
 {
-	if (this->hp <= 0)
+	if (this->hp <= 0 && !this->isDeath)
 	{
 		if (this->animationComponent->play("DEATH", dt, true))
 		{
@@ -193,18 +194,26 @@ void Enemy::randomItem()
 //Functions
 void Enemy::updateShooting(Player* player)
 {
-	if (this->type == "BOSS" && this->bullets.size() <= 1)
+	if (this->type == "BOSS")
 	{
-		if (abs(this->velocity.x) < 20.f && this->shootCooldown > this->shootCooldownMax && this->hp > 0 /*&& this->onGround*/)
+		if (abs(this->velocity.x) < 20.f && this->shootCooldown > this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
 		{
 			if (this->isFaceLeft)
 			{
-				this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x,
+				this->bullets.push_back(new Bullet(&this->BossBulletTexture, this->sprite.getPosition().x + 100,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, this->bulletSpeed));
+				this->bullets.push_back(new Bullet(&this->BossBulletTexture, this->sprite.getPosition().x + 50,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, this->bulletSpeed));
+				this->bullets.push_back(new Bullet(&this->BossBulletTexture, this->sprite.getPosition().x,
 					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, this->bulletSpeed));
 			}
 			else
 			{
-				this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width,
+				this->bullets.push_back(new Bullet(&this->BossBulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width + 100,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, this->bulletSpeed));
+				this->bullets.push_back(new Bullet(&this->BossBulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width + 50,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, this->bulletSpeed));
+				this->bullets.push_back(new Bullet(&this->BossBulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width,
 					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, this->bulletSpeed));
 			}
 			this->isShooting = true;
@@ -214,7 +223,7 @@ void Enemy::updateShooting(Player* player)
 	}
 	if (this->type == "SOLDIER")
 	{
-		if (this->velocity.x == 0.f && this->shootCooldown > this->shootCooldownMax && this->hp > 0 /*&& this->onGround*/)
+		if (this->velocity.x == 0.f && this->shootCooldown > this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
 		{
 			if (this->isFaceLeft)
 			{
@@ -270,7 +279,7 @@ void Enemy::updatePhysics(const float& dt)
 
 void Enemy::updateMovement(Player* player, const float& dt)
 {
-	if (this->type == "SOLDIER")
+	if (this->type == "SOLDIER" && !this->isDeath)
 	{
 		if (this->sprite.getPosition().x - player->getPosition().x >= 700.f /*&& this->onGround*/)
 		{
@@ -281,7 +290,7 @@ void Enemy::updateMovement(Player* player, const float& dt)
 			this->velocity.x += this->speedValue;
 		}
 	}
-	if (this->type == "BOSS")
+	if (this->type == "BOSS" && !this->isDeath)
 	{
 		if (this->sprite.getPosition().x - player->getPosition().x >= 650.f /*&& this->onGround*/)
 		{
@@ -293,11 +302,11 @@ void Enemy::updateMovement(Player* player, const float& dt)
 		}
 	}
 	
-	if (this->sprite.getPosition().x - player->getPosition().x > 0)
+	if (this->sprite.getPosition().x - player->getPosition().x > 0 && !this->isDeath)
 	{
 		this->isFaceLeft = true;
 	}
-	if (this->sprite.getPosition().x - player->getPosition().x < 0)
+	if (this->sprite.getPosition().x - player->getPosition().x < 0 && !this->isDeath)
 	{
 		this->isFaceLeft = false;
 	}
@@ -369,6 +378,10 @@ void Enemy::updateAnimation(const float& dt)
 			this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
 			this->animationComponent->play("IDLE", dt);
 		}
+		if (this->isDeath)
+		{
+			this->animationComponent->addAnimation("IDLE", 30.f, 0, 5, 0, 5, 85, 50);
+		}
 	}
 	
 	
@@ -423,8 +436,9 @@ void Enemy::bulletCollision(Player* player)
 
 			--counter;
 		}
+		counter++;
 	}
-	counter++;
+	
 }
 
 //Functions

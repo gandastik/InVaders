@@ -59,7 +59,7 @@ void Player::initPhysics()
 	this->speedValue = 0;
 	this->mass = 65.f;
 	this->isJumping = false;
-	this->jumpCooldownMax = 40.f;
+	this->jumpCooldownMax = 30.f;
 	this->jumpCooldown = this->jumpCooldownMax;
 }
 

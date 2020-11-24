@@ -594,7 +594,7 @@ void GameState::render(sf::RenderTarget* target)
 		enemy->render(this->window);
 	}
 
-	this->window->draw(this->door);
+	//this->window->draw(this->door);
 
 	this->renderPlayer();
 
