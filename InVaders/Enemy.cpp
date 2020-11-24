@@ -33,7 +33,7 @@ void Enemy::initSoundEffects()
 		std::cout << "ERROR::ENEMY::COULD NOT LOAD SOUND EFFECTS GUN" << std::endl;
 	}
 	this->gunShotSound.setBuffer(this->gunshot);
-	this->gunShotSound.setVolume(15.f);
+	this->gunShotSound.setVolume(10.f);
 
 	if (!this->takeDmgsfx.loadFromFile("Resources/Sound Effects/enemy_take_dmg.wav"))
 	{
@@ -57,8 +57,9 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 	:type(type)
 {
 	this->sprite.setTexture(*texture);
-	this->body.setSize(sf::Vector2f(texture->getSize()));
 	this->sprite.setPosition(pos_x, pos_y);
+	this->body.setSize(sf::Vector2f(texture->getSize()));
+	this->body.setPosition(pos_x, pos_y);
 	this->texture = *texture;
 
 	this->initPos.x = pos_x;
@@ -72,10 +73,32 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 	this->randomItem();
 
 	//Add animations
-	this->animationComponent->addAnimation("IDLE", 30.f, 0, 0, 1, 0, 45, 40);
-	this->animationComponent->addAnimation("DEATH", 5.f, 0, 1, 10, 1, 30, 40);
-	this->animationComponent->addAnimation("SHOOTING", 7.f, 0, 2, 4, 2, 61, 40);
-
+	if (this->type == "SOLDIER")
+	{
+		this->hitbox = new Hitbox(this->sprite, 50, 0, 50, 100);
+		this->hpMax = 3;
+		this->hp = hpMax;
+		this->points = 5;
+		this->bulletSpeed = 6.f;
+		this->shootCooldownMax = 2.f;
+		this->animationComponent->addAnimation("IDLE", 30.f, 0, 0, 1, 0, 45, 40);
+		this->animationComponent->addAnimation("DEATH", 5.f, 0, 1, 10, 1, 30, 40);
+		this->animationComponent->addAnimation("SHOOTING", 7.f, 0, 2, 4, 2, 61, 40);
+	}
+	if (this->type == "BOSS")
+	{
+		this->hitbox = new Hitbox(this->sprite, 20, 20, 60, 100);
+		this->hpMax = 30;
+		this->hp = hpMax;
+		this->points = rand() % 51 + 30;
+		this->bulletSpeed = 10.f;
+		this->shootCooldownMax = 0.2f;
+		this->gunshot.loadFromFile("Resources/Sound Effects/machine_gun.wav");
+		this->animationComponent->addAnimation("IDLE", 30.f, 0, 1, 2, 1, 128, 50);
+		this->animationComponent->addAnimation("RUN", 5.f, 0, 1, 9, 1, 85, 50);
+		this->animationComponent->addAnimation("SHOOTING", 1.f, 0, 3, 7, 3, 128, 50);
+		this->animationComponent->addAnimation("DEATH", 10.f, 0, 4, 5, 4, 85, 50);
+	}
 }
 
 Enemy::~Enemy()
@@ -105,7 +128,7 @@ sf::Vector2f Enemy::getPosition()
 
 sf::FloatRect Enemy::getGlobalBounds()
 {
-	return this->sprite.getGlobalBounds();
+	return this->hitbox->getGlobalBounds();
 }
 
 bool Enemy::getIsDrop()
@@ -170,21 +193,43 @@ void Enemy::randomItem()
 //Functions
 void Enemy::updateShooting(Player* player)
 {
-	if (this->sprite.getPosition().x - player->getPosition().x <= 800.f && this->shootCooldown > this->shootCooldownMax && this->hp > 0 /*&& this->onGround*/)
+	if (this->type == "BOSS" && this->bullets.size() <= 1)
 	{
-		if (this->isFaceLeft)
+		if (abs(this->velocity.x) < 20.f && this->shootCooldown > this->shootCooldownMax && this->hp > 0 /*&& this->onGround*/)
 		{
-			this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x,
-				this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, 6.f));
+			if (this->isFaceLeft)
+			{
+				this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, this->bulletSpeed));
+			}
+			else
+			{
+				this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, this->bulletSpeed));
+			}
+			this->isShooting = true;
+			this->gunShotSound.play();
+			this->shootTimer.restart();
 		}
-		else
+	}
+	if (this->type == "SOLDIER")
+	{
+		if (this->velocity.x == 0.f && this->shootCooldown > this->shootCooldownMax && this->hp > 0 /*&& this->onGround*/)
 		{
-			this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width,
-				this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, 6.f));
+			if (this->isFaceLeft)
+			{
+				this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, this->bulletSpeed));
+			}
+			else
+			{
+				this->bullets.push_back(new Bullet(&this->bulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, this->bulletSpeed));
+			}
+			this->isShooting = true;
+			this->gunShotSound.play();
+			this->shootTimer.restart();
 		}
-		this->isShooting = true;
-		this->gunShotSound.play();
-		this->shootTimer.restart();
 	}
 }
 
@@ -225,10 +270,29 @@ void Enemy::updatePhysics(const float& dt)
 
 void Enemy::updateMovement(Player* player, const float& dt)
 {
-	if (this->sprite.getPosition().x - player->getPosition().x >= 800.f /*&& this->onGround*/)
+	if (this->type == "SOLDIER")
 	{
-		this->velocity.x -= this->speedValue;
+		if (this->sprite.getPosition().x - player->getPosition().x >= 700.f /*&& this->onGround*/)
+		{
+			this->velocity.x -= this->speedValue;
+		}
+		if (player->getPosition().x - this->sprite.getPosition().x >= 700.f /*&& this->onGround*/)
+		{
+			this->velocity.x += this->speedValue;
+		}
 	}
+	if (this->type == "BOSS")
+	{
+		if (this->sprite.getPosition().x - player->getPosition().x >= 650.f /*&& this->onGround*/)
+		{
+			this->velocity.x -= this->speedValue;
+		}
+		if (player->getPosition().x - this->sprite.getPosition().x >= 650.f /*&& this->onGround*/)
+		{
+			this->velocity.x += this->speedValue;
+		}
+	}
+	
 	if (this->sprite.getPosition().x - player->getPosition().x > 0)
 	{
 		this->isFaceLeft = true;
@@ -240,28 +304,73 @@ void Enemy::updateMovement(Player* player, const float& dt)
 
 }
 
-void Enemy::updateAnimation(const float& dt)
+void Enemy::updateHitbox()
 {
-	if (this->isFaceLeft)
+	this->hitbox->update();
+	if (this->type == "BOSS")
 	{
-	this->sprite.setScale(2.5f, 2.5f);
-	this->sprite.setOrigin(0.f, 0.f);
-	this->animationComponent->play("IDLE", dt);
-	}
-	else if (!this->isFaceLeft)
-	{
-	this->sprite.setScale(-2.5f, 2.5f);
-	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
-	this->animationComponent->play("IDLE", dt);
-	}
-	
-	if (this->isShooting)
-	{
-		if (this->animationComponent->play("SHOOTING", dt, true))
+		if (this->isFaceLeft)
 		{
-			this->isShooting = false;
+			this->hitbox->setPosition(this->sprite.getPosition().x + 230.f, this->sprite.getPosition().y + 20);
+		}
+		else
+		{
+			this->hitbox->setPosition(this->sprite.getPosition().x + 20, this->sprite.getPosition().y + 20);
 		}
 	}
+	
+}
+
+void Enemy::updateAnimation(const float& dt)
+{
+	if (this->type == "SOLDIER")
+	{
+		if (this->isFaceLeft)
+		{
+			this->sprite.setScale(2.5f, 2.5f);
+			this->sprite.setOrigin(0.f, 0.f);
+			this->animationComponent->play("IDLE", dt);
+		}
+		else if (!this->isFaceLeft)
+		{
+			this->sprite.setScale(-2.5f, 2.5f);
+			this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
+			this->animationComponent->play("IDLE", dt);
+		}
+
+		if (this->isShooting)
+		{
+			if (this->animationComponent->play("SHOOTING", dt, true))
+			{
+				this->isShooting = false;
+			}
+		}
+	}
+	if (this->type == "BOSS")
+	{
+		if (this->isShooting)
+		{
+			if (this->animationComponent->play("SHOOTING", dt, true))
+			{
+				this->isShooting = false;
+			}
+		}
+		if (this->isFaceLeft)
+		{
+			this->hitbox->setScale(2.5f, 2.5f);
+			//this->sprite.setScale(2.5f, 2.5f);
+			this->sprite.setOrigin(0.f, 0.f);
+			this->animationComponent->play("IDLE", dt);
+		}
+		else if (!this->isFaceLeft)
+		{
+			this->hitbox->setScale(-2.5f, 2.5f);
+			//this->sprite.setScale(-2.5f, 2.5f);
+			this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
+			this->animationComponent->play("IDLE", dt);
+		}
+	}
+	
 	
 }
 
@@ -295,14 +404,22 @@ void Enemy::bulletCollision(Player* player)
 			--counter;
 			//std::cout << this->bullets.size() << std::endl;
 		}
-
+		//bullet culling (right scree)
+		else if (bullet->getBounds().left + bullet->getBounds().width > this->sprite.getPosition().x + 1200.f)
+		{
+			//delete bullet
+			delete this->bullets.at(counter);
+			this->bullets.erase(this->bullets.begin() + counter);
+			--counter;
+			//std::cout << this->bullets.size() << std::endl;
+		}
 		//Bullet collide with player
 		if (bullet->isIntersects(player->getSprite().getGlobalBounds()))
 		{
 			delete this->bullets.at(counter);
 			this->bullets.erase(this->bullets.begin() + counter);
 			//Decrease player hp
-			player->takeDmg(1);
+			player->takeDmg(this->damage);
 
 			--counter;
 		}
@@ -322,6 +439,7 @@ void Enemy::update(Player* player, const float& dt)
 	this->updateColor();
 	this->updateAnimation(dt);
 	this->deathAnimation(dt);
+	this->updateHitbox();
 	this->bulletCollision(player);
 }
 
@@ -333,4 +451,6 @@ void Enemy::render(sf::RenderTarget* target)
 	{
 		bullet->render(target);
 	}
+
+	//this->hitbox->render(*target);
 }

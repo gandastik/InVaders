@@ -214,7 +214,7 @@ void GameState::spawnEnemies()
 	/*
 		note : enemies can only spawn between 500-540 in Y-axis
 		condition : random spawn enemy in X-axis between the center of the screen 
-		and the end of the screen every views move
+		and the end of the screen in every checkpoint
 	*/
 	//std::cout << this->checkPoint << std::endl;
 	if (this->checkPoint == 1 && !this->done)
@@ -367,7 +367,7 @@ void GameState::updateCollision(const float& dt)
 		for (auto* bullet : this->bullets)
 		{
 			//PLAYER'S BULLETS collide with PLATFORMS
-			if (platform->getCollider().checkCollision(bullet->getCollider(), bullet->getSprite(), this->direction, 1.f))
+			if (platform->getSprite().getGlobalBounds().intersects(bullet->getBounds()))
 			{
 				delete this->bullets.at(counter);
 				this->bullets.erase(this->bullets.begin() + counter);
@@ -379,7 +379,7 @@ void GameState::updateCollision(const float& dt)
 	//Check the collision between PLAYER and ENEMIES
 	for (auto* enemy : this->enemies)
 	{
-		if (this->player->getGlobalBounds().intersects(enemy->getGlobalBounds()))
+		if (this->player->getGlobalBounds().intersects(enemy->getGlobalBounds()) && enemy->getHp() > 0)
 		{
 			if(this->meleeCooldown.getElapsedTime().asSeconds() >= 3.f)
 			{
@@ -429,7 +429,7 @@ void GameState::updateBullet(const float& dt)
 		bullet->update();
 
 		//bullet culling (right screen)
-		if (bullet->getBounds().left + bullet->getBounds().width > this->view->getCenter().x + this->window->getSize().x / 2.f)
+		if (bullet->getBounds().left + bullet->getBounds().width > this->view->getCenter().x + this->window->getSize().x / 2.f + 100.f)
 		{
 			//delete bullet
 			delete this->bullets.at(counter);
@@ -438,7 +438,7 @@ void GameState::updateBullet(const float& dt)
 			//std::cout << this->bullets.size() << std::endl;
 		}
 		//bullet culling (left screen)
-		if (bullet->getBounds().left < this->view->getCenter().x - this->window->getSize().x / 2.f)
+		if (bullet->getBounds().left < this->view->getCenter().x - this->window->getSize().x / 2.f - 100.f)
 		{
 			delete this->bullets.at(counter);
 			this->bullets.erase(this->bullets.begin() + counter);
@@ -449,7 +449,7 @@ void GameState::updateBullet(const float& dt)
 		//check if bullet hit the enemy(ies)
 		for (auto* enemy : this->enemies)
 		{
-			if (bullet->getCollider().checkCollision(enemy->getCollider(), bullet->getSprite() ,this->direction, 0.f))
+			if (bullet->getBounds().intersects(enemy->getGlobalBounds()) && enemy->getHp() > 0)
 			{
 				//std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
@@ -524,7 +524,7 @@ void GameState::update(const float& dt)
 	else this->moveCamera = false;
 	
 
-	//this->spawnEnemies();
+	this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();

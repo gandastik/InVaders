@@ -37,9 +37,9 @@ void BossFightState::initBackground()
 
 void BossFightState::initMusic()
 {
-	this->bg_music.openFromFile("Resources/Sound Effects/bg_music.ogg");
+	this->bg_music.openFromFile("Resources/Sound Effects/boss_scene_music.ogg");
 	this->bg_music.setLoop(true);
-	this->bg_music.setVolume(5.f);
+	this->bg_music.setVolume(10.f);
 	this->bg_music.play();
 }
 
@@ -78,11 +78,18 @@ void BossFightState::initTexture()
 	this->textures["HEALTH"]->loadFromFile("Texture/Item/healthPack.png");
 	this->textures["BONUS"] = new sf::Texture;
 	this->textures["BONUS"]->loadFromFile("Texture/Item/bonus.png");
+	this->textures["BOSS"] = new sf::Texture;
+	this->textures["BOSS"]->loadFromFile("Texture/boss_scene/boss.png");
 }
 
 void BossFightState::initPlayer()
 {
 	this->player->setPosition(0, 0);
+}
+
+void BossFightState::initEnemy()
+{
+	this->enemies.push_back(new Enemy(this->textures["BOSS"], "BOSS", 2000, 520));
 }
 
 void BossFightState::initItem()
@@ -149,6 +156,7 @@ BossFightState::BossFightState(sf::RenderWindow* window, std::map<std::string, i
 	this->initTexture();
 	this->initVariables();
 	this->initPlayer();
+	this->initEnemy();
 	this->initMusic();
 	this->initSoundEffects();
 	this->initPlatform();
@@ -177,6 +185,11 @@ BossFightState::~BossFightState()
 	for (auto* platform : this->platforms)
 	{
 		delete platform;
+	}
+	//delete Enemies
+	for (auto* enemy : this->enemies)
+	{
+		delete enemy;
 	}
 	//delete Items
 	for (auto* item : this->items)
@@ -215,6 +228,25 @@ void BossFightState::updateInput(const float& dt)
 void BossFightState::updatePlayer(const float& dt)
 {
 	this->player->update(dt);
+}
+
+void BossFightState::updateEnemy(const float& dt)
+{
+	int temp = 0;
+	for (auto* enemy : this->enemies)
+	{
+		enemy->update(this->player, dt);
+		if (enemy->getHp() <= 0)
+		{
+			if (enemy->getIsDeath())
+			{
+				delete this->enemies.at(temp);
+				this->enemies.erase(this->enemies.begin() + temp);
+				temp--;
+			}
+		}
+		temp++;
+	}
 }
 
 void BossFightState::updateCollision(const float& dt)
@@ -307,6 +339,32 @@ void BossFightState::updateBullet(const float& dt)
 			--counter;
 			//std::cout << this->bullets.size() << std::endl;
 		}
+		//bullet collision with the enemy
+		for (auto* enemy : this->enemies)
+		{
+			if (bullet->getBounds().intersects(enemy->getGlobalBounds()))
+			{
+				//std::cout << enemy->getHp() << std::endl;
+				enemy->takeDmg(1);
+				////if enemy's hp is 0
+				if (enemy->getHp() == 0)
+				{
+					this->player->addScore(enemy->getPoint());
+					if (enemy->getIsDrop())
+						this->items.push_back(new Item(this->textures["HEALTH"], "HEAL", enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
+					//	if (enemy->getIsDeath())
+					//	{
+					//		delete this->enemies.at(temp);
+					//		this->enemies.erase(this->enemies.begin() + temp);
+					//		temp--;
+					//	}
+				}
+				delete this->bullets.at(counter);
+				this->bullets.erase(this->bullets.begin() + counter);
+				--counter;
+			}
+			//temp++;
+		}
 	}
 	++counter;
 }
@@ -348,11 +406,12 @@ void BossFightState::update(const float& dt)
 	this->updateItemsCollision(dt);
 	this->updateBullet(dt);
 	this->updatePlayer(dt);
+	this->updateEnemy(dt);
 
 
 	this->updateGUI(dt);
 
-	this->view->setCenter(this->viewPos);
+	//this->view->setCenter(this->viewPos);
 
 	if (this->player->getHp() <= 0)
 	{
@@ -398,6 +457,11 @@ void BossFightState::render(sf::RenderTarget* target)
 	for (auto* bullet : this->bullets)
 	{
 		bullet->render(this->window);
+	}
+
+	for (auto* enemy : this->enemies)
+	{
+		enemy->render(this->window);
 	}
 
 	this->renderPlayer();

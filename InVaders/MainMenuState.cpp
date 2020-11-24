@@ -57,12 +57,12 @@ void MainMenuState::initKeybinds()
 
 void MainMenuState::initButtons()
 {
-	this->buttons["CREATE_NAME"] = new Button(this->window->getSize().x / 2.f - 75, 200, 150, 50, &this->font, "NEW GAME",
-		sf::Color(70, 70, 70, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
-	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x / 2.f - 75, 400, 150, 50, &this->font, "QUIT",
-		sf::Color(100, 100, 100, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
-	this->buttons["SCORE_BOARD"] = new Button(this->window->getSize().x / 2.f - 75, 300, 150, 50, &this->font, "SCORE BOARD",
-		sf::Color(100, 100, 100, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+	this->buttons["CREATE_NAME"] = new Button(this->window->getSize().x - 300, 200, 250, 50, &this->font, "NEW GAME",
+		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
+	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x - 300, 400, 250, 50, &this->font, "QUIT",
+		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
+	this->buttons["SCORE_BOARD"] = new Button(this->window->getSize().x - 300, 300, 250, 50, &this->font, "SCORE BOARD",
+		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
 }
 
 MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)

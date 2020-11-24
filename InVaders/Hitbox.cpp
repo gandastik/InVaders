@@ -32,6 +32,11 @@ sf::Sprite& Hitbox::getSprite()
 	return this->sprite;
 }
 
+const sf::FloatRect& Hitbox::getGlobalBounds() const
+{
+	return this->hitbox.getGlobalBounds();
+}
+
 //Modifiers
 void Hitbox::setPosition(sf::Vector2f& position)
 {
@@ -39,11 +44,23 @@ void Hitbox::setPosition(sf::Vector2f& position)
 	this->sprite.setPosition(position.x - this->offsetX, position.y - this->offsetY);
 }
 
-void Hitbox::setPosition(const float x, const float y)
+void Hitbox::setPosition(float x, float y)
 {
 	this->hitbox.setPosition(x, y);
-	this->sprite.setPosition(x - this->offsetX, y - this->offsetY);
+	//this->sprite.setPosition(x - this->offsetX, y - this->offsetY);
 
+}
+
+void Hitbox::setOffset(float offset_x, float offset_y)
+{
+	this->offsetX = offset_x;
+	this->offsetY = offset_y;
+}
+
+void Hitbox::setScale(float x, float y)
+{
+	this->hitbox.setScale(1.f, 1.f);
+	this->sprite.setScale(x, y);
 }
 
 //Functions

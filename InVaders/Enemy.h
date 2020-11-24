@@ -37,6 +37,9 @@ private:
 	//Animations
 	AnimationComponent* animationComponent;
 
+	//Hitbox
+	Hitbox* hitbox;
+
 	sf::Clock takeDmgTimer;
 
 	sf::Vector2f initPos;
@@ -45,6 +48,7 @@ private:
 	std::vector<Bullet*> bullets;
 	sf::Texture bulletTexture;
 	sf::Clock shootTimer;
+	float bulletSpeed;
 	float shootCooldown;
 	float shootCooldownMax;
 
@@ -90,6 +94,7 @@ public:
 	Collider getCollider();
 	void updatePhysics(const float& dt);
 	void updateMovement(Player* player, const float& dt);
+	void updateHitbox();
 	void updateAnimation(const float& dt);
 	void updateColor();
 	void updateBullet();

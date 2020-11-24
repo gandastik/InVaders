@@ -67,7 +67,7 @@ void Player::initPhysics()
 Player::Player()
 {
 	this->initVariables();
-	this->sprite->setPosition(12000, 0);
+	//this->sprite->setPosition(12000, 0);
 	this->initTexture();
 	this->initSprite();
 	this->initSoundEffects();
@@ -427,5 +427,5 @@ void Player::render(sf::RenderTarget* target)
 {
 	target->draw(*this->sprite);
 	
-	this->hitbox->render(*target);
+	//this->hitbox->render(*target);
 }

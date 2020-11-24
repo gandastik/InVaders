@@ -27,7 +27,7 @@ void CreateNameState::initText()
 {
 	this->input = "";
 	this->text.setFont(this->font);
-	this->text.setCharacterSize(20.f);
+	this->text.setCharacterSize(25.f);
 	this->text.setPosition(sf::Vector2f(this->window->getSize().x / 2.f - 100, 200.f));
 }
 
@@ -50,8 +50,8 @@ void CreateNameState::initKeybinds()
 
 void CreateNameState::initButtons()
 {
-	this->buttons["GAME_STATE"] = new Button(this->window->getSize().x / 2.f - 75, 300, 150, 50, &this->font, "START GAME",
-		sf::Color(70, 70, 70, 250), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+	this->buttons["GAME_STATE"] = new Button(this->window->getSize().x / 2.f - 100, 300, 200, 50, &this->font, "START GAME",
+		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
 }
 
 CreateNameState::CreateNameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
@@ -114,14 +114,21 @@ void CreateNameState::update(const float& dt)
 		{
 			if (this->nameEvent.text.unicode < 128)
 			{
-				std::cout << "Text entered: " << static_cast<char>(this->nameEvent.text.unicode) << std::endl;
+				std::cout << "Text entered: " << (this->nameEvent.text.unicode) << std::endl;
 				if (this->nameEvent.text.unicode == static_cast<sf::Uint32>(8) && this->input.getSize() > 0)
 				{
 					this->input.erase(this->input.getSize() - 1);
 				}
 				else
 				{
-					this->input += this->nameEvent.text.unicode;
+					if (this->input.getSize() < 13)
+					{
+						if (this->nameEvent.text.unicode >= 61 && this->nameEvent.text.unicode <= 122)
+						{
+							this->nameEvent.text.unicode -= 32;
+						}
+						this->input += this->nameEvent.text.unicode;
+					}
 				}
 
 			}
@@ -131,6 +138,7 @@ void CreateNameState::update(const float& dt)
 	this->updateInput(dt);
 	this->updateButtons();
 
+	
 	this->text.setString(this->input);
 }
 

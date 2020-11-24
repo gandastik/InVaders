@@ -38,6 +38,9 @@ private:
 	//Player
 	sf::Clock meleeCooldown;
 
+	//Enemy
+	std::vector<Enemy*> enemies;
+
 	//Bullets
 	std::map<std::string, sf::Texture*> textures;
 	std::vector<Bullet*> bullets;
@@ -64,6 +67,7 @@ private:
 	void initSoundEffects();
 	void initTexture();
 	void initPlayer();
+	void initEnemy();
 	void initItem();
 	void initView();
 	void initGUI();
@@ -80,6 +84,7 @@ public:
 	//Update
 	void updateInput(const float& dt);
 	void updatePlayer(const float& dt);
+	void updateEnemy(const float& dt);
 	void updateCollision(const float& dt);
 	void updateItemsCollision(const float& dt);
 	void updateBullet(const float& dt);

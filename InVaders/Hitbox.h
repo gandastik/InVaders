@@ -18,10 +18,13 @@ public:
 	const sf::Vector2f& getPosition() const;
 	sf::RectangleShape& getHitbox();
 	sf::Sprite& getSprite();
+	const sf::FloatRect& getGlobalBounds() const;
 
 	//Modifiers
 	void setPosition(sf::Vector2f& position);
-	void setPosition(const float x, const float y);
+	void setPosition(float x, float y);
+	void setOffset(float offset_x, float offset_y);
+	void setScale(float x, float y);
 
 	//Functions
 	bool Intersect(const sf::FloatRect& frect);
