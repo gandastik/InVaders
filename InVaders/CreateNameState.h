@@ -7,12 +7,13 @@ class CreateNameState :
 {
 private:
 	sf::Event nameEvent;
-
 	sf::Texture backgroundTexture;
 	sf::RectangleShape background;
+	sf::RectangleShape textHolder;
 
 	sf::Font font;
 	sf::String input;
+	std::string nameString;
 	sf::Text text;
 
 	std::map<std::string, Button*> buttons;

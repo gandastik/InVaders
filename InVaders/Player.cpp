@@ -6,10 +6,11 @@ void Player::initVariables()
 {
 	this->sprite = new sf::Sprite;
 	this->animationState = IDLE;
-	this->maxHp = 10.f;
+	this->maxHp = 20.f;
 	this->hp = maxHp;
 	this->isShooting = false;
 	this->shootCD = 0.4f;
+	this->name = "";
 }
 
 void Player::initTexture()
@@ -54,10 +55,10 @@ void Player::initPhysics()
 	this->isFaceRight = true;
 
 	//Jump
-	this->jumpForce = 400.f;
+	this->jumpForce = 380.f;
 	this->gravityAcceleration = 9.81f;
 	this->speedValue = 0;
-	this->mass = 65.f;
+	this->mass = 60.f;
 	this->isJumping = false;
 	this->jumpCooldownMax = 30.f;
 	this->jumpCooldown = this->jumpCooldownMax;
@@ -149,6 +150,15 @@ const int& Player::getScore() const
 {
 	return this->score;
 }
+std::string Player::getName()
+{
+	return this->name;
+}
+
+const bool& Player::getIsShooting() const
+{
+	return this->isShooting;
+}
 
 //Modifiers
 void Player::setPosition(const float x, const float y)
@@ -190,6 +200,11 @@ void Player::Melee()
 void Player::addScore(int x)
 {
 	this->score += x;
+}
+
+void Player::setName(std::string name)
+{
+	this->name.assign(name);
 }
 
 void Player::creatAnimationComponent()

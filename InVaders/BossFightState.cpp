@@ -25,6 +25,7 @@ void BossFightState::initVariables()
 	this->score = 0;
 	this->changeColor = 255;
 	this->endgame = false;
+	this->isSpawn = false;
 }
 
 void BossFightState::initBackground()
@@ -79,13 +80,15 @@ void BossFightState::initTexture()
 	this->textures["HEALTH"]->loadFromFile("Texture/Item/healthPack.png");
 	this->textures["BONUS"] = new sf::Texture;
 	this->textures["BONUS"]->loadFromFile("Texture/Item/bonus.png");
+	this->textures["ENEMY"] = new sf::Texture;
+	this->textures["ENEMY"]->loadFromFile("Texture/Enemy/enemy.png");
 	this->textures["BOSS"] = new sf::Texture;
 	this->textures["BOSS"]->loadFromFile("Texture/boss_scene/boss.png");
 }
 
 void BossFightState::initPlayer()
 {
-	this->player->setPosition(0, 0);
+	this->player->setPosition(0, 300);
 }
 
 void BossFightState::initEnemy()
@@ -112,22 +115,26 @@ void BossFightState::initView()
 
 void BossFightState::initGUI()
 {
-	this->hpBar.setPosition(10.f, 10.f);
-	this->hpBar.setSize(sf::Vector2f(20.f * this->player->getHp(), 20.f));
+	this->hpBar.setPosition(10.f, 35.f);
+	this->hpBar.setSize(sf::Vector2f(10.f * this->player->getHp(), 20.f));
 	this->hpBar.setFillColor(sf::Color::Red);
 
-	this->hpBarOutline.setPosition(10.f, 10.f);
-	this->hpBarOutline.setSize(sf::Vector2f(20.f * this->player->getMaxHp(), 20.f));
+	this->hpBarOutline.setPosition(10.f, 35.f);
+	this->hpBarOutline.setSize(sf::Vector2f(10.f * this->player->getMaxHp(), 20.f));
 	this->hpBarOutline.setOutlineThickness(2.f);
 	this->hpBarOutline.setOutlineColor(sf::Color::Black);
 	this->hpBarOutline.setFillColor(sf::Color::Transparent);
 
+	this->BonusItemIcon.setTexture(this->textures["BONUS"]);
+	this->BonusItemIcon.setSize(sf::Vector2f(30.f, 30.f));
+	this->BonusItemIcon.setPosition(20.f, 60.f);
+
 	this->bossHpBar.setPosition(40.f, this->window->getSize().y - 30.f);
-	this->bossHpBar.setSize(sf::Vector2f(40.f * this->enemies.at(0)->getHp(), 20.f));
+	this->bossHpBar.setSize(sf::Vector2f(30.f * this->enemies.at(0)->getHp(), 20.f));
 	this->bossHpBar.setFillColor(sf::Color::Red);
 
 	this->bossHpBarOutline.setPosition(40.f, this->window->getSize().y - 30.f);
-	this->bossHpBarOutline.setSize(sf::Vector2f(40.f * this->enemies.at(0)->getHp(), 20.f));
+	this->bossHpBarOutline.setSize(sf::Vector2f(30.f * this->enemies.at(0)->getHp(), 20.f));
 	this->bossHpBarOutline.setOutlineThickness(2.f);
 	this->bossHpBarOutline.setOutlineColor(sf::Color::Black);
 	this->bossHpBarOutline.setFillColor(sf::Color::Transparent);
@@ -138,10 +145,17 @@ void BossFightState::initGUI()
 	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setCharacterSize(30.f);
 	this->scoreText.setFillColor(sf::Color(250, 220, 0, 250));
-	this->scoreText.setOutlineThickness(1.f);
+	this->scoreText.setOutlineThickness(2.f);
 	this->scoreText.setOutlineColor(sf::Color::Black);
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
 
+	this->playerName.setFont(this->scoreFont);
+	this->playerName.setString(this->player->getName());
+	this->playerName.setCharacterSize(20.f);
+	this->playerName.setFillColor(sf::Color(255, 255, 255, 255));
+	this->playerName.setOutlineThickness(2.f);
+	this->playerName.setOutlineColor(sf::Color::Black);
+	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + this->playerName.getGlobalBounds().width + 10.f, 5.f);
 }
 
 void BossFightState::initKeybinds()
@@ -180,8 +194,6 @@ BossFightState::BossFightState(sf::RenderWindow* window, std::map<std::string, i
 
 BossFightState::~BossFightState()
 {
-	delete this->player;
-
 	//delete textures
 	for (auto& i : this->textures)
 	{
@@ -215,9 +227,9 @@ void BossFightState::endState()
 	this->bg_music.stop();
 }
 
-void BossFightState::spawnEnemies()
+void BossFightState::spawnEnemy()
 {
-	
+
 }
 
 void BossFightState::updateInput(const float& dt)
@@ -247,11 +259,24 @@ void BossFightState::updateEnemy(const float& dt)
 	for (auto* enemy : this->enemies)
 	{
 		enemy->update(this->player, dt);
+		if (enemy->getType() == "BOSS" && enemy->getHp() <= enemy->getMaxHp() / 2 && !this->isSpawn)
+		{
+			this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 600 + int(this->window->getSize().x / 2.f + static_cast<int>(this->view->getCenter().x)), rand() % 41 + 500));
+			this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 600 + int(this->window->getSize().x / 2.f + static_cast<int>(this->view->getCenter().x)), rand() % 41 + 500));
+			this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 600 + int(this->window->getSize().x / 2.f + static_cast<int>(this->view->getCenter().x)), rand() % 41 + 500));
+			this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % int(static_cast<int>(this->view->getCenter().x) - this->window->getSize().x / 2.f), rand() % 41 + 500));
+			this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % int(static_cast<int>(this->view->getCenter().x) - this->window->getSize().x / 2.f), rand() % 41 + 500));
+			this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % int(static_cast<int>(this->view->getCenter().x) - this->window->getSize().x / 2.f), rand() % 41 + 500));
+			this->isSpawn = true;
+		}
 		if (enemy->getHp() <= 0)
 		{
-			if (enemy->getIsDeath())
+			if (enemy->getIsDeath() && enemy->getType() == "SOLDIER")
 			{
 				this->endgame = true;
+				delete this->enemies.at(temp);
+				this->enemies.erase(this->enemies.begin() + temp);
+				temp--;
 			}
 		}
 		temp++;
@@ -303,7 +328,7 @@ void BossFightState::updateItemsCollision(const float& dt)
 	unsigned itemCounter = 0;
 	for (auto* item : this->items)
 	{
-		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < 10 && item->getType() == "HEAL")
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < this->player->getMaxHp() && item->getType() == "HEAL")
 		{
 			delete this->items.at(itemCounter);
 			this->player->heal(1);
@@ -351,7 +376,7 @@ void BossFightState::updateBullet(const float& dt)
 		//bullet collision with the enemy
 		for (auto* enemy : this->enemies)
 		{
-			if (bullet->getBounds().intersects(enemy->getGlobalBounds()) && enemy->getIsDeath() == false)
+			if (bullet->getBounds().intersects(enemy->getGlobalBounds()) && enemy->getHp() > 0)
 			{
 				//std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
@@ -381,16 +406,22 @@ void BossFightState::updateBullet(const float& dt)
 void BossFightState::updateGUI(const float& dt)
 {
 
-	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
-	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
-	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 20.f, 20.f));
+	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
+	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
+	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 10.f, 20.f));
+
+	this->BonusItemIcon.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 20.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 60.f);
+	this->BonusItemIcon.setFillColor(sf::Color(255, 255, 255, this->changeColor -= 500 * dt));
 
 	this->bossHpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 40.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 30.f);
 	this->bossHpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 40.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 30.f);
-	this->bossHpBar.setSize(sf::Vector2f(this->enemies.at(0)->getHp() * 40.f, 20.f));
+	this->bossHpBar.setSize(sf::Vector2f(this->enemies.at(0)->getHp() * 30.f, 20.f));
 
 	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
+
+	this->playerName.setString(this->player->getName());
+	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, 5.f);
 }
 
 void BossFightState::update(const float& dt)
@@ -412,6 +443,8 @@ void BossFightState::update(const float& dt)
 	{
 		this->view->setCenter(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f);
 	}
+	this->spawnEnemy();
+
 	this->window->setView(*this->view);
 	this->updateMousePosition();
 	this->updateInput(dt);
@@ -448,7 +481,12 @@ void BossFightState::renderGUI()
 	this->window->draw(this->bossHpBar);
 	this->window->draw(this->bossHpBarOutline);
 
+	if (this->player->getBonusState())
+		this->window->draw(this->BonusItemIcon);
+	else this->changeColor = 255;
+
 	this->window->draw(this->scoreText);
+	this->window->draw(this->playerName);
 }
 
 void BossFightState::render(sf::RenderTarget* target)

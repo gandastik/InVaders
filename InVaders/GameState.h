@@ -23,6 +23,7 @@ private:
 	sf::RectangleShape hpBarOutline;
 	sf::RectangleShape hpBar;
 	sf::RectangleShape BonusItemIcon;
+	sf::Text playerName;
 	int changeColor;
 	sf::Font scoreFont;
 	sf::Text scoreText;
@@ -39,7 +40,6 @@ private:
 	float nextViewPos;
 
 	//Player
-	Player* player;
 	sf::Clock meleeCooldown;
 
 	//Enemy

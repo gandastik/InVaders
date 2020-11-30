@@ -33,7 +33,6 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
-	
 }
 
 void Game::initKeys()
@@ -63,6 +62,7 @@ void Game::initStates()
 Game::Game()
 {
 	this->initWindow();
+	this->initVariables();
 	this->initKeys();
 	this->initStates();
 }
@@ -76,7 +76,6 @@ Game::~Game()
 		delete this->states.top();
 		this->states.pop();
 	}
-
 }
 
 
@@ -111,7 +110,6 @@ void Game::update(const float& dt)
 	if (!this->states.empty())
 	{
 		this->states.top()->update(this->dt);
-
 		if (this->states.top()->getQuit())
 		{
 			this->states.top()->endState();

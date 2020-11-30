@@ -4,6 +4,7 @@
 #include "Button.h"
 #include "GameState.h"
 #include "CreateNameState.h"
+#include "ScoreBoardState.h"
 
 class MainMenuState :
 	public State
@@ -14,6 +15,8 @@ private:
 	sf::Texture backgroundTexture;
 	sf::RectangleShape background;
 	sf::Font font;
+	sf::Font gameTitleFont;
+	sf::Text gameTitle;
 
 	std::map<std::string, Button*> buttons;
 
@@ -24,6 +27,7 @@ private:
 	void initMusic();
 	void initBackground();
 	void initFonts();
+	void initText();
 	void initKeybinds();
 	void initButtons();
 public:

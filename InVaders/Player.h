@@ -13,6 +13,7 @@ private:
 	sf::Sprite* sprite;
 	sf::Texture textureSheet;
 	sf::Clock animationTimer;
+	std::string name;
 
 	//Status
 	int maxHp;
@@ -90,6 +91,8 @@ public:
 	const bool& getBonusState() const;
 	const int& getScore() const;
 	Collider getCollider();
+	std::string getName();
+	const bool& getIsShooting() const;
 
 	//Modifiers
 	void setPosition(const float x, const float y);
@@ -99,6 +102,7 @@ public:
 	void reduceShootCD();
 	void Melee();
 	void addScore(int x);
+	void setName(std::string name);
 
 	//Components
 	void creatAnimationComponent();

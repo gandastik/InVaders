@@ -52,9 +52,38 @@ void GameOverState::initKeybinds()
 	ifs.close();
 }
 
+void GameOverState::initHighScore()
+{
+	this->fp = fopen("./score.txt", "r");
+	for (int i = 0; i < 5; i++)
+	{
+		fscanf(this->fp, "%s", &this->temp);
+		this->name[i] = this->temp;
+		fscanf(this->fp, "%d", &this->score[i]);
+		this->userScore.push_back(std::make_pair(this->score[i], this->name[i]));
+	}
+	this->name[5] = this->player->getName();
+	this->score[5] = this->player->getScore();
+	this->userScore.push_back(std::make_pair(this->score[5], this->name[5]));
+	std::sort(this->userScore.begin(), this->userScore.end());
+	fclose(this->fp);
+	fopen("./score.txt", "w");
+	for (int i = 5; i >= 1; i--)
+	{
+		strcpy(this->temp, this->userScore[i].second.c_str());
+		fprintf(this->fp, "%s %d\n", this->temp, this->userScore[i].first);
+	}
+	fclose(this->fp);
+	/*for (int i = 0; i < 5; i++)
+	{
+		std::cout << nameScore[i].second << " " << nameScore[i].first << std::endl;
+	}*/
+	
+}
+
 void GameOverState::initButtons()
 {
-	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 75.f, 560 , 150, 50, &this->font, "NEW GAME",
+	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 75.f, 560 , 150, 50, &this->font, "NEW GAME", 30,
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 }
 
@@ -65,6 +94,7 @@ GameOverState::GameOverState(sf::RenderWindow* window, std::map<std::string, int
 	this->initBackground();
 	this->initFonts();
 	this->initKeybinds();
+	this->initHighScore();
 	this->initButtons();
 	this->initMusic();
 }
@@ -94,7 +124,9 @@ void GameOverState::updateButtons()
 	//New Game
 	if (this->buttons["GAME_STATE"]->isPressed())
 	{
-		this->states->push(new GameState(this->window, this->supportedKeys, this->states, this->view, this->player));
+		if (!this->states->empty())
+			this->states->pop();
+		this->states->push(new CreateNameState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
 }

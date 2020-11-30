@@ -23,6 +23,7 @@ private:
 	sf::RectangleShape BonusItemIcon;
 	sf::RectangleShape bossHpBarOutline;
 	sf::RectangleShape bossHpBar;
+	sf::Text playerName;
 	int changeColor;
 	sf::Font scoreFont;
 	sf::Text scoreText;
@@ -43,6 +44,8 @@ private:
 
 	//Enemy
 	std::vector<Enemy*> enemies;
+	sf::Clock spawnClock;
+	bool isSpawn;
 
 	//Bullets
 	std::map<std::string, sf::Texture*> textures;
@@ -82,9 +85,9 @@ public:
 
 	//Functions
 	void endState();
-	void spawnEnemies();
 
 	//Update
+	void spawnEnemy();
 	void updateInput(const float& dt);
 	void updatePlayer(const float& dt);
 	void updateEnemy(const float& dt);

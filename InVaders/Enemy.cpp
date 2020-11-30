@@ -7,7 +7,7 @@ void Enemy::initVariables()
 	this->hp = hpMax;
 	this->damage = 1;
 	this->points = 5;
-	this->dropChance = 50;
+	this->dropChance = 30;
 	this->isDeath = false;
 
 	this->onGround = false;
@@ -20,7 +20,7 @@ void Enemy::initVariables()
 
 void Enemy::initPhysics()
 {
-	this->maxVelocityX = 200.f;
+	this->maxVelocityX = 150.f;
 	this->maxVelocityY = 1000.f;
 	this->speedValue = 50.f;
 	this->gravity = 2000.f;
@@ -77,11 +77,12 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 	if (this->type == "SOLDIER")
 	{
 		this->hitbox = new Hitbox(this->sprite, 50, 0, 50, 100);
-		this->hpMax = 3;
+		this->hpMax = 2;
+		this->maxVelocityX = 150.f;
 		this->hp = hpMax;
 		this->points = 5;
 		this->bulletSpeed = 6.f;
-		this->shootCooldownMax = 2.f;
+		this->shootCooldownMax = 2.25f;
 		this->animationComponent->addAnimation("IDLE", 30.f, 0, 0, 1, 0, 45, 40);
 		this->animationComponent->addAnimation("DEATH", 5.f, 0, 1, 10, 1, 30, 40);
 		this->animationComponent->addAnimation("SHOOTING", 7.f, 0, 2, 4, 2, 61, 40);
@@ -89,8 +90,9 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 	if (this->type == "BOSS")
 	{
 		this->hitbox = new Hitbox(this->sprite, 20, 20, 60, 100);
-		this->hpMax = 30;
+		this->hpMax = 40;
 		this->hp = hpMax;
+		this->maxVelocityX = 250.f;
 		this->points = rand() % 51 + 30;
 		this->bulletSpeed = 10.f;
 		this->shootCooldownMax = 0.5f;
@@ -140,6 +142,16 @@ bool Enemy::getIsDrop()
 bool Enemy::getIsDeath()
 {
 	return this->isDeath;
+}
+
+std::string Enemy::getType()
+{
+	return this->type;
+}
+
+int Enemy::getMaxHp()
+{
+	return this->hpMax;
 }
 
 //Modifiers
@@ -196,7 +208,7 @@ void Enemy::updateShooting(Player* player)
 {
 	if (this->type == "BOSS")
 	{
-		if (abs(this->velocity.x) < 20.f && this->shootCooldown > this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
+		if (abs(this->velocity.x) < 20.f && this->shootTimer.getElapsedTime().asSeconds() >= this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
 		{
 			if (this->isFaceLeft)
 			{
@@ -223,7 +235,7 @@ void Enemy::updateShooting(Player* player)
 	}
 	if (this->type == "SOLDIER")
 	{
-		if (this->velocity.x == 0.f && this->shootCooldown > this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
+		if (this->velocity.x == 0.f && this->shootTimer.getElapsedTime().asSeconds() >= this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
 		{
 			if (this->isFaceLeft)
 			{
@@ -281,11 +293,11 @@ void Enemy::updateMovement(Player* player, const float& dt)
 {
 	if (this->type == "SOLDIER" && !this->isDeath)
 	{
-		if (this->sprite.getPosition().x - player->getPosition().x >= 700.f /*&& this->onGround*/)
+		if (this->sprite.getPosition().x - player->getPosition().x >= 650.f /*&& this->onGround*/)
 		{
 			this->velocity.x -= this->speedValue;
 		}
-		if (player->getPosition().x - this->sprite.getPosition().x >= 700.f /*&& this->onGround*/)
+		if (player->getPosition().x - this->sprite.getPosition().x >= 650.f /*&& this->onGround*/)
 		{
 			this->velocity.x += this->speedValue;
 		}
@@ -444,8 +456,6 @@ void Enemy::bulletCollision(Player* player)
 //Functions
 void Enemy::update(Player* player, const float& dt)
 {
-	this->shootCooldown = this->shootTimer.getElapsedTime().asSeconds();
-
 	this->updateMovement(player, dt);
 	this->updatePhysics(dt);
 	this->updateShooting(player);

@@ -104,7 +104,7 @@ void GameState::initTexture()
 
 void GameState::initPlayer()
 {
-	this->player = new Player();
+
 }
 
 void GameState::initItem()
@@ -126,19 +126,19 @@ void GameState::initView()
 
 void GameState::initGUI()
 {
-	this->hpBar.setPosition(10.f, 10.f);
-	this->hpBar.setSize(sf::Vector2f(20.f * this->player->getHp(), 20.f));
+	this->hpBar.setPosition(10.f, 35.f);
+	this->hpBar.setSize(sf::Vector2f(10.f * this->player->getHp(), 20.f));
 	this->hpBar.setFillColor(sf::Color::Red);
 
-	this->hpBarOutline.setPosition(10.f, 10.f);
-	this->hpBarOutline.setSize(sf::Vector2f(20.f * this->player->getMaxHp(), 20.f));
+	this->hpBarOutline.setPosition(10.f, 35.f);
+	this->hpBarOutline.setSize(sf::Vector2f(10.f * this->player->getMaxHp(), 20.f));
 	this->hpBarOutline.setOutlineThickness(2.f);
 	this->hpBarOutline.setOutlineColor(sf::Color::Black);
 	this->hpBarOutline.setFillColor(sf::Color::Transparent);
 
 	this->BonusItemIcon.setTexture(this->textures["BONUS"]);
 	this->BonusItemIcon.setSize(sf::Vector2f(30.f, 30.f));
-	this->BonusItemIcon.setPosition(20.f, 40.f);
+	this->BonusItemIcon.setPosition(20.f, 60.f);
 
 	if (!this->scoreFont.loadFromFile("Fonts/04font.ttf"))
 		std::cout << "ERROR::GAME_STATE::COULD NOT LOAD SCOREFONT FROM FILE" << std::endl;
@@ -146,9 +146,17 @@ void GameState::initGUI()
 	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setCharacterSize(30.f);
 	this->scoreText.setFillColor(sf::Color(250, 220, 0, 250));
-	this->scoreText.setOutlineThickness(1.f);
+	this->scoreText.setOutlineThickness(2.f);
 	this->scoreText.setOutlineColor(sf::Color::Black);
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
+
+	this->playerName.setFont(this->scoreFont);
+	this->playerName.setString(this->player->getName());
+	this->playerName.setCharacterSize(20.f);
+	this->playerName.setFillColor(sf::Color(255, 255, 255, 255));
+	this->playerName.setOutlineThickness(2.f);
+	this->playerName.setOutlineColor(sf::Color::Black);
+	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + this->playerName.getGlobalBounds().width + 10.f, 5.f);
 }
 
 GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
@@ -170,7 +178,6 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 
 GameState::~GameState()
 {
-	delete this->player;
 	//delete textures
 	for (auto& i : this->textures)
 	{
@@ -221,8 +228,10 @@ void GameState::spawnEnemies()
 	{
 		std::cout << "DONE" << std::endl;
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x), rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x), rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 100, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 200, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 300, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 400, rand() % 41 + 500));
 		this->done = true;
 		this->checkPoint++;
 	}
@@ -232,6 +241,9 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 300, rand() % 41 + 500));
 		this->done = true;
 		this->checkPoint++;
 	}
@@ -241,6 +253,8 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->done = true;
 		this->checkPoint++;
 	}
@@ -257,9 +271,9 @@ void GameState::spawnEnemies()
 		std::cout << "DONE" << std::endl;
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
-		this->done = true;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 300, rand() % 41 + 500));
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 6 && !this->done /* && !this->moveCamera*/)
@@ -268,6 +282,8 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->done = true;
 		this->checkPoint++;
 	}
@@ -276,7 +292,9 @@ void GameState::spawnEnemies()
 		std::cout << "DONE" << std::endl;
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));		
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->done = true;
 		this->checkPoint++;
 	}
@@ -285,6 +303,36 @@ void GameState::spawnEnemies()
 		std::cout << "DONE" << std::endl;
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 9 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 10 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->done = true;
+		this->checkPoint++;
+	}
+	if (this->checkPoint == 11 && !this->done /* && !this->moveCamera*/)
+	{
+		std::cout << "DONE" << std::endl;
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->done = true;
 		this->checkPoint++;
 	}
@@ -337,6 +385,10 @@ void GameState::updateCollision(const float& dt)
 	if (this->player->getPosition().x < this->view->getCenter().x - this->window->getSize().x / 2.f)
 	{
 		this->player->setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->player->getPosition().y);
+	}
+	if (this->player->getPosition().x + this->player->getGlobalBounds().width > this->view->getCenter().x + this->window->getSize().x / 2.f)
+	{
+		this->player->setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->player->getGlobalBounds().width, this->player->getPosition().y);
 	}
 	//Check collision between player and the end of the map
 	if (this->player->getPosition().x + this->player->getGlobalBounds().width >= 12909)
@@ -401,7 +453,7 @@ void GameState::updateItemsCollision(const float& dt)
 	unsigned itemCounter = 0;
 	for (auto* item : this->items)
 	{
-		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < 10 && item->getType() == "HEAL")
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < this->player->getMaxHp() && item->getType() == "HEAL")
 		{
 			delete this->items.at(itemCounter);
 			this->player->heal(1);
@@ -409,7 +461,7 @@ void GameState::updateItemsCollision(const float& dt)
 			this->pickUpItemSound.play();
 			--itemCounter;
 		}
-		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && item->getType() == "BONUS")
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && item->getType() == "BONUS" && !this->player->getIsShooting())
 		{
 			delete this->items.at(itemCounter);
 			this->player->reduceShootCD();
@@ -472,22 +524,25 @@ void GameState::updateBullet(const float& dt)
 			}
 			//temp++;
 		}
-
+		++counter;
 	}
-	++counter;
+	
 }
 
 void GameState::updateGUI(const float& dt)
 {
-	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
-	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
-	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 20.f, 20.f));
+	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
+	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
+	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 10.f, 20.f));
 
-	this->BonusItemIcon.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 20.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 40.f);
+	this->BonusItemIcon.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 20.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 60.f);
 	this->BonusItemIcon.setFillColor(sf::Color(255, 255, 255, this->changeColor-=500*dt));
 
 	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
+
+	this->playerName.setString(this->player->getName());
+	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, 5.f);
 }
 
 void GameState::update(const float& dt)
@@ -542,7 +597,8 @@ void GameState::update(const float& dt)
 
 	if (this->player->getHp() <= 0)
 	{
-		this->states->pop();
+		if (!this->states->empty())
+			this->states->pop();
 		this->states->push(new GameOverState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
@@ -558,10 +614,13 @@ void GameState::renderGUI()
 {
 	this->window->draw(this->hpBar);
 	this->window->draw(this->hpBarOutline);
+
 	if (this->player->getBonusState())
 		this->window->draw(this->BonusItemIcon);
 	else this->changeColor = 255;
+
 	this->window->draw(this->scoreText);
+	this->window->draw(this->playerName);
 }
 
 void GameState::render(sf::RenderTarget* target)

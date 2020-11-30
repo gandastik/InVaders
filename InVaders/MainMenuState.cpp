@@ -6,7 +6,7 @@
 //Initializer Functions
 void MainMenuState::initVariables()
 {
-
+	this->view->setCenter(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f);
 }
 
 void MainMenuState::initMusic()
@@ -22,7 +22,7 @@ void MainMenuState::initBackground()
 	this->background.setSize(sf::Vector2f(static_cast<float>(this->window->getSize().x)
 		, static_cast<float>(this->window->getSize().y)));
 
-	if (!this->backgroundTexture.loadFromFile("Resources/background.jpg"))
+	if (!this->backgroundTexture.loadFromFile("Resources/wallpaper.jpg"))
 	{
 		std::cout << "ERROR::MAIN_MENU_STATE::FAILED TO LOAD BACKGROUND TO TEXTURE" << std::endl;
 	}
@@ -36,6 +36,19 @@ void MainMenuState::initFonts()
 	{
 		std::cout << "ERROR::MAINMENUSTATE::COULD NOT LOAD FONT!" << std::endl;
 	}
+}
+
+void MainMenuState::initText()
+{
+	if (!this->gameTitleFont.loadFromFile("Fonts/04font.ttf"))
+		std::cout << "ERROR::MAINMENUSTATE::COULD NOT LOAD FONT!" << std::endl;
+	this->gameTitle.setFont(this->gameTitleFont);
+	this->gameTitle.setCharacterSize(60.f);
+	this->gameTitle.setLetterSpacing(1.6f);
+	this->gameTitle.setOutlineThickness(5.f);
+	this->gameTitle.setOutlineColor(sf::Color::Black);
+	this->gameTitle.setPosition( 50.f, 50.f);
+	this->gameTitle.setString("METAL\nSLAUGTHER");
 }
 
 void MainMenuState::initKeybinds()
@@ -57,11 +70,11 @@ void MainMenuState::initKeybinds()
 
 void MainMenuState::initButtons()
 {
-	this->buttons["CREATE_NAME"] = new Button(this->window->getSize().x - 300, 200, 250, 50, &this->font, "NEW GAME",
+	this->buttons["CREATE_NAME"] = new Button(this->window->getSize().x - 400, 200, 250, 50, &this->font, "NEW GAME", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
-	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x - 300, 400, 250, 50, &this->font, "QUIT",
+	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x - 400, 400, 250, 50, &this->font, "QUIT", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
-	this->buttons["SCORE_BOARD"] = new Button(this->window->getSize().x - 300, 300, 250, 50, &this->font, "SCORE BOARD",
+	this->buttons["SCORE_BOARD"] = new Button(this->window->getSize().x - 400, 300, 250, 50, &this->font, "SCORE BOARD", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
 }
 
@@ -71,6 +84,7 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::map<std::string, int
 	this->initVariables();
 	this->initBackground();
 	this->initFonts();
+	this->initText();
 	this->initKeybinds();
 	this->initButtons();
 	this->initMusic();
@@ -103,6 +117,12 @@ void MainMenuState::updateButtons()
 	{
 		this->states->push(new CreateNameState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
+	}
+
+	//SCOREBOARD
+	if (this->buttons["SCORE_BOARD"]->isPressed())
+	{
+		this->states->push(new ScoreBoardState(this->window, this->supportedKeys, this->states, this->view, this->player));
 	}
 
 	//Quit
@@ -147,5 +167,7 @@ void MainMenuState::render(sf::RenderTarget* target)
 	target->draw(this->background);
 
 	this->renderButtons(target);
+
+	target->draw(this->gameTitle);
 	
 }

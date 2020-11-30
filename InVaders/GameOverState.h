@@ -13,6 +13,13 @@ private:
 	sf::RectangleShape background;
 	sf::Font font;
 
+	//Highscore
+	FILE* fp;
+	char temp[255];
+	int score[6];
+	std::string name[6];
+	std::vector <std::pair<int, std::string>> userScore;
+
 	std::map<std::string, Button*>buttons;
 
 	sf::Music bg_music;
@@ -23,6 +30,7 @@ private:
 	void initBackground();
 	void initFonts();
 	void initKeybinds();
+	void initHighScore();
 	void initButtons();
 public:
 	GameOverState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player);

@@ -78,6 +78,8 @@ public:
 	sf::FloatRect getGlobalBounds();
 	bool getIsDrop();
 	bool getIsDeath();
+	std::string getType();
+	int getMaxHp();
 
 	//Modifiers
 	void takeDmg(int dmg);
