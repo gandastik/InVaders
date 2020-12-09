@@ -89,6 +89,9 @@ void BossFightState::initTexture()
 void BossFightState::initPlayer()
 {
 	this->player->setPosition(0, 300);
+	this->player->setScale(2.5f, 2.5f);
+	this->player->createHitbox(20.f, 80.f, 50, 20);
+	this->player->setJumpForce(400.f);
 }
 
 void BossFightState::initEnemy()
@@ -350,7 +353,6 @@ void BossFightState::updateItemsCollision(const float& dt)
 
 void BossFightState::updateBullet(const float& dt)
 {
-
 	unsigned counter = 0;
 	for (auto* bullet : this->bullets)
 	{

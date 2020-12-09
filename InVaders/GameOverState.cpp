@@ -85,6 +85,8 @@ void GameOverState::initButtons()
 {
 	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 75.f, 560 , 150, 50, &this->font, "NEW GAME", 30,
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
+	this->buttons["MAIN_MENU"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 170.f, 650, 150, 50, &this->font, "BACK TO MENU", 20,
+		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 }
 
 GameOverState::GameOverState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
@@ -127,6 +129,13 @@ void GameOverState::updateButtons()
 		if (!this->states->empty())
 			this->states->pop();
 		this->states->push(new CreateNameState(this->window, this->supportedKeys, this->states, this->view, this->player));
+		this->bg_music.stop();
+	}
+	if (this->buttons["MAIN_MENU"]->isPressed())
+	{
+		if (!this->states->empty())
+			this->states->pop();
+		this->states->push(new MainMenuState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
 }

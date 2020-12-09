@@ -1,0 +1,488 @@
+#include "stdafx.h"
+#include "GameState2.h"
+
+void GameState2::initKeybinds()
+{
+	std::ifstream ifs("config/gamestate_keybinds.ini");
+
+	if (ifs.is_open())
+	{
+		std::string key = "";
+		std::string key2 = "";
+
+		while (ifs >> key >> key2)
+		{
+			this->keybinds[key] = this->supportedKeys->at(key2);
+		}
+	}
+	ifs.close();
+}
+
+
+void GameState2::initPlatform()
+{
+	this->direction.x = 0.f;
+	this->direction.y = 0.f;
+	//Ground
+	this->platforms.push_back(new Platform(sf::Vector2f(0.f, 472.f), sf::Vector2f(143.f, 245.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(158.f, 540.f), sf::Vector2f(90.f, 176.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(245.f, 584.f), sf::Vector2f(769.f, 133.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1012.f, 530.f), sf::Vector2f(110.f, 179.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1121.f, 474.f), sf::Vector2f(122.f, 376.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1261.f, 2196.f), sf::Vector2f(513.f, 135.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(891.f, 717.f), sf::Vector2f(115.f, 573.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1778.f, 527.f), sf::Vector2f(251.f, 172.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1778.f, 696.f), sf::Vector2f(253.f, 320.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1768.f, 2196.f), sf::Vector2f(3637.f, 53.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1651.f, 467.f), sf::Vector2f(313.f, 59.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2038.f, 577.f), sf::Vector2f(732.f, 32.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10.f, 2134.f), sf::Vector2f(810.f, 188.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(823.f, 2108.f), sf::Vector2f(60.f, 40.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(884.f, 2082.f), sf::Vector2f(246.f, 50.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1130.f, 2056.f), sf::Vector2f(59.f, 35.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1187.f, 2030.f), sf::Vector2f(73.f, 295.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1237.f, 1972.f), sf::Vector2f(156.f, 50.F), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10.f, 2134.f), sf::Vector2f(810.f, 188.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10.f, 2134.f), sf::Vector2f(810.f, 188.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1267.f, 692.f), sf::Vector2f(124, 26), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1644.f, 846.f), sf::Vector2f(124, 26), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1250.f, 1072.f), sf::Vector2f(124, 40), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1644.f, 1744.f), sf::Vector2f(124, 26), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1644.f, 1294.f), sf::Vector2f(124, 26), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1259.f, 1518.f), sf::Vector2f(124, 26), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1010.f, 1182.f), sf::Vector2f(253.f, 562.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1133.f, 1152.f), sf::Vector2f(131.f, 36.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1201.f, 1095.f), sf::Vector2f(60.f, 46.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(824.f, 1736.f), sf::Vector2f(310.f, 122.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1770.f, 1294.f), sf::Vector2f(257.f, 619.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2000.f, 1294.f), sf::Vector2f(1283.f, 131.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3307.f, 1297.f), sf::Vector2f(261.f, 613.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3564.f, 1520.f), sf::Vector2f(130.f, 53.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3945.f, 1743.f), sf::Vector2f(130.f, 53.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3948.f, 1292.f), sf::Vector2f(136.f, 53.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3561.f, 1966.f), sf::Vector2f(139.f, 56.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4073.f, 1292.f), sf::Vector2f(259.f, 615.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4330.f, 1292.f), sf::Vector2f(516.f, 110.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4845.f, 1245.f), sf::Vector2f(498.f, 630.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4911.f, 1186.f), sf::Vector2f(188.f, 54.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5089.f, 1186.f), sf::Vector2f(157.f, 59.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5248.f, 1209.f), sf::Vector2f(35.f, 55.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5287.f, 1242.f), sf::Vector2f(1662.f, 76.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5287.f, 1242.f), sf::Vector2f(1662.f, 76.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6947.f, 1210.f), sf::Vector2f(67.f, 89.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6982.f, 1183.f), sf::Vector2f(469.f, 669.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6890.f, 1607.f), sf::Vector2f(559.f, 251.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6993.f, 2082.f), sf::Vector2f(521.f, 246.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6957.f, 2113.f), sf::Vector2f(81.f, 129.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6931.f, 2142.f), sf::Vector2f(40.f, 100.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6253.f, 2190.f), sf::Vector2f(679.f, 133.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6127.f, 1608.f), sf::Vector2f(125.f, 713.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6894.f, 2168.f), sf::Vector2f(43.f, 83.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(7517.f, 2246.f), sf::Vector2f(383.f, 81.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(7900.f, 2080.f), sf::Vector2f(228.f, 242.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8124.f, 2115.f), sf::Vector2f(27.f, 60.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8152.f, 2137.f), sf::Vector2f(36.f, 60.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8190.f, 2167.f), sf::Vector2f(36.f, 60.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8281.f, 2192.f), sf::Vector2f(2756.f, 131.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11387.f, 2235.f), sf::Vector2f(102.f, 303.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10841.f, 1970.f), sf::Vector2f(196.f, 62.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11101.f, 2082.f), sf::Vector2f(278.f, 242.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11407.f, 2137.f), sf::Vector2f(835.f, 191.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11474.f, 2174.f), sf::Vector2f(312.f, 117.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10966.f, 1181.f), sf::Vector2f(256.f, 565.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10456.f, 1744.f), sf::Vector2f(135.f, 59.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10973.f, 2025.f), sf::Vector2f(110.f, 299.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10844.f, 1070.f), sf::Vector2f(140.f, 55.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10010.f, 1299.f), sf::Vector2f(457.f, 609.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8220.f, 1299.f), sf::Vector2f(1997.f, 436.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8097.f, 1246.f), sf::Vector2f(127.f, 503.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(7964.f, 1180.f), sf::Vector2f(137.f, 570.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10457.f, 1299.f), sf::Vector2f(137.f, 54.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10841.f, 1521.f), sf::Vector2f(134.f, 42.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10970.f, 1135.f), sf::Vector2f(137.f, 614.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11102.f, 1187.f), sf::Vector2f(131.f, 677.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11224.f, 952.f), sf::Vector2f(198.f, 272.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10459.f, 852.f), sf::Vector2f(139.f, 60.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10204.f, 576.f), sf::Vector2f(253.f, 440.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10272.f, 476.f), sf::Vector2f(318.f, 61.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10841.f, 696.f), sf::Vector2f(137.f, 16.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10972.f, 471.f), sf::Vector2f(159.f, 377.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11100.f, 527.f), sf::Vector2f(127.f, 428.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11229.f, 587.f), sf::Vector2f(776.f, 135.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11999.f, 543.f), sf::Vector2f(86.f, 173.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(12067.f, 480.f), sf::Vector2f(198.f, 234.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4842.f, 2167.f), sf::Vector2f(40.f, 30.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4882.f, 2138.f), sf::Vector2f(40.f, 30.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4915.f, 2112.f), sf::Vector2f(40.f, 30.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4950.f, 2082.f), sf::Vector2f(151.f, 30.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5098.f, 2082.f), sf::Vector2f(150.f, 30.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5250.f, 2210.f), sf::Vector2f(34.f, 71.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5287.f, 2136.f), sf::Vector2f(126.f, 176.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5407.f, 2193.f), sf::Vector2f(68.f, 114.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5475.f, 2250.f), sf::Vector2f(388.f, 73.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5862.f, 2192.f), sf::Vector2f(64.f, 101.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5925.f, 2135.f), sf::Vector2f(82.f, 122.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5988.f, 1612.f), sf::Vector2f(60.f, 714.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8287.f, 585.f), sf::Vector2f(1918.f, 256), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8254.f, 563.f), sf::Vector2f(36.f, 30.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8222.f, 535.f), sf::Vector2f(28.f, 30.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(7967.f, 487.f), sf::Vector2f(256.f, 250.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(7967.f, 667.f), sf::Vector2f(253.f, 296.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6991.f, 479.f), sf::Vector2f(461.f, 482.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6947.f, 712.f), sf::Vector2f(65.f, 251.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6962.f, 507.f), sf::Vector2f(42.f, 55.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6931.f, 534.f), sf::Vector2f(42.f, 55.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6897.f, 562.f), sf::Vector2f(42.f, 55.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6832.f, 585.f), sf::Vector2f(78.f, 57.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5290.f, 630.f), sf::Vector2f(1665.f, 217.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5356.f, 583.f), sf::Vector2f(61.f, 50.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5424.f, 563.f), sf::Vector2f(31.f, 50.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5293.f, 533.f), sf::Vector2f(31.f, 50.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5261.f, 505.f), sf::Vector2f(31.f, 50.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4614.f, 472.f), sf::Vector2f(645.f, 237.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4188.f, 472.f), sf::Vector2f(495.f, 237.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4156.f, 503.f), sf::Vector2f(48.f, 60.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4120.f, 532.f), sf::Vector2f(48.f, 60.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4088.f, 559.f), sf::Vector2f(48.f, 60.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4056.f, 587.f), sf::Vector2f(48.f, 60.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4025.f, 614.f), sf::Vector2f(48.f, 60.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2802.f, 637.f), sf::Vector2f(1284.f, 209.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2770.f, 611.f), sf::Vector2f(34.f, 30.f), "stairR"));
+
+}
+
+void GameState2::initVariables()
+{
+	this->score = 0;
+	this->changeColor = 255;
+}
+
+void GameState2::initBackground()
+{
+	if (!this->backgroundTexture.loadFromFile("Texture/state2_background.png"))
+		std::cout << "ERROR::GAME::Could not load bg.png!" << "\n";
+	this->background.setTexture(this->backgroundTexture);
+	this->background.setScale(4.f, 3.5f);
+}
+
+void GameState2::initTexture()
+{
+
+}
+
+void GameState2::initPlayer()
+{
+	this->player->setPosition(0, 0);
+	//this->player->setScale(3, 3);
+	this->player->createHitbox(5.f, 10.f, 65.f, 90.f);
+	this->player->setJumpForce(450.f);
+}
+
+void GameState2::initView()
+{
+	this->view = new sf::View;
+	this->viewPos.x = this->window->getSize().x / 2;
+	this->viewPos.y = this->window->getSize().y / 2;
+	this->view->setSize(sf::Vector2f(this->window->getSize().x, this->window->getSize().y));
+	this->currentCamera = this->window->getSize().x - 50.f;
+	this->moveCamera = false;
+	this->nextViewPos = viewPos.x;
+}
+
+void GameState2::initGUI()
+{
+	this->hpBar.setPosition(10.f, 35.f);
+	this->hpBar.setSize(sf::Vector2f(10.f * this->player->getHp(), 20.f));
+	this->hpBar.setFillColor(sf::Color::Red);
+
+	this->hpBarOutline.setPosition(10.f, 35.f);
+	this->hpBarOutline.setSize(sf::Vector2f(10.f * this->player->getMaxHp(), 20.f));
+	this->hpBarOutline.setOutlineThickness(2.f);
+	this->hpBarOutline.setOutlineColor(sf::Color::Black);
+	this->hpBarOutline.setFillColor(sf::Color::Transparent);
+
+	this->BonusItemIcon.setTexture(this->textures["BONUS"]);
+	this->BonusItemIcon.setSize(sf::Vector2f(30.f, 30.f));
+	this->BonusItemIcon.setPosition(20.f, 60.f);
+
+	if (!this->scoreFont.loadFromFile("Fonts/04font.ttf"))
+		std::cout << "ERROR::GAME_STATE::COULD NOT LOAD SCOREFONT FROM FILE" << std::endl;
+	this->scoreText.setFont(this->scoreFont);
+	this->scoreText.setString(std::to_string(this->player->getScore()));
+	this->scoreText.setCharacterSize(30.f);
+	this->scoreText.setFillColor(sf::Color(250, 220, 0, 250));
+	this->scoreText.setOutlineThickness(2.f);
+	this->scoreText.setOutlineColor(sf::Color::Black);
+	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);
+
+	this->playerName.setFont(this->scoreFont);
+	this->playerName.setString(this->player->getName());
+	this->playerName.setCharacterSize(20.f);
+	this->playerName.setFillColor(sf::Color(255, 255, 255, 255));
+	this->playerName.setOutlineThickness(2.f);
+	this->playerName.setOutlineColor(sf::Color::Black);
+	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + this->playerName.getGlobalBounds().width + 10.f, 5.f);
+
+}
+
+
+GameState2::GameState2(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player)
+	: State(window, supportedKeys, states, view, player)
+{
+	this->initTexture();
+	this->initVariables();
+	this->initPlayer();
+	this->initPlatform();
+	this->initKeybinds();
+	this->initBackground();
+	this->initView();
+	this->initGUI();
+}
+
+GameState2::~GameState2()
+{
+	//delete textures
+	for (auto& i : this->textures)
+	{
+		delete i.second;
+	}
+	//delete bullets
+	for (auto* bullet : this->bullets)
+	{
+		delete bullet;
+	}
+	//delete bullets
+	for (auto* bullet : this->bullets)
+	{
+		delete bullet;
+	}
+}
+
+void GameState2::endState()
+{
+	std::cout << "Ending State2" << std::endl;
+}
+
+void GameState2::spawnEnemies()
+{
+}
+
+void GameState2::updateViewPosition()
+{
+	this->view->setCenter(this->player->getPosition().x, this->player->getPosition().y);
+	/*else if (this->player->getPosition().x > this->backgroundTexture.getSize().x - this->window->getSize().x / 2.f)
+	{
+		this->view->setCenter(this->backgroundTexture.getSize().x - this->window->getSize().x / 2.f, this->window->getSize().y / 2.f);
+	}*/
+	/*if (this->player->getPosition().y > this->window->getSize().y / 2.f + 200.f)
+	{
+		this->view->setCenter(this->player->getPosition().x, this->player->getPosition().y);
+	}
+	else
+		this->view->setCenter(this->player->getPosition().x, this->window->getSize().y / 2.f);*/
+
+}
+
+void GameState2::updateInput(const float& dt)
+{
+	this->checkForQuit();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		if (this->shootTimer.getElapsedTime().asSeconds() >= this->player->getShootCD())
+		{
+			if (this->player->getIsFaceRight())
+				this->bullets.push_back(new Bullet(this->textures["BULLET"], this->player->getPosition().x + this->player->getGlobalBounds().width, this->player->getPosition().y + this->player->getGlobalBounds().height / 2.f - 20.f, 1.f, 0.f, 10.f));
+			else
+				this->bullets.push_back(new Bullet(this->textures["FLIPPED_BULLET"], this->player->getPosition().x, this->player->getPosition().y + this->player->getGlobalBounds().height / 2.f - 20.f, -1.f, 0.f, 10.f));
+			this->shootTimer.restart();
+		}
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::End))
+	{
+		this->states->pop();
+		this->states->push(new BossFightState(this->window, this->supportedKeys, this->states, this->view, this->player));
+	}
+}
+
+void GameState2::updatePlayer(const float& dt)
+{
+	this->player->update(dt);
+}
+
+void GameState2::updateEnemy(const float& dt)
+{
+
+}
+
+void GameState2::updateCollision(const float& dt)
+{
+	//Check collision between the left side of the WINDOW
+	if (this->player->getPosition().x < 0.f)
+	{
+		this->player->setPosition(0.f, this->player->getPosition().y);
+	}
+	//Check collision between player and the end of the map
+	if (this->player->getPosition().x + this->player->getGlobalBounds().width >= this->backgroundTexture.getSize().x * 4.f)
+	{
+		this->player->setPosition(this->backgroundTexture.getSize().x - this->player->getGlobalBounds().width, this->player->getPosition().y);
+	}
+	//Check collision between the PLAYER and PLATFORMS
+	unsigned counter = 0;
+	for (int i = 0; i < this->platforms.size(); i++)
+	{
+		Platform* platform = this->platforms[i];
+		if (platform->getType() == "stairL" || platform->getType() == "stairR")
+		{
+			if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f, platform->getType()))
+			{
+				this->player->onCollision(this->direction, dt);
+				this->player->resetVelocityY();
+			}
+		}
+		else if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
+		{
+			this->player->onCollision(this->direction, dt);
+			this->player->resetVelocityY();
+		}
+		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))
+		{
+			this->player->setOnGround(0);
+		}
+		for (auto* bullet : this->bullets)
+		{
+			//PLAYER'S BULLETS collide with PLATFORMS
+			if (platform->getCollider().checkCollision(bullet->getCollider(), bullet->getSprite(), this->direction, 1.f))
+			{
+				delete this->bullets.at(counter);
+				this->bullets.erase(this->bullets.begin() + counter);
+				--counter;
+			}
+		}
+	}
+	counter++;
+}
+
+void GameState2::updateItemsCollision(const float& dt)
+{
+}
+
+void GameState2::updateBullet(const float& dt)
+{
+	unsigned counter = 0;
+	for (auto* bullet : this->bullets)
+	{
+		bullet->update();
+
+		//bullet culling (right screen)
+		if (bullet->getBounds().left + bullet->getBounds().width > this->view->getCenter().x + this->window->getSize().x / 2.f)
+		{
+			//delete bullet
+			delete this->bullets.at(counter);
+			this->bullets.erase(this->bullets.begin() + counter);
+			--counter;
+			//std::cout << this->bullets.size() << std::endl;
+		}
+		//bullet culling (left screen)
+		if (bullet->getBounds().left < this->view->getCenter().x - this->window->getSize().x / 2.f - 50)
+		{
+			delete this->bullets.at(counter);
+			this->bullets.erase(this->bullets.begin() + counter);
+			--counter;
+			//std::cout << this->bullets.size() << std::endl;
+		}
+	}
+	++counter;
+}
+
+void GameState2::updateGUI(const float& dt)
+{
+
+	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
+	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
+	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 10.f, 20.f));
+
+	this->BonusItemIcon.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 20.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 60.f);
+	this->BonusItemIcon.setFillColor(sf::Color(255, 255, 255, this->changeColor -= 500 * dt));
+
+	this->scoreText.setString(std::to_string(this->player->getScore()));
+	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 10.f);
+
+	this->playerName.setString(this->player->getName());
+	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 5.f);
+
+}
+
+void GameState2::update(const float& dt)
+{
+	while (this->window->pollEvent(this->ev))
+	{
+
+	}
+
+	this->updateViewPosition();
+
+	this->window->setView(*this->view);
+	this->updateMousePosition();
+	this->updateInput(dt);
+	this->updateCollision(dt);
+	this->updateItemsCollision(dt);
+	this->updateBullet(dt);
+	this->updatePlayer(dt);
+	this->updateEnemy(dt);
+
+
+	this->updateGUI(dt);
+
+	//this->view->setCenter(this->viewPos);
+
+	if (this->player->getHp() <= 0)
+	{
+		this->states->pop();
+		this->states->push(new GameOverState(this->window, this->supportedKeys, this->states, this->view, this->player));
+		this->bg_music.stop();
+	}
+
+}
+
+void GameState2::renderPlayer()
+{
+	this->player->render(this->window);
+}
+
+void GameState2::renderGUI()
+{
+	this->window->draw(this->hpBar);
+	this->window->draw(this->hpBarOutline);
+
+	if (this->player->getBonusState())
+		this->window->draw(this->BonusItemIcon);
+	else this->changeColor = 255;
+
+	this->window->draw(this->scoreText);
+	this->window->draw(this->playerName);
+}
+
+void GameState2::render(sf::RenderTarget* target)
+{
+	if (!target)
+	{
+		target = this->window;
+	}
+	//render
+	/*for (int i = 0; i < this->platforms.size(); i++)
+	{
+		Platform* platform = this->platforms[i];
+		platform->render(this->window);
+	}*/
+
+	this->window->draw(this->background);
+
+	for (auto* bullet : this->bullets)
+	{
+		bullet->render(this->window);
+	}
+
+	this->renderPlayer();
+
+	this->renderGUI();
+}

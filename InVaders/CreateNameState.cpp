@@ -6,7 +6,6 @@ void CreateNameState::initVariables()
 {
 	this->player = new Player();
 	this->player->setPosition(0.f, 0.f);
-
 	this->textHolder.setFillColor(sf::Color::Transparent);
 	this->textHolder.setSize(sf::Vector2f(200.f, 50.f));
 	this->textHolder.setOutlineThickness(2.f);

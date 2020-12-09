@@ -1,2 +1,42 @@
-﻿  Game.cpp
+﻿  GameState2.cpp
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(184,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(185,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(186,85): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(186,58): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(212,35): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(220,36): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(331,20): warning C4018: '<': signed/unsigned mismatch
+D:\kk\Code\InVaders\InVaders\GameState2.cpp(405,89): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
   InVaders.vcxproj -> D:\kk\Code\InVaders\Debug\InVaders.exe

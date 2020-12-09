@@ -55,6 +55,7 @@ void Game::initKeys()
 
 void Game::initStates()
 {
+	this->view.setCenter(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f);
 	this->states.push(new MainMenuState(this->window, &this->supportedKeys, &this->states, &this->view, this->player));
 }
 

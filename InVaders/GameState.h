@@ -9,6 +9,7 @@
 #include "GameOverState.h"
 #include "Item.h"
 #include "BossFightState.h"
+#include "GameState2.h"
 
 class GameState :
 	public State

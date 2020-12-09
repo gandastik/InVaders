@@ -93,6 +93,9 @@
     <ClCompile Include="ScoreBoardState.cpp">
       <Filter>States</Filter>
     </ClCompile>
+    <ClCompile Include="GameState2.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -159,6 +162,9 @@
       <Filter>States</Filter>
     </ClInclude>
     <ClInclude Include="ScoreBoardState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState2.h">
       <Filter>States</Filter>
     </ClInclude>
   </ItemGroup>

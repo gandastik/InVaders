@@ -39,6 +39,8 @@ private:
 	sf::Clock shootCooldown;
 	bool isShooting;
 	bool isJump;
+	float scaleX;
+	float scaleY;
 
 	//sound effects
 	sf::SoundBuffer gunshot;
@@ -97,6 +99,7 @@ public:
 	const bool& getIsJump() const;
 
 	//Modifiers
+	void setScale(float x, float y);
 	void setPosition(const float x, const float y);
 	void resetVelocityY();
 	void takeDmg(int dmg);
@@ -105,6 +108,7 @@ public:
 	void Melee();
 	void addScore(int x);
 	void setName(std::string name);
+	void setJumpForce(float x);
 
 	//Components
 	void creatAnimationComponent();

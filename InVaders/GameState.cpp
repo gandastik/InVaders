@@ -399,7 +399,7 @@ void GameState::updateCollision(const float& dt)
 	if (this->door.getGlobalBounds().intersects(this->player->getGlobalBounds()) && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->states->pop();
-		this->states->push(new BossFightState(this->window, this->supportedKeys, this->states, this->view, this->player));
+		this->states->push(new GameState2(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
 	//Check collision between the PLAYER and PLATFORMS
@@ -579,7 +579,7 @@ void GameState::update(const float& dt)
 	else this->moveCamera = false;
 	
 
-	//this->spawnEnemies();
+	this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();

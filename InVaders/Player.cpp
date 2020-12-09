@@ -22,7 +22,9 @@ void Player::initTexture()
 void Player::initSprite()
 {
 	this->sprite->setTexture(this->textureSheet);
-	this->sprite->setScale(2.5f, 2.5f);
+	this->scaleX = 2.5f;
+	this->scaleY = 2.5f;
+	this->sprite->setScale(this->scaleX, this->scaleY);
 }
 
 void Player::initAnimationComponent()
@@ -55,7 +57,7 @@ void Player::initPhysics()
 	this->isFaceRight = true;
 
 	//Jump
-	this->jumpForce = 380.f;
+	this->jumpForce = 400.f;
 	this->gravityAcceleration = 9.81f;
 	this->speedValue = 0;
 	this->mass = 60.f;
@@ -167,6 +169,13 @@ const bool& Player::getIsJump() const
 }
 
 //Modifiers
+void Player::setScale(float x, float y)
+{
+	this->scaleX = x;
+	this->scaleY = y;
+	this->sprite->setScale(x, y);
+}
+
 void Player::setPosition(const float x, const float y)
 {
 	this->sprite->setPosition(x, y);	
@@ -235,6 +244,11 @@ void Player::setOnGround(int temp)
 void Player::setIsJumping()
 {
 	this->isJumping = false;
+}
+
+void Player::setJumpForce(float x)
+{
+	this->jumpForce = x;
 }
 
 //Functions
@@ -422,14 +436,14 @@ void Player::updateAnimation(const float &dt)
 	}
 	if (this->animationState == MOVING_RIGHT)
 	{
-		this->sprite->setScale(2.5f, 2.5f);
+		this->sprite->setScale(this->scaleX, this->scaleY);
 		this->sprite->setOrigin(0.f, 0.f);
 		this->animationComponent->play("RUN", dt, this->velocity.x, this->velocityMax);
 		this->isFaceRight = true;
 	}
 	if (this->animationState == MOVING_LEFT)
 	{
-		this->sprite->setScale(-2.5f, 2.5f);
+		this->sprite->setScale(-this->scaleX, this->scaleY);
 		this->sprite->setOrigin(this->sprite->getGlobalBounds().width / 2.5f, 0.f);
 		this->animationComponent->play("RUN", dt, this->velocity.x, this->velocityMax);
 		this->isFaceRight = false;
@@ -457,5 +471,5 @@ void Player::render(sf::RenderTarget* target)
 {
 	target->draw(*this->sprite);
 	
-	//this->hitbox->render(*target);
+	this->hitbox->render(*target);
 }

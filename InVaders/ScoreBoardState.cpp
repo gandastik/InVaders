@@ -18,7 +18,7 @@ void ScoreBoardState::initBackground()
 		std::cout << "ERROR::SCOREBOARDSTATE::COULD NOT LOAD FROM FILE GAMEOVER" << std::endl;
 	}
 	this->background.setTexture(&this->backgroundTexture);
-	//this->background.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->view->getCenter().y - this->window->getSize().y / 2.f);
+	this->background.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->view->getCenter().y - this->window->getSize().y / 2.f);
 }
 
 void ScoreBoardState::initFonts()
@@ -35,18 +35,18 @@ void ScoreBoardState::initText()
 	this->scoreBoardText.setCharacterSize(40.f);
 	this->scoreBoardText.setFillColor(sf::Color::White);
 	this->scoreBoardText.setString("..SCOREBOARD..");
-	this->scoreBoardText.setPosition(this->window->getSize().x /2.f - 140.f, 40.f);
+	this->scoreBoardText.setPosition(this->view->getCenter().x - 140.f, 40.f);
 
 	for (int i = 0; i < 5; i++)
 	{
 		this->playerName[i].setFont(this->font);
 		this->playerName[i].setCharacterSize(22.f);
 		this->playerName[i].setFillColor(sf::Color::White);
-		this->playerName[i].setPosition(this->window->getSize().x / 2.f - 140, 100.f + (100 * i));
+		this->playerName[i].setPosition(this->view->getCenter().x - 140, 100.f + (100 * i));
 		this->playerScore[i].setFont(this->font);
 		this->playerScore[i].setCharacterSize(22.f);
 		this->playerScore[i].setFillColor(sf::Color::White);
-		this->playerScore[i].setPosition(this->window->getSize().x / 2.f + 100, 100.f + (100 * i));
+		this->playerScore[i].setPosition(this->view->getCenter().x + 100, 100.f + (100 * i));
 	}
 }
 
@@ -84,7 +84,7 @@ void ScoreBoardState::initHighScore()
 
 void ScoreBoardState::initButtons()
 {
-	this->buttons["MAIN_MENU"] = new Button(this->window->getSize().x / 2.f - 100.f, 560, 220, 50, &this->font, "BACK TO MENU", 30,
+	this->buttons["MAIN_MENU"] = new Button(this->view->getCenter().x - 100.f, 560, 220, 50, &this->font, "BACK TO MENU", 30,
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 }
 

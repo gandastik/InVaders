@@ -6,7 +6,7 @@
 //Initializer Functions
 void MainMenuState::initVariables()
 {
-	this->view->setCenter(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f);
+	//this->view->setCenter(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f);
 }
 
 void MainMenuState::initMusic()
@@ -28,6 +28,7 @@ void MainMenuState::initBackground()
 	}
 
 	this->background.setTexture(&this->backgroundTexture);
+	this->background.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->view->getCenter().y - this->window->getSize().y / 2.f);
 }
 
 void MainMenuState::initFonts()
@@ -47,7 +48,7 @@ void MainMenuState::initText()
 	this->gameTitle.setLetterSpacing(1.6f);
 	this->gameTitle.setOutlineThickness(5.f);
 	this->gameTitle.setOutlineColor(sf::Color::Black);
-	this->gameTitle.setPosition( 50.f, 50.f);
+	this->gameTitle.setPosition( this->view->getCenter().x - this->window->getSize().x / 2.f + 50.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 50.f);
 	this->gameTitle.setString("METAL\nSLAUGTHER");
 }
 
@@ -70,11 +71,11 @@ void MainMenuState::initKeybinds()
 
 void MainMenuState::initButtons()
 {
-	this->buttons["CREATE_NAME"] = new Button(this->window->getSize().x - 400, 200, 250, 50, &this->font, "NEW GAME", 40,
+	this->buttons["CREATE_NAME"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, 200, 250, 50, &this->font, "NEW GAME", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
-	this->buttons["EXIT_STATE"] = new Button(this->window->getSize().x - 400, 400, 250, 50, &this->font, "QUIT", 40,
+	this->buttons["EXIT_STATE"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, 400, 250, 50, &this->font, "QUIT", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
-	this->buttons["SCORE_BOARD"] = new Button(this->window->getSize().x - 400, 300, 250, 50, &this->font, "SCORE BOARD", 40,
+	this->buttons["SCORE_BOARD"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, 300, 250, 50, &this->font, "SCORE BOARD", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
 }
 
@@ -115,6 +116,7 @@ void MainMenuState::updateButtons()
 	//Start
 	if (this->buttons["CREATE_NAME"]->isPressed())
 	{
+		this->states->pop();
 		this->states->push(new CreateNameState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
