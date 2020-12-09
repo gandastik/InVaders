@@ -81,6 +81,7 @@ Player::Player()
 	this->animationComponent->addAnimation("RUN", 6.f, 1, 1, 8, 1, 40, 40);
 	this->animationComponent->addAnimation("SHOOT", 3.f , 0, 2, 9, 2, 54, 40);
 	this->animationComponent->addAnimation("MELEE", 8.f , 0, 4, 5, 4, 54, 40);
+	this->animationComponent->addAnimation("JUMP", 15.f , 0, 5, 8, 5, 40, 48);
 }
 
 Player::~Player()
@@ -158,6 +159,11 @@ std::string Player::getName()
 const bool& Player::getIsShooting() const
 {
 	return this->isShooting;
+}
+
+const bool& Player::getIsJump() const
+{
+	return this->isJump;
 }
 
 //Modifiers
@@ -271,7 +277,7 @@ void Player::meleeAnimation(const float& dt)
 	}
 }
 
-void Player::onCollision(sf::Vector2f direction)
+void Player::onCollision(sf::Vector2f direction, float dt)
 {
 	if (direction.x < 0.f)
 	{
@@ -362,21 +368,21 @@ void Player::updateMovement(const float& dt)
 		this->animationState = MOVING_RIGHT;
 		
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && this->isJumping == false && canJump()) //JUMP
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && this->isJumping == false && canJump() && !this->isShooting && !this->isMelee) //JUMP
 	{
 		//this->move(dt, 0.f, -1.f);
 		//this->onGround = false;
 		//this->animationState = JUMPING;
 		this->speedValue = this->jumpForce / this->mass;
 		this->isJumping = true;
-		
+		this->isJump = true;
 	}
 	
 	//else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) //DOWN
 	//{
 	//	this->sprite.move(0.f, 3.f);
 	//}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !this->isJump)
 	{
 		if (this->shootCooldown.getElapsedTime().asSeconds() >= this->shootCD)
 		{
@@ -386,6 +392,10 @@ void Player::updateMovement(const float& dt)
 			this->shootCooldown.restart();
 		}
 		
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Comma))
+	{
+		this->sprite->setPosition(12000.f, 0.f);
 	}
 }
 
@@ -404,6 +414,11 @@ void Player::updateAnimation(const float &dt)
 	{
 		if (this->animationComponent->play("MELEE", dt, true))
 			this->isMelee = false;
+	}
+	if (this->isJump)
+	{
+		if (this->animationComponent->play("JUMP", dt, true))
+			this->isJump = false;
 	}
 	if (this->animationState == MOVING_RIGHT)
 	{

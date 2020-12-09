@@ -38,6 +38,7 @@ private:
 	sf::Clock shootAnimTimer;
 	sf::Clock shootCooldown;
 	bool isShooting;
+	bool isJump;
 
 	//sound effects
 	sf::SoundBuffer gunshot;
@@ -93,6 +94,7 @@ public:
 	Collider getCollider();
 	std::string getName();
 	const bool& getIsShooting() const;
+	const bool& getIsJump() const;
 
 	//Modifiers
 	void setPosition(const float x, const float y);
@@ -110,7 +112,7 @@ public:
 
 	//Functions
 	void meleeAnimation(const float& dt);
-	void onCollision(sf::Vector2f direction);
+	void onCollision(sf::Vector2f direction, float dt);
 	void jump(const float& dt);
 	void setOnGround(int temp);
 	void setIsJumping();

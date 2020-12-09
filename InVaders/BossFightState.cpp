@@ -302,7 +302,7 @@ void BossFightState::updateCollision(const float& dt)
 		Platform* platform = this->platforms[i];
 		if (platform->getCollider().checkCollision(this->player->getCollider(),this->player->getSprite(), this->direction, 1.f))
 		{
-			this->player->onCollision(this->direction);
+			this->player->onCollision(this->direction, dt);
 			this->player->resetVelocityY();
 		}
 		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))

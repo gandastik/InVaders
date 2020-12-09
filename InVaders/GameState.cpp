@@ -341,7 +341,7 @@ void GameState::spawnEnemies()
 void GameState::updateInput(const float& dt)
 {
 	this->checkForQuit();
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && this->player->getIsJump() == false)
 	{
 		if (this->shootTimer.getElapsedTime().asSeconds() >= this->player->getShootCD())
 		{
@@ -386,10 +386,10 @@ void GameState::updateCollision(const float& dt)
 	{
 		this->player->setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f, this->player->getPosition().y);
 	}
-	if (this->player->getPosition().x + this->player->getGlobalBounds().width > this->view->getCenter().x + this->window->getSize().x / 2.f)
+	/*if (this->player->getPosition().x + this->player->getGlobalBounds().width > this->view->getCenter().x + this->window->getSize().x / 2.f)
 	{
 		this->player->setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->player->getGlobalBounds().width, this->player->getPosition().y);
-	}
+	}*/
 	//Check collision between player and the end of the map
 	if (this->player->getPosition().x + this->player->getGlobalBounds().width >= 12909)
 	{
@@ -409,7 +409,7 @@ void GameState::updateCollision(const float& dt)
 		Platform* platform = this->platforms[i];
 		if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
 		{
-			this->player->onCollision(this->direction);
+			this->player->onCollision(this->direction, dt);
 			this->player->resetVelocityY();
 		}
 		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))
@@ -579,7 +579,7 @@ void GameState::update(const float& dt)
 	else this->moveCamera = false;
 	
 
-	this->spawnEnemies();
+	//this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();
