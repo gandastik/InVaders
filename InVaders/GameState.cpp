@@ -24,17 +24,17 @@ void GameState::initPlatform()
 	//Ground
 	this->platforms.push_back(new Platform(this->textures["PLATFORM1"], sf::Vector2f(-5.f, 610.f)));
 	//Stair
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3816.f, 567.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3837.f, 546.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3858.f, 525.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3879.f, 504.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3900.f, 483.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3921.f, 462.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3942.f, 453.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3963.f, 431.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(3984.f, 410.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM2"], sf::Vector2f(4005.f, 389.f)));
-	this->platforms.push_back(new Platform(this->textures["PLATFORM3"], sf::Vector2f(3972.f, 388.5f)));
+	this->platforms.push_back(new Platform(sf::Vector2f(3816.f, 567.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3837.f, 546.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3858.f, 525.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3879.f, 504.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3900.f, 483.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3921.f, 462.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3942.f, 453.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3963.f, 431.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3984.f, 410.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4005.f, 389.f), sf::Vector2f(225.f, 79.f), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3972.f, 388.5f), sf::Vector2f(465.f, 251.f), "stairL"));
 }
 
 void GameState::initVariables()
@@ -271,9 +271,10 @@ void GameState::spawnEnemies()
 		std::cout << "DONE" << std::endl;
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 300, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 300, rand() % 41 + 500));
+		this->done = true;
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 6 && !this->done /* && !this->moveCamera*/)
@@ -407,7 +408,15 @@ void GameState::updateCollision(const float& dt)
 	for (int i = 0; i < this->platforms.size(); i++)
 	{
 		Platform* platform = this->platforms[i];
-		if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
+		if (platform->getType() == "stairL" || platform->getType() == "stairR")
+		{
+			if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f, platform->getType()))
+			{
+				this->player->onCollision(this->direction, dt);
+				this->player->resetVelocityY();
+			}
+		}
+		else if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
 		{
 			this->player->onCollision(this->direction, dt);
 			this->player->resetVelocityY();
@@ -419,7 +428,7 @@ void GameState::updateCollision(const float& dt)
 		for (auto* bullet : this->bullets)
 		{
 			//PLAYER'S BULLETS collide with PLATFORMS
-			if (platform->getSprite().getGlobalBounds().intersects(bullet->getBounds()))
+			if (platform->getBody().getGlobalBounds().intersects(bullet->getBounds()))
 			{
 				delete this->bullets.at(counter);
 				this->bullets.erase(this->bullets.begin() + counter);
@@ -453,6 +462,7 @@ void GameState::updateItemsCollision(const float& dt)
 	unsigned itemCounter = 0;
 	for (auto* item : this->items)
 	{
+		item->update(dt);
 		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < this->player->getMaxHp() && item->getType() == "HEAL")
 		{
 			delete this->items.at(itemCounter);

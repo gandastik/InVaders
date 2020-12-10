@@ -33,6 +33,10 @@ private:
 	sf::Sprite background;
 	sf::Texture backgroundTexture;
 
+	//Enemy
+	std::vector<Enemy*> enemies;
+	sf::Vector2f enemyDirection;
+
 	//View
 	sf::Vector2f viewPos;
 	float currentCamera;

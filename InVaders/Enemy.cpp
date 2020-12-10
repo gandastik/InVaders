@@ -13,6 +13,7 @@ void Enemy::initVariables()
 	this->onGround = false;
 
 	this->bulletTexture.loadFromFile("Texture/flipped_bullet.png");
+	this->sniperBulletTexture.loadFromFile("Texture/Enemy/sniperBullet.png");
 	this->BossBulletTexture.loadFromFile("Texture/boss_scene/bullet.png");
 	this->shootCooldownMax = 2.f; //in seconds
 	this->shootCooldown = this->shootCooldownMax;
@@ -86,6 +87,19 @@ Enemy::Enemy(sf::Texture* texture, std::string type, float pos_x, float pos_y)
 		this->animationComponent->addAnimation("IDLE", 30.f, 0, 0, 1, 0, 45, 40);
 		this->animationComponent->addAnimation("DEATH", 5.f, 0, 1, 10, 1, 30, 40);
 		this->animationComponent->addAnimation("SHOOTING", 7.f, 0, 2, 4, 2, 61, 40);
+	}
+	if (this->type == "SNIPER")
+	{
+		this->hitbox = new Hitbox(this->sprite, 50, 0, 50, 100);
+		this->hpMax = 2;
+		this->maxVelocityX = 150.f;
+		this->hp = hpMax;
+		this->points = 5;
+		this->bulletSpeed = 6.f;
+		this->shootCooldownMax = 2.25f;
+		this->animationComponent->addAnimation("IDLE", 30.f, 0, 0, 3, 0, 42, 40);
+		this->animationComponent->addAnimation("SHOOTING", 10.f, 0, 1, 4, 1, 50, 40);
+		this->animationComponent->addAnimation("DEATH", 15.f, 0, 2, 5, 2, 50, 50);
 	}
 	if (this->type == "BOSS")
 	{
@@ -252,6 +266,25 @@ void Enemy::updateShooting(Player* player)
 			this->shootTimer.restart();
 		}
 	}
+	if (this->type == "SNIPER")
+	{
+		if (this->velocity.x == 0.f && this->shootTimer.getElapsedTime().asSeconds() >= this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
+		{
+			if (this->isFaceLeft)
+			{
+				this->bullets.push_back(new Bullet(&this->sniperBulletTexture, this->sprite.getPosition().x,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, -1.f, 0.f, this->bulletSpeed));
+			}
+			else
+			{
+				this->bullets.push_back(new Bullet(&this->sniperBulletTexture, this->sprite.getPosition().x + this->sprite.getGlobalBounds().width,
+					this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2.f - 5.f, 1.f, 0.f, this->bulletSpeed));
+			}
+			this->isShooting = true;
+			this->gunShotSound.play();
+			this->shootTimer.restart();
+		}
+	}
 }
 
 Collider Enemy::getCollider()
@@ -359,6 +392,28 @@ void Enemy::updateAnimation(const float& dt)
 			this->animationComponent->play("IDLE", dt);
 		}
 
+		if (this->isShooting)
+		{
+			if (this->animationComponent->play("SHOOTING", dt, true))
+			{
+				this->isShooting = false;
+			}
+		}
+	}
+	if (this->type == "SNIPER")
+	{
+		if (this->isFaceLeft)
+		{
+			this->sprite.setScale(2.5f, 2.5f);
+			this->sprite.setOrigin(0.f, 0.f);
+			this->animationComponent->play("IDLE", dt);
+		}
+		else if (!this->isFaceLeft)
+		{
+			this->sprite.setScale(-2.5f, 2.5f);
+			this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2.5f, 0.f);
+			this->animationComponent->play("IDLE", dt);
+		}
 		if (this->isShooting)
 		{
 			if (this->animationComponent->play("SHOOTING", dt, true))

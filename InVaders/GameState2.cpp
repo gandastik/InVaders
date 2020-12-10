@@ -148,6 +148,38 @@ void GameState2::initPlatform()
 	this->platforms.push_back(new Platform(sf::Vector2f(4025.f, 614.f), sf::Vector2f(48.f, 60.f), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(2802.f, 637.f), sf::Vector2f(1284.f, 209.f), "floor"));
 	this->platforms.push_back(new Platform(sf::Vector2f(2770.f, 611.f), sf::Vector2f(34.f, 30.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(0.f, 69.f), sf::Vector2f(2566.f, 120.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2806.f, 359.f), sf::Vector2f(1097.f, 61.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3761.f, 0.f), sf::Vector2f(136.f, 354.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3839.f, 0.f), sf::Vector2f(1408.f, 248.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6956.f, 0.f), sf::Vector2f(494.f, 248.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(7449.f, 0.f), sf::Vector2f(524.f, 79.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(7970.f, 0.f), sf::Vector2f(197.f, 248.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8154.f, 0.f), sf::Vector2f(327.f, 305.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8475.f, 136.f), sf::Vector2f(138.f, 58.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8858.f, 358.f), sf::Vector2f(138.f, 58.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8987.f, 0.f), sf::Vector2f(257.f, 299.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(9236.f, 86.f), sf::Vector2f(3007.f, 107.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(11221.f, 1610.f), sf::Vector2f(189.f, 249.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8221.f, 792.f), sf::Vector2f(130.f, 223.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8862.f, 848.f), sf::Vector2f(715.f, 173.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10077.f, 855.f), sf::Vector2f(146.f, 166.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2546.f, 840.f), sf::Vector2f(255.f, 180.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2543.f, 1740.f), sf::Vector2f(255.f, 178.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3306.f, 714.f), sf::Vector2f(265.f, 306.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4076.f, 689.f), sf::Vector2f(260.f, 335.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(4843.f, 714.f), sf::Vector2f(443.f, 246.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6952.f, 711.f), sf::Vector2f(502.f, 255.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8229.f, 1637.f), sf::Vector2f(126.f, 278.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(8858.f, 1678.f), sf::Vector2f(136.f, 240.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(10016.f, 1678.f), sf::Vector2f(194.f, 240.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2542.f, 0.f), sf::Vector2f(728.f, 83.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3632.f, 133.f), sf::Vector2f(136.f, 58.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1008.f, 745.f), sf::Vector2f(125.f, 216.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5253.f, 302.f), sf::Vector2f(70.f, 60.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5295.f, 285.f), sf::Vector2f(64.f, 75.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(5235.f, 249.f), sf::Vector2f(80.f, 70.f), "stairR"));
+	this->platforms.push_back(new Platform(sf::Vector2f(6831.f, 249.f), sf::Vector2f(190.f, 54.f), "floor"));
 
 }
 
@@ -165,17 +197,32 @@ void GameState2::initBackground()
 	this->background.setScale(4.f, 3.5f);
 }
 
+void GameState2::initMusic()
+{
+	this->bg_music.openFromFile("Resources/Sound Effects/state2_bg_music.ogg");
+	this->bg_music.setLoop(true);
+	this->bg_music.setVolume(10.f);
+	this->bg_music.play();
+}
+
 void GameState2::initTexture()
 {
-
+	this->textures["BULLET"] = new sf::Texture;
+	this->textures["BULLET"]->loadFromFile("Texture/bullet.png");
+	this->textures["FLIPPED_BULLET"] = new sf::Texture;
+	this->textures["FLIPPED_BULLET"]->loadFromFile("Texture/flipped_bullet.png");
+	this->textures["SNIPER"] = new sf::Texture;
+	this->textures["SNIPER"]->loadFromFile("Texture/Enemy/sniper.png");
 }
 
 void GameState2::initPlayer()
 {
-	this->player->setPosition(0, 0);
+	this->player->setPosition(0, 300);
 	//this->player->setScale(3, 3);
-	this->player->createHitbox(5.f, 10.f, 65.f, 90.f);
+	this->player->createHitbox(25.f, 10.f, 55.f, 90.f);
 	this->player->setJumpForce(450.f);
+
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 1710.f, 382.f));
 }
 
 void GameState2::initView()
@@ -232,6 +279,7 @@ GameState2::GameState2(sf::RenderWindow* window, std::map<std::string, int>* sup
 	this->initTexture();
 	this->initVariables();
 	this->initPlayer();
+	this->initMusic();
 	this->initPlatform();
 	this->initKeybinds();
 	this->initBackground();
@@ -286,7 +334,7 @@ void GameState2::updateViewPosition()
 void GameState2::updateInput(const float& dt)
 {
 	this->checkForQuit();
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && this->player->getIsJump() == false)
 	{
 		if (this->shootTimer.getElapsedTime().asSeconds() >= this->player->getShootCD())
 		{
@@ -299,6 +347,7 @@ void GameState2::updateInput(const float& dt)
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::End))
 	{
+		this->bg_music.stop();
 		this->states->pop();
 		this->states->push(new BossFightState(this->window, this->supportedKeys, this->states, this->view, this->player));
 	}
@@ -311,7 +360,21 @@ void GameState2::updatePlayer(const float& dt)
 
 void GameState2::updateEnemy(const float& dt)
 {
-
+	int temp = 0;
+	for (auto* enemy : this->enemies)
+	{
+		enemy->update(this->player, dt);
+		if (enemy->getHp() <= 0)
+		{
+			if (enemy->getIsDeath())
+			{
+				delete this->enemies.at(temp);
+				this->enemies.erase(this->enemies.begin() + temp);
+				temp--;
+			}
+		}
+		temp++;
+	}
 }
 
 void GameState2::updateCollision(const float& dt)
@@ -325,6 +388,10 @@ void GameState2::updateCollision(const float& dt)
 	if (this->player->getPosition().x + this->player->getGlobalBounds().width >= this->backgroundTexture.getSize().x * 4.f)
 	{
 		this->player->setPosition(this->backgroundTexture.getSize().x - this->player->getGlobalBounds().width, this->player->getPosition().y);
+	}
+	if (this->player->getPosition().y < 0)
+	{
+		this->player->setPosition(this->player->getPosition().x, 0.f);
 	}
 	//Check collision between the PLAYER and PLATFORMS
 	unsigned counter = 0;
@@ -351,7 +418,7 @@ void GameState2::updateCollision(const float& dt)
 		for (auto* bullet : this->bullets)
 		{
 			//PLAYER'S BULLETS collide with PLATFORMS
-			if (platform->getCollider().checkCollision(bullet->getCollider(), bullet->getSprite(), this->direction, 1.f))
+			if (platform->getBody().getGlobalBounds().intersects(bullet->getBounds()))
 			{
 				delete this->bullets.at(counter);
 				this->bullets.erase(this->bullets.begin() + counter);
@@ -390,6 +457,24 @@ void GameState2::updateBullet(const float& dt)
 			--counter;
 			//std::cout << this->bullets.size() << std::endl;
 		}
+		//check if bullet hit the enemy(ies)
+		for (auto* enemy : this->enemies)
+		{
+			if (bullet->getBounds().intersects(enemy->getGlobalBounds()) && enemy->getHp() > 0)
+			{
+				//std::cout << enemy->getHp() << std::endl;
+				enemy->takeDmg(1);
+				////if enemy's hp is 0
+				if (enemy->getHp() == 0)
+				{
+					this->player->addScore(enemy->getPoint());
+				}
+				delete this->bullets.at(counter);
+				this->bullets.erase(this->bullets.begin() + counter);
+				--counter;
+			}
+			//temp++;
+		}
 	}
 	++counter;
 }
@@ -420,6 +505,8 @@ void GameState2::update(const float& dt)
 	}
 
 	this->updateViewPosition();
+
+	this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();
@@ -480,6 +567,11 @@ void GameState2::render(sf::RenderTarget* target)
 	for (auto* bullet : this->bullets)
 	{
 		bullet->render(this->window);
+	}
+
+	for (auto* enemy : this->enemies)
+	{
+		enemy->render(this->window);
 	}
 
 	this->renderPlayer();

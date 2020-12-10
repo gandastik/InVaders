@@ -15,7 +15,10 @@ public:
 
 	Collider getCollider();
 	std::string getType();
-	void render(sf::RenderTarget* target);
+	sf::RectangleShape getBody();
 	sf::Sprite getSprite();
+
+
+	void render(sf::RenderTarget* target);
 };
 

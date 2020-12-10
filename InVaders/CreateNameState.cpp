@@ -134,11 +134,15 @@ void CreateNameState::update(const float& dt)
 				}
 				else
 				{
-					if (this->input.getSize() < 13 && this->nameEvent.text.unicode != 13)
+					if (this->input.getSize() < 12 && this->nameEvent.text.unicode != 13)
 					{
 						if (this->nameEvent.text.unicode >= 97 && this->nameEvent.text.unicode <= 122)
 						{
 							this->nameEvent.text.unicode -= 32;
+						}
+						if (this->nameEvent.text.unicode == 32)
+						{
+							this->nameEvent.text.unicode = 95;
 						}
 						this->input += this->nameEvent.text.unicode;
 						this->nameString += this->nameEvent.text.unicode;

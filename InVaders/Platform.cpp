@@ -36,6 +36,11 @@ std::string Platform::getType()
 	return this->type;
 }
 
+sf::RectangleShape Platform::getBody()
+{
+	return this->body;
+}
+
 void Platform::render(sf::RenderTarget* target)
 {
 	target->draw(body);

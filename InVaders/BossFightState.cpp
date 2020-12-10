@@ -315,7 +315,7 @@ void BossFightState::updateCollision(const float& dt)
 		for (auto* bullet : this->bullets)
 		{
 			//PLAYER'S BULLETS collide with PLATFORMS
-			if (platform->getCollider().checkCollision(bullet->getCollider(), bullet->getSprite(), this->direction, 1.f))
+			if (platform->getBody().getGlobalBounds().intersects(bullet->getBounds()))
 			{
 				delete this->bullets.at(counter);
 				this->bullets.erase(this->bullets.begin() + counter);
