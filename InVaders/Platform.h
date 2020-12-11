@@ -17,6 +17,7 @@ public:
 	std::string getType();
 	sf::RectangleShape getBody();
 	sf::Sprite getSprite();
+	sf::FloatRect getGlobalBounds();
 
 
 	void render(sf::RenderTarget* target);

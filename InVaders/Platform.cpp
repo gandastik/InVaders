@@ -50,3 +50,8 @@ sf::Sprite Platform::getSprite()
 {
 	return this->sprite;
 }
+
+sf::FloatRect Platform::getGlobalBounds()
+{
+	return this->body.getGlobalBounds();
+}

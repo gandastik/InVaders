@@ -268,7 +268,7 @@ void Enemy::updateShooting(Player* player)
 	}
 	if (this->type == "SNIPER")
 	{
-		if (this->velocity.x == 0.f && this->shootTimer.getElapsedTime().asSeconds() >= this->shootCooldownMax && !this->isDeath /*&& this->onGround*/)
+		if (this->velocity.x == 0.f && this->shootTimer.getElapsedTime().asSeconds() >= this->shootCooldownMax && !this->isDeath /*&& this->onGround*/ && abs(this->sprite.getPosition().y - player->getPosition().y) <= 300.f && abs(this->sprite.getPosition().x - player->getPosition().x) <= 600.f)
 		{
 			if (this->isFaceLeft)
 			{

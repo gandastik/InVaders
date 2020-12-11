@@ -42,6 +42,7 @@ void GameState::initVariables()
 	this->score = 0;
 	this->checkPoint = 1;
 	this->done = false;
+	this->isStart = false;
 	this->changeColor = 255;
 	this->door.setSize(sf::Vector2f(75.f, 182.f));
 	this->door.setPosition(12645.f, 413.f);
@@ -174,6 +175,9 @@ GameState::GameState(sf::RenderWindow* window, std::map<std::string, int>* suppo
 	this->initItem();
 	this->initView();
 	this->initGUI();
+
+	this->createTextHolder(this->view->getCenter().x - this->window->getSize().x / 2.f + 500, this->view->getCenter().y - this->window->getSize().y / 2.f + 100,
+		1000, 190.f, "YOUR MISSION IS TO FIND ALLEN O'NEIL \nAND PUT AN END TO HIS LIFE!");
 }
 
 GameState::~GameState()
@@ -207,6 +211,11 @@ GameState::~GameState()
 	for (auto& i : this->soundEffects)
 	{
 		delete i.second;
+	}
+	//delete Text
+	for (auto* i : this->textHolder)
+	{
+		delete i;
 	}
 }
 
@@ -413,13 +422,13 @@ void GameState::updateCollision(const float& dt)
 			if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f, platform->getType()))
 			{
 				this->player->onCollision(this->direction, dt);
-				this->player->resetVelocityY();
+				//this->player->resetVelocityY();
 			}
 		}
 		else if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
 		{
 			this->player->onCollision(this->direction, dt);
-			this->player->resetVelocityY();
+			//this->player->resetVelocityY();
 		}
 		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))
 		{
@@ -455,6 +464,11 @@ void GameState::updateCollision(const float& dt)
 			}
 		}
 	}
+}
+
+void GameState::createTextHolder(float pos_x, float pos_y, float sizeX, float sizeY, sf::String text)
+{
+	this->textHolder.push_back(new TextHolder(pos_x, pos_y, sizeX, sizeY, text));
 }
 
 void GameState::updateItemsCollision(const float& dt)
@@ -541,6 +555,8 @@ void GameState::updateBullet(const float& dt)
 
 void GameState::updateGUI(const float& dt)
 {
+	if (this->player->getHp() > 20)
+		this->player->setHP(this->player->getMaxHp());
 	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
 	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
 	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 10.f, 20.f));
@@ -553,6 +569,17 @@ void GameState::updateGUI(const float& dt)
 
 	this->playerName.setString(this->player->getName());
 	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, 5.f);
+
+	for (auto* text : this->textHolder)
+	{
+		text->update(dt);
+		text->setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 160, this->view->getCenter().y - this->window->getSize().y / 2.f + 80);
+	}
+	if (this->textTimer.getElapsedTime().asSeconds() >= 4.f)
+	{
+		this->isStart = true;
+		this->textHolder.clear();
+	}
 }
 
 void GameState::update(const float& dt)
@@ -588,8 +615,8 @@ void GameState::update(const float& dt)
 	if (this->viewPos.x < this->nextViewPos && this->moveCamera && this->viewPos.x < 12270) this->viewPos.x += 300.f * dt;
 	else this->moveCamera = false;
 	
-
-	this->spawnEnemies();
+	if (this->isStart)
+		this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();
@@ -631,6 +658,14 @@ void GameState::renderGUI()
 
 	this->window->draw(this->scoreText);
 	this->window->draw(this->playerName);
+
+	for (auto* text : this->textHolder)
+	{
+		if (this->textTimer.getElapsedTime().asSeconds() <= 4.f)
+		{
+			text->render(this->window);
+		}
+	}
 }
 
 void GameState::render(sf::RenderTarget* target)

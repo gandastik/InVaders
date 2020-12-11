@@ -71,11 +71,11 @@ void MainMenuState::initKeybinds()
 
 void MainMenuState::initButtons()
 {
-	this->buttons["CREATE_NAME"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, 200, 250, 50, &this->font, "NEW GAME", 40,
+	this->buttons["CREATE_NAME"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, this->view->getCenter().y - this->window->getSize().y / 2.f + 200, 250, 50, &this->font, "NEW GAME", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
-	this->buttons["EXIT_STATE"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, 400, 250, 50, &this->font, "QUIT", 40,
+	this->buttons["EXIT_STATE"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, this->view->getCenter().y - this->window->getSize().y / 2.f + 400, 250, 50, &this->font, "QUIT", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
-	this->buttons["SCORE_BOARD"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, 300, 250, 50, &this->font, "SCORE BOARD", 40,
+	this->buttons["SCORE_BOARD"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 400, this->view->getCenter().y - this->window->getSize().y / 2.f + 300, 250, 50, &this->font, "SCORE BOARD", 40,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
 }
 

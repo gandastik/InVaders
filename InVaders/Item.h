@@ -27,6 +27,9 @@ public:
 	sf::FloatRect getGlobalBounds();
 	const std::string& getType() const;
 
+	//Modifiers
+	void setPosition(float x, float y);
+
 	//Components
 	void createAnimationComponent();
 	void createHitbox(float offset_x, float offset_y, float width, float height);

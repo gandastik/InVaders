@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include "GameOverState.h"
 #include "Item.h"
+#include "EndGameState.h"
 
 class BossFightState:
 	public State
@@ -13,6 +14,8 @@ class BossFightState:
 private:
 	sf::Event ev;
 	bool endgame;
+	bool isIgnore;
+	sf::Clock collisionTimer;
 
 	//Resources
 	sf::Music bg_music;

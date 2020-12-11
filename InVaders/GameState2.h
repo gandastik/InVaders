@@ -9,6 +9,7 @@
 #include "GameOverState.h"
 #include "Item.h"
 #include "BossFightState.h"
+#include "TextHolder.h"
 
 class GameState2 :
 	public State
@@ -28,6 +29,7 @@ private:
 	sf::Font scoreFont;
 	sf::Text scoreText;
 	int score;
+	sf::Sprite KeySprite;
 
 	//Background
 	sf::Sprite background;
@@ -36,6 +38,17 @@ private:
 	//Enemy
 	std::vector<Enemy*> enemies;
 	sf::Vector2f enemyDirection;
+
+	//Items
+	std::vector<Item*> items;
+	
+	//Sound Effects
+	std::map<std::string, sf::SoundBuffer*> soundEffects;
+	sf::Sound pickUpHealthSound;
+	sf::Sound pickUpCoinSound;
+	sf::Sound pickUpPooSound;
+	sf::Sound pickUpChickenSound;
+	sf::Sound openDoorSound;
 
 	//View
 	sf::Vector2f viewPos;
@@ -52,6 +65,14 @@ private:
 	std::vector<Platform*> platforms;
 	sf::Vector2f direction;
 
+	//Door
+	bool haveKey;
+	bool isPressed;
+
+	//Components
+	std::vector<TextHolder*> textHolder;
+	sf::Clock textTimer;
+
 	//Initialization
 	void initPlatform();
 	void initVariables();
@@ -60,6 +81,7 @@ private:
 	void initSoundEffects();
 	void initTexture();
 	void initPlayer();
+	void initEnemy();
 	void initItem();
 	void initView();
 	void initGUI();
@@ -73,6 +95,7 @@ public:
 	//Functions
 	void endState();
 	void spawnEnemies();
+	void createTextHolder(float pos_x, float pos_y, float sizeX, float sizeY, sf::String text);
 
 	//Update
 	void updateViewPosition();

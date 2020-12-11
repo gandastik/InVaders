@@ -83,9 +83,9 @@ void GameOverState::initHighScore()
 
 void GameOverState::initButtons()
 {
-	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 75.f, 560 , 150, 50, &this->font, "NEW GAME", 30,
+	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 75.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 160 , 150, 50, &this->font, "NEW GAME", 30,
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
-	this->buttons["MAIN_MENU"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 170.f, 650, 150, 50, &this->font, "BACK TO MENU", 20,
+	this->buttons["MAIN_MENU"] = new Button(this->view->getCenter().x + this->window->getSize().x / 2.f - 170.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 70, 150, 50, &this->font, "BACK TO MENU", 20,
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 }
 

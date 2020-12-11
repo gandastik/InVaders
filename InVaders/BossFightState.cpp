@@ -276,7 +276,16 @@ void BossFightState::updateEnemy(const float& dt)
 		{
 			if (enemy->getIsDeath() && enemy->getType() == "SOLDIER")
 			{
+				delete this->enemies.at(temp);
+				this->enemies.erase(this->enemies.begin() + temp);
+				temp--;
+			}
+			if (enemy->getIsDeath() && enemy->getType() == "BOSS")
+			{
 				this->endgame = true;
+				this->states->pop();
+				this->states->push(new EndGameState(this->window, this->supportedKeys, this->states, this->view, this->player));
+				this->bg_music.stop();
 				delete this->enemies.at(temp);
 				this->enemies.erase(this->enemies.begin() + temp);
 				temp--;
@@ -303,10 +312,15 @@ void BossFightState::updateCollision(const float& dt)
 	for (int i = 0; i < this->platforms.size(); i++)
 	{
 		Platform* platform = this->platforms[i];
-		if (platform->getCollider().checkCollision(this->player->getCollider(),this->player->getSprite(), this->direction, 1.f))
+		if (platform->getCollider().checkCollision(this->player->getCollider(),this->player->getSprite(), this->direction, 1.f, this->isIgnore))
 		{
 			this->player->onCollision(this->direction, dt);
-			this->player->resetVelocityY();
+			//this->player->resetVelocityY();
+			if (this->collisionTimer.getElapsedTime().asMilliseconds() >= 100)
+			{
+				this->isIgnore = false;
+				this->collisionTimer.restart();
+			}
 		}
 		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))
 		{

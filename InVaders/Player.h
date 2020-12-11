@@ -109,6 +109,7 @@ public:
 	void addScore(int x);
 	void setName(std::string name);
 	void setJumpForce(float x);
+	void setHP(int x);
 
 	//Components
 	void creatAnimationComponent();

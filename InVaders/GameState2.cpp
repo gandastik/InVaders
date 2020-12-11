@@ -180,6 +180,9 @@ void GameState2::initPlatform()
 	this->platforms.push_back(new Platform(sf::Vector2f(5295.f, 285.f), sf::Vector2f(64.f, 75.f), "stairR"));
 	this->platforms.push_back(new Platform(sf::Vector2f(5235.f, 249.f), sf::Vector2f(80.f, 70.f), "stairR"));
 	this->platforms.push_back(new Platform(sf::Vector2f(6831.f, 249.f), sf::Vector2f(190.f, 54.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(12187.f, 249.f), sf::Vector2f(36.f, 224.f), "door"));
+	this->platforms.push_back(new Platform(sf::Vector2f(12239.f, 1733.f), sf::Vector2f(151.f, 471.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(12247.f, 241.f), sf::Vector2f(142.f, 263.f), "floor"));
 
 }
 
@@ -187,6 +190,8 @@ void GameState2::initVariables()
 {
 	this->score = 0;
 	this->changeColor = 255;
+	this->haveKey = false;
+	this->isPressed = false;
 }
 
 void GameState2::initBackground()
@@ -205,6 +210,31 @@ void GameState2::initMusic()
 	this->bg_music.play();
 }
 
+void GameState2::initSoundEffects()
+{
+	this->soundEffects["PICKUP_COIN"] = new sf::SoundBuffer;
+	this->soundEffects["PICKUP_COIN"]->loadFromFile("Resources/Sound Effects/pick_up_coin.wav");
+	this->soundEffects["PICKUP_POO"] = new sf::SoundBuffer;
+	this->soundEffects["PICKUP_POO"]->loadFromFile("Resources/Sound Effects/pick_up_poo.wav");
+	this->soundEffects["PICKUP_CHICKEN"] = new sf::SoundBuffer;
+	this->soundEffects["PICKUP_CHICKEN"]->loadFromFile("Resources/Sound Effects/pick_up_chicken.wav");
+	this->soundEffects["PICKUP_HEALTH"] = new sf::SoundBuffer;
+	this->soundEffects["PICKUP_HEALTH"]->loadFromFile("Resources/Sound Effects/pick_up_item.wav");
+	this->soundEffects["DOOR_OPEN"] = new sf::SoundBuffer;
+	this->soundEffects["DOOR_OPEN"]->loadFromFile("Resources/Sound Effects/door_lock.wav");
+
+	this->pickUpCoinSound.setBuffer(*this->soundEffects["PICKUP_COIN"]);
+	this->pickUpCoinSound.setVolume(10.f);
+	this->pickUpPooSound.setBuffer(*this->soundEffects["PICKUP_POO"]);
+	this->pickUpPooSound.setVolume(10.f);
+	this->pickUpChickenSound.setBuffer(*this->soundEffects["PICKUP_CHICKEN"]);
+	this->pickUpChickenSound.setVolume(10.f);
+	this->pickUpHealthSound.setBuffer(*this->soundEffects["PICKUP_HEALTH"]);
+	this->pickUpHealthSound.setVolume(10.f);
+	this->openDoorSound.setBuffer(*this->soundEffects["DOOR_OPEN"]);
+	this->openDoorSound.setVolume(15.f);
+}
+
 void GameState2::initTexture()
 {
 	this->textures["BULLET"] = new sf::Texture;
@@ -213,6 +243,16 @@ void GameState2::initTexture()
 	this->textures["FLIPPED_BULLET"]->loadFromFile("Texture/flipped_bullet.png");
 	this->textures["SNIPER"] = new sf::Texture;
 	this->textures["SNIPER"]->loadFromFile("Texture/Enemy/sniper.png");
+	this->textures["HEALTH"] = new sf::Texture;
+	this->textures["HEALTH"]->loadFromFile("Texture/Item/healthPack.png");
+	this->textures["COIN"] = new sf::Texture;
+	this->textures["COIN"]->loadFromFile("Texture/Item/coin.png");
+	this->textures["POO"] = new sf::Texture;
+	this->textures["POO"]->loadFromFile("Texture/Item/poo.png");
+	this->textures["CHICKEN"] = new sf::Texture;
+	this->textures["CHICKEN"]->loadFromFile("Texture/Item/chicken.png");
+	this->textures["KEY"] = new sf::Texture;
+	this->textures["KEY"]->loadFromFile("Texture/Item/key.png");
 }
 
 void GameState2::initPlayer()
@@ -221,8 +261,64 @@ void GameState2::initPlayer()
 	//this->player->setScale(3, 3);
 	this->player->createHitbox(25.f, 10.f, 55.f, 90.f);
 	this->player->setJumpForce(450.f);
+}
 
+void GameState2::initEnemy()
+{
 	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 1710.f, 382.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 88.f, 2045.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 347.f, 2040.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 3131.f, 2096.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 4627.f, 1199.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 3149.f, 1199.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 6436.f, 545.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 5883.f, 542.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 12104.f, 2049.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 11863.f, 2044.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 6550.f, 2119.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 6703.f, 2119.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 9850.f, 2100.f));
+}
+
+void GameState2::initItem()
+{
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 100, 1840));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 1040, 1073));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 550, 320));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 590, 320));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 630, 320));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 1505, 849));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 1505, 537));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 3500, 150));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 1505, 1363));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 1505, 1748));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 3800, 1384));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 3800, 1607));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 3800, 1804));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 7703, 693));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 7703, 1499));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 8717, 100));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 11140, 1040));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 10706, 1868));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 10706, 1568));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 10706, 1268));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 10706, 968));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 10706, 668));
+	this->items.push_back(new Item(this->textures["COIN"], "COIN", 10706, 368));
+	this->items.push_back(new Item(this->textures["POO"], "POO", 1410, 2135));
+	this->items.push_back(new Item(this->textures["POO"], "POO", 1460, 2135));
+	this->items.push_back(new Item(this->textures["POO"], "POO", 1510, 2135));
+	this->items.push_back(new Item(this->textures["POO"], "POO", 1560, 2135));
+	this->items.push_back(new Item(this->textures["POO"], "POO", 1610, 2135));
+	this->items.push_back(new Item(this->textures["POO"], "POO", 7686, 2193));
+	this->items.push_back(new Item(this->textures["CHICKEN"], "CHICKEN", 1857, 1238));
+	this->items.push_back(new Item(this->textures["CHICKEN"], "CHICKEN", 3647, 295));
+	this->items.push_back(new Item(this->textures["CHICKEN"], "CHICKEN", 6632, 2020));
+
+
+
+
+	this->items.push_back(new Item(this->textures["KEY"], "KEY", 5655, 1983));
 }
 
 void GameState2::initView()
@@ -279,12 +375,18 @@ GameState2::GameState2(sf::RenderWindow* window, std::map<std::string, int>* sup
 	this->initTexture();
 	this->initVariables();
 	this->initPlayer();
+	this->initEnemy();
 	this->initMusic();
+	this->initSoundEffects();
 	this->initPlatform();
 	this->initKeybinds();
 	this->initBackground();
+	this->initItem();
 	this->initView();
 	this->initGUI();
+
+	this->createTextHolder(this->view->getCenter().x - this->window->getSize().x / 2.f + 5 , this->view->getCenter().y + this->window->getSize().y / 2.f - 200, 
+						this->window->getSize().x - 10, 190.f, "FIND A KEY! TO PROCEED THE MISSION");
 }
 
 GameState2::~GameState2()
@@ -299,10 +401,30 @@ GameState2::~GameState2()
 	{
 		delete bullet;
 	}
-	//delete bullets
-	for (auto* bullet : this->bullets)
+	//delete platforms
+	for (auto* platform : this->platforms)
 	{
-		delete bullet;
+		delete platform;
+	}
+	//delete Enemies
+	for (auto* enemy : this->enemies)
+	{
+		delete enemy;
+	}
+	//delete Items
+	for (auto* item : this->items)
+	{
+		delete item;
+	}
+	//delete Sound Effects
+	for (auto& i : this->soundEffects)
+	{
+		delete i.second;
+	}
+	//delete Text
+	for (auto* text : this->textHolder)
+	{
+		delete text;
 	}
 }
 
@@ -313,6 +435,11 @@ void GameState2::endState()
 
 void GameState2::spawnEnemies()
 {
+}
+
+void GameState2::createTextHolder(float pos_x, float pos_y, float sizeX, float sizeY, sf::String text)
+{
+	this->textHolder.push_back(new TextHolder(pos_x, pos_y, sizeX, sizeY, text));
 }
 
 void GameState2::updateViewPosition()
@@ -406,6 +533,25 @@ void GameState2::updateCollision(const float& dt)
 				this->player->resetVelocityY();
 			}
 		}
+		else if (platform->getType() == "door")
+		{
+			if (platform->getGlobalBounds().intersects(this->player->getGlobalBounds()))
+			{
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && this->haveKey)
+				{
+					this->openDoorSound.play();
+					this->bg_music.stop();
+					this->states->pop();
+					this->states->push(new BossFightState(this->window, this->supportedKeys, this->states, this->view, this->player));
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !this->haveKey && !this->isPressed)
+				{
+					this->createTextHolder(this->view->getCenter().x - this->window->getSize().x / 2.f + 5, this->view->getCenter().y + this->window->getSize().y / 2.f - 200, this->window->getSize().x - 10.f, 190.f, "* THE DOOR IS LOCK!");
+					this->textTimer.restart();
+					this->isPressed = true;
+				}
+			}
+		}
 		else if (platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
 		{
 			this->player->onCollision(this->direction, dt);
@@ -431,6 +577,57 @@ void GameState2::updateCollision(const float& dt)
 
 void GameState2::updateItemsCollision(const float& dt)
 {
+	unsigned itemCounter = 0;
+	for (auto* item : this->items)
+	{
+		item->update(dt);
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < this->player->getMaxHp() && item->getType() == "HEAL")
+		{
+			delete this->items.at(itemCounter);
+			this->player->heal(1);
+			this->items.erase(this->items.begin() + itemCounter);
+			this->pickUpHealthSound.play();
+			--itemCounter;
+		}
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && item->getType() == "COIN")
+		{
+			delete this->items.at(itemCounter);
+			this->player->addScore(2.f);
+			this->items.erase(this->items.begin() + itemCounter);
+			this->pickUpCoinSound.play();
+			--itemCounter;
+		}
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && item->getType() == "POO")
+		{
+			delete this->items.at(itemCounter);
+			this->player->takeDmg(5);
+			this->items.erase(this->items.begin() + itemCounter);
+			this->pickUpPooSound.play();
+			--itemCounter;
+		}
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && item->getType() == "CHICKEN")
+		{
+			delete this->items.at(itemCounter);
+			this->player->addScore(10);
+			this->player->heal(2);
+			this->items.erase(this->items.begin() + itemCounter);
+			this->pickUpChickenSound.play();
+			--itemCounter;
+		}
+		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && item->getType() == "KEY")
+		{
+			delete this->items.at(itemCounter);
+			this->haveKey = true;
+			this->items.erase(this->items.begin() + itemCounter);
+			this->pickUpCoinSound.play();
+			this->KeySprite.setTexture(*this->textures["KEY"]);
+			this->createTextHolder(this->view->getCenter().x - this->window->getSize().x / 2.f + 5, this->view->getCenter().y + this->window->getSize().y / 2.f - 200, this->window->getSize().x - 10.f, 190.f, "YOU HAVE FOUND A KEY!\n* NOW YOU NEED TO FIND A DOOR!");
+			this->textTimer.restart();
+			this->KeySprite.setTextureRect({ 0, 0, 14, 21 });
+			--itemCounter;
+		}
+		++itemCounter;
+	}
 }
 
 void GameState2::updateBullet(const float& dt)
@@ -468,6 +665,8 @@ void GameState2::updateBullet(const float& dt)
 				if (enemy->getHp() == 0)
 				{
 					this->player->addScore(enemy->getPoint());
+					if (enemy->getIsDrop())
+						this->items.push_back(new Item(this->textures["HEALTH"], "HEAL", enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
 				}
 				delete this->bullets.at(counter);
 				this->bullets.erase(this->bullets.begin() + counter);
@@ -481,7 +680,8 @@ void GameState2::updateBullet(const float& dt)
 
 void GameState2::updateGUI(const float& dt)
 {
-
+	if (this->player->getHp() > 20)
+		this->player->setHP(this->player->getMaxHp());
 	this->hpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
 	this->hpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 35.f);
 	this->hpBar.setSize(sf::Vector2f(this->player->getHp() * 10.f, 20.f));
@@ -495,6 +695,19 @@ void GameState2::updateGUI(const float& dt)
 	this->playerName.setString(this->player->getName());
 	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 5.f);
 
+	this->KeySprite.setScale(1.5f, 1.5f);
+	this->KeySprite.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 20.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 60.f);
+
+	for (auto* text : this->textHolder)
+	{
+		text->update(dt);
+		text->setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 5, this->view->getCenter().y + this->window->getSize().y / 2.f - 200);
+	}
+	if (this->textTimer.getElapsedTime().asSeconds() >= 4.f)
+	{
+		this->textHolder.clear();
+		this->isPressed = false;
+	}
 }
 
 void GameState2::update(const float& dt)
@@ -528,7 +741,7 @@ void GameState2::update(const float& dt)
 		this->states->push(new GameOverState(this->window, this->supportedKeys, this->states, this->view, this->player));
 		this->bg_music.stop();
 	}
-
+	
 }
 
 void GameState2::renderPlayer()
@@ -547,6 +760,16 @@ void GameState2::renderGUI()
 
 	this->window->draw(this->scoreText);
 	this->window->draw(this->playerName);
+
+	this->window->draw(this->KeySprite);
+
+	for (auto* text : this->textHolder)
+	{
+		if (this->textTimer.getElapsedTime().asSeconds() <= 4.f)
+		{
+			text->render(this->window);
+		}
+	}
 }
 
 void GameState2::render(sf::RenderTarget* target)
@@ -563,6 +786,11 @@ void GameState2::render(sf::RenderTarget* target)
 	}*/
 
 	this->window->draw(this->background);
+
+	for (auto* item : this->items)
+	{
+		item->render(this->window);
+	}
 
 	for (auto* bullet : this->bullets)
 	{

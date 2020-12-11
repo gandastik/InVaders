@@ -10,7 +10,7 @@ void CreateNameState::initVariables()
 	this->textHolder.setSize(sf::Vector2f(200.f, 50.f));
 	this->textHolder.setOutlineThickness(2.f);
 	this->textHolder.setOutlineColor(sf::Color::White);
-	this->textHolder.setPosition(sf::Vector2f(this->view->getCenter().x - 110, 300.f));
+	this->textHolder.setPosition(sf::Vector2f(this->view->getCenter().x - 110, this->view->getCenter().y - this->window->getSize().y / 2.f + 300.f));
 }
 
 void CreateNameState::initMusic()
@@ -34,7 +34,7 @@ void CreateNameState::initText()
 	this->input = "";
 	this->text.setFont(this->font);
 	this->text.setCharacterSize(25.f);
-	this->text.setPosition(sf::Vector2f(this->view->getCenter().x - 100, 310.f));
+	this->text.setPosition(sf::Vector2f(this->view->getCenter().x - 100, this->view->getCenter().y - this->window->getSize().y / 2.f + 310.f));
 }
 
 void CreateNameState::initKeybinds()
@@ -56,7 +56,7 @@ void CreateNameState::initKeybinds()
 
 void CreateNameState::initButtons()
 {
-	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 100, 400, 200, 50, &this->font, "START GAME", 30,
+	this->buttons["GAME_STATE"] = new Button(this->view->getCenter().x - 100, this->view->getCenter().y - this->window->getSize().y / 2.f + 400, 200, 50, &this->font, "START GAME", 30,
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0));
 }
 

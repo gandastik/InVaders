@@ -10,6 +10,7 @@
 #include "Item.h"
 #include "BossFightState.h"
 #include "GameState2.h"
+#include "TextHolder.h"
 
 class GameState :
 	public State
@@ -30,6 +31,9 @@ private:
 	sf::Text scoreText;
 	int score;
 
+	std::vector<TextHolder*> textHolder;
+	sf::Clock textTimer;
+
 	//Background
 	sf::Sprite background;
 	sf::Texture backgroundTexture;
@@ -48,6 +52,7 @@ private:
 	sf::Vector2f enemyDirection;
 	int checkPoint;
 	bool done;
+	bool isStart;
 
 	//Bullets
 	std::map<std::string, sf::Texture*> textures;
@@ -86,10 +91,11 @@ public:
 	//Constructure & Destructure
 	GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys, std::stack<State*>* states, sf::View* view, Player* player);
 	virtual ~GameState();
-
+	
 	//Functions
 	void endState();
 	void spawnEnemies();
+	void createTextHolder(float pos_x, float pos_y, float sizeX, float sizeY, sf::String text);
 
 	//Update
 	void updateInput(const float& dt);

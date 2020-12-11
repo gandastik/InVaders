@@ -42,14 +42,14 @@ void Player::initSoundEffects()
 	if (!this->takeDmgsfx.loadFromFile("Resources/Sound Effects/player_take_dmg.wav"))
 		std::cout << "ERROR::PLAYER::COULD NOT LOAD FROM FILE PLAYER_TAKE_DMG" << std::endl;
 	this->takeDmgSound.setBuffer(this->takeDmgsfx);
-	this->takeDmgSound.setVolume(30.f);
+	this->takeDmgSound.setVolume(25.f);
 }
 
 void Player::initPhysics()
 {
 	this->velocityMax = 3000.f;
 	this->velocityMin = 1.f;
-	this->acceleration = 50.f;
+	this->acceleration = 100.f;
 	this->drag = 0.90f;
 	this->gravity = 7500.f;
 	this->velocityMaxY = 1000.f;
@@ -251,6 +251,11 @@ void Player::setJumpForce(float x)
 	this->jumpForce = x;
 }
 
+void Player::setHP(int x)
+{
+	this->hp = x;
+}
+
 //Functions
 
 void Player::move(const float& dt, const float dir_x, const float dir_y)
@@ -312,7 +317,7 @@ void Player::onCollision(sf::Vector2f direction, float dt)
 	else if (direction.y > 0.f)
 	{
 		//Collision on the top
-		//this->velocity.y = 0.f;
+		this->velocity.y = 0.f;
 	}
 }
 
@@ -471,5 +476,5 @@ void Player::render(sf::RenderTarget* target)
 {
 	target->draw(*this->sprite);
 	
-	this->hitbox->render(*target);
+	//this->hitbox->render(*target);
 }

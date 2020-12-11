@@ -18,6 +18,7 @@ public:
 
 	void move(float dx, float dy);
 	bool checkCollision(Collider other, sf::Sprite& spriteOther, sf::Vector2f& direction, float push);
+	bool checkCollision(Collider other, sf::Sprite& spriteOther, sf::Vector2f& direction, float push, bool& isIgnore);
 	bool checkCollision(Collider other, sf::Sprite& spriteOther, sf::Vector2f& direction, float push, std::string type);
 };
 
