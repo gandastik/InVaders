@@ -53,6 +53,7 @@ private:
 	int checkPoint;
 	bool done;
 	bool isStart;
+	bool isGo;
 
 	//Bullets
 	std::map<std::string, sf::Texture*> textures;
@@ -73,6 +74,7 @@ private:
 
 	//Boss fight
 	sf::RectangleShape door;
+	int opacity;
 
 	//Initialization
 	void initPlatform();

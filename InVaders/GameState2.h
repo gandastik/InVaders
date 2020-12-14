@@ -35,6 +35,9 @@ private:
 	sf::Sprite background;
 	sf::Texture backgroundTexture;
 
+	//Player
+	sf::Clock meleeCooldown;
+
 	//Enemy
 	std::vector<Enemy*> enemies;
 	sf::Vector2f enemyDirection;
@@ -49,6 +52,7 @@ private:
 	sf::Sound pickUpPooSound;
 	sf::Sound pickUpChickenSound;
 	sf::Sound openDoorSound;
+	sf::Sound meleeSound;
 
 	//View
 	sf::Vector2f viewPos;

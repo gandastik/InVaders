@@ -1,5 +1,5 @@
-﻿  Game.cpp
-D:\kk\Code\InVaders\InVaders\Game.cpp(104,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+﻿  GameState.cpp
+D:\kk\Code\InVaders\InVaders\GameState.cpp(120,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=unsigned int
@@ -8,7 +8,7 @@ D:\kk\Code\InVaders\InVaders\Game.cpp(104,46): warning C4244: '=': conversion fr
           [
               T=float
           ]
-D:\kk\Code\InVaders\InVaders\Game.cpp(105,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(121,46): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=unsigned int
@@ -17,20 +17,77 @@ D:\kk\Code\InVaders\InVaders\Game.cpp(105,46): warning C4244: '=': conversion fr
           [
               T=float
           ]
-D:\kk\Code\InVaders\InVaders\Game.cpp(106,78): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(122,85): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
+          [
+              T=unsigned int
+          ]
+          and
           [
               T=float
           ]
-D:\kk\Code\InVaders\InVaders\Game.cpp(106,52): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(122,58): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
+          [
+              T=unsigned int
+          ]
+          and
           [
               T=float
           ]
-D:\kk\Code\InVaders\InVaders\Game.cpp(223,20): warning C4018: '<': signed/unsigned mismatch
+D:\kk\Code\InVaders\InVaders\GameState.cpp(148,35): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(156,36): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(239,163): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(240,169): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(241,169): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(242,169): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(243,169): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(250,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(251,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(252,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(253,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(254,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(255,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(262,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(263,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(264,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(265,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(266,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(281,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(282,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(283,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(284,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(285,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(292,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(293,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(294,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(295,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(296,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(303,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(304,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(305,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(306,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(307,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(314,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(315,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(316,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(317,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(324,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(325,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(326,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(327,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(334,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(335,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(336,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(343,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(344,165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(345,171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(417,20): warning C4018: '<': signed/unsigned mismatch
+D:\kk\Code\InVaders\InVaders\GameState.cpp(565,85): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\kk\Code\InVaders\InVaders\GameState.cpp(678,20): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  3 of 834 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+  4 of 1447 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+    13 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   InVaders.vcxproj -> D:\kk\Code\InVaders\Release\InVaders.exe

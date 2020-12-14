@@ -15,7 +15,7 @@ void EndGameState::initMusic()
 
 void EndGameState::initBackground()
 {
-	if (!this->backgroundTexture.loadFromFile("Resources/you_win_bg.jpg"))
+	if (!this->backgroundTexture.loadFromFile("Resources/youwin.png"))
 	{
 		std::cout << "ERROR::GAME_OVER_STATE::COULD NOT LOAD FROM FILE GAMEOVER" << std::endl;
 	}
@@ -32,7 +32,7 @@ void EndGameState::initBackground()
 
 void EndGameState::initFonts()
 {
-	if (!this->font.loadFromFile("Fonts/DTM-Mono.otf"))
+	if (!this->font.loadFromFile("Fonts/04font.ttf"))
 	{
 		std::cout << "ERROR::GAME_OVER_STATE::COULD NOT LOAD FROM FILE 04FONT" << std::endl;
 	}
@@ -154,6 +154,7 @@ void EndGameState::render(sf::RenderTarget* target)
 	if (!target)
 		target = this->window;
 
-	target->draw(this->text);
+	//target->draw(this->text);
+	target->draw(this->background);
 	this->renderButtons(target);
 }

@@ -37,12 +37,14 @@ void MainMenuState::initFonts()
 	{
 		std::cout << "ERROR::MAINMENUSTATE::COULD NOT LOAD FONT!" << std::endl;
 	}
+	if (!this->gameTitleFont.loadFromFile("Fonts/04font.ttf"))
+		std::cout << "ERROR::MAINMENUSTATE::COULD NOT LOAD FONT!" << std::endl;
+	if (!this->nameFont.loadFromFile("Fonts/DTM-mono.otf"))
+		std::cout << "ERROR::MAINMENUSTATE::COULD NOT LOAD FONT!" << std::endl;
 }
 
 void MainMenuState::initText()
 {
-	if (!this->gameTitleFont.loadFromFile("Fonts/04font.ttf"))
-		std::cout << "ERROR::MAINMENUSTATE::COULD NOT LOAD FONT!" << std::endl;
 	this->gameTitle.setFont(this->gameTitleFont);
 	this->gameTitle.setCharacterSize(60.f);
 	this->gameTitle.setLetterSpacing(1.6f);
@@ -50,6 +52,14 @@ void MainMenuState::initText()
 	this->gameTitle.setOutlineColor(sf::Color::Black);
 	this->gameTitle.setPosition( this->view->getCenter().x - this->window->getSize().x / 2.f + 50.f, this->view->getCenter().y - this->window->getSize().y / 2.f + 50.f);
 	this->gameTitle.setString("METAL\nSLAUGTHER");
+
+	this->name.setFont(this->nameFont);
+	this->name.setStyle(sf::Text::Bold);
+	this->name.setCharacterSize(20.f);
+	this->name.setOutlineThickness(1.f);
+	this->name.setOutlineColor(sf::Color::Black);
+	this->name.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - 420.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 30.f);
+	this->name.setString("63010035 KITSADANG SAWANGSIRIPOL");
 }
 
 void MainMenuState::initKeybinds()
@@ -172,4 +182,5 @@ void MainMenuState::render(sf::RenderTarget* target)
 
 	target->draw(this->gameTitle);
 	
+	target->draw(this->name);
 }

@@ -43,9 +43,11 @@ void GameState::initVariables()
 	this->checkPoint = 1;
 	this->done = false;
 	this->isStart = false;
+	this->isGo = false;
+	this->opacity = 0;
 	this->changeColor = 255;
-	this->door.setSize(sf::Vector2f(75.f, 182.f));
-	this->door.setPosition(12645.f, 413.f);
+	this->door.setSize(sf::Vector2f(25.f, 182.f));
+	this->door.setPosition(12655.f, 413.f);
 }
 
 void GameState::initBackground()
@@ -101,11 +103,13 @@ void GameState::initTexture()
 	this->textures["HEALTH"]->loadFromFile("Texture/Item/healthPack.png");
 	this->textures["BONUS"] = new sf::Texture;
 	this->textures["BONUS"]->loadFromFile("Texture/Item/bonus.png");
+	this->textures["GO"] = new sf::Texture;
+	this->textures["GO"]->loadFromFile("Resources/GUI/GO.png");
 }
 
 void GameState::initPlayer()
 {
-
+	this->player->setPosition(0, 450);
 }
 
 void GameState::initItem()
@@ -236,11 +240,11 @@ void GameState::spawnEnemies()
 	if (this->checkPoint == 1 && !this->done)
 	{
 		std::cout << "DONE" << std::endl;
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x), rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 100, rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 200, rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 300, rand() % 41 + 500));
-		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->viewPos.x) + 400, rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 500 + static_cast<int>(this->viewPos.x + this->window->getSize().x / 2.f), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 500 + static_cast<int>(this->viewPos.x + this->window->getSize().x / 2.f), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 500 + static_cast<int>(this->viewPos.x + this->window->getSize().x / 2.f), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 500 + static_cast<int>(this->viewPos.x + this->window->getSize().x / 2.f), rand() % 41 + 500));
+		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 500 + static_cast<int>(this->viewPos.x + this->window->getSize().x / 2.f), rand() % 41 + 500));
 		this->done = true;
 		this->checkPoint++;
 	}
@@ -253,7 +257,18 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 300, rand() % 41 + 500));
+		this->isGo = false;
 		this->done = true;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 3 && !this->done /*&& !this->moveCamera*/)
@@ -265,6 +280,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 4 && !this->done /* && !this->moveCamera*/)
@@ -273,6 +299,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", 4180.f, 300.f));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", 4290.f, 300.f));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 5 && !this->done /* && !this->moveCamera*/)
@@ -284,6 +321,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 300, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 300, rand() % 41 + 500));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 6 && !this->done /* && !this->moveCamera*/)
@@ -295,6 +343,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 7 && !this->done /* && !this->moveCamera*/)
@@ -306,6 +365,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 8 && !this->done /* && !this->moveCamera*/)
@@ -316,6 +386,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 200, rand() % 41 + 500));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 9 && !this->done /* && !this->moveCamera*/)
@@ -326,6 +407,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 10 && !this->done /* && !this->moveCamera*/)
@@ -335,6 +427,17 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->done = true;
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 	if (this->checkPoint == 11 && !this->done /* && !this->moveCamera*/)
@@ -344,6 +447,22 @@ void GameState::spawnEnemies()
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos), rand() % 41 + 500));
 		this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % this->window->getSize().x / 2.f + static_cast<int>(this->nextViewPos) + 100, rand() % 41 + 500));
 		this->done = true;
+		this->createTextHolder(this->view->getCenter().x - this->window->getSize().x / 2.f + 500, this->view->getCenter().y - this->window->getSize().y / 2.f + 100,
+			1000, 190.f, "YOU FOUND A DOOR!\n*PRESS UPPER ARROW TO GET IN");
+
+		
+		this->textTimer.restart();
+		this->isGo = false;
+		int i = 0;
+		for (auto* item : this->items)
+		{
+			if (item->getType() == "GO")
+			{
+				delete this->items.at(i);
+				this->items.erase(this->items.begin() + i);
+			}
+			i++;
+		}
 		this->checkPoint++;
 	}
 }
@@ -430,7 +549,7 @@ void GameState::updateCollision(const float& dt)
 			this->player->onCollision(this->direction, dt);
 			//this->player->resetVelocityY();
 		}
-		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))
+		else if (!platform->getCollider().checkCollision(this->player->getCollider(), this->player->getSprite(), this->direction, 1.f))
 		{
 			this->player->setOnGround(0);
 		}
@@ -533,24 +652,18 @@ void GameState::updateBullet(const float& dt)
 				if (enemy->getHp() == 0)
 				{
 					this->player->addScore(enemy->getPoint());
-					if(enemy->getIsDrop())
+					if (enemy->getIsDrop())
 						this->items.push_back(new Item(this->textures["HEALTH"], "HEAL", enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
-				//	if (enemy->getIsDeath())
-				//	{
-				//		delete this->enemies.at(temp);
-				//		this->enemies.erase(this->enemies.begin() + temp);
-				//		temp--;
-				//	}
 				}
-				delete this->bullets.at(counter);
-				this->bullets.erase(this->bullets.begin() + counter);
-				--counter;
+					delete this->bullets.at(counter);
+					this->bullets.erase(this->bullets.begin() + counter);
+					--counter;
 			}
 			//temp++;
 		}
-		++counter;
+		
 	}
-	
+	++counter;
 }
 
 void GameState::updateGUI(const float& dt)
@@ -570,6 +683,15 @@ void GameState::updateGUI(const float& dt)
 	this->playerName.setString(this->player->getName());
 	this->playerName.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 10.f, 5.f);
 
+	//Door
+	if (this->opacity > 255)
+	{
+		this->opacity = 0;
+	}
+	this->door.setFillColor(sf::Color(255, 255, 255, this->opacity));
+	this->opacity+=5;
+
+	//Text Holder
 	for (auto* text : this->textHolder)
 	{
 		text->update(dt);
@@ -579,6 +701,13 @@ void GameState::updateGUI(const float& dt)
 	{
 		this->isStart = true;
 		this->textHolder.clear();
+	}
+
+	//Go signs
+	if (this->enemies.empty() && !this->isGo)
+	{
+		this->items.push_back(new Item(this->textures["GO"], "GO", this->view->getCenter().x + this->window->getSize().x / 2.f - 150.f, this->view->getCenter().y - this->window->getSize().y /2.f + 50.f));
+		this->isGo = true;
 	}
 }
 
@@ -615,8 +744,7 @@ void GameState::update(const float& dt)
 	if (this->viewPos.x < this->nextViewPos && this->moveCamera && this->viewPos.x < 12270) this->viewPos.x += 300.f * dt;
 	else this->moveCamera = false;
 	
-	if (this->isStart)
-		this->spawnEnemies();
+	//this->spawnEnemies();
 
 	this->window->setView(*this->view);
 	this->updateMousePosition();
@@ -624,9 +752,9 @@ void GameState::update(const float& dt)
 	this->updateCollision(dt);
 	this->updateItemsCollision(dt);
 	this->updateBullet(dt);
+	this->updateEnemy(dt);
 	this->updatePlayer(dt);
 	
-	this->updateEnemy(dt);
 
 	this->updateGUI(dt);
 

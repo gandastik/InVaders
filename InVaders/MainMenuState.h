@@ -17,6 +17,8 @@ private:
 	sf::Font font;
 	sf::Font gameTitleFont;
 	sf::Text gameTitle;
+	sf::Font nameFont;
+	sf::Text name;
 
 	std::map<std::string, Button*> buttons;
 

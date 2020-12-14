@@ -20,5 +20,4 @@
 #include<SFML/Window.hpp>
 #include<SFML/System.hpp>
 
-#include "Collision.h"
 

@@ -51,7 +51,11 @@ void BossFightState::initSoundEffects()
 	this->soundEffects["PICKUP_SOUND"]->loadFromFile("Resources/Sound Effects/pick_up_item.wav");
 	this->soundEffects["PICKUP_BONUS_SOUND"] = new sf::SoundBuffer;
 	this->soundEffects["PICKUP_BONUS_SOUND"]->loadFromFile("Resources/Sound Effects/power_up.wav");
+	this->soundEffects["MELEE_SOUND"] = new sf::SoundBuffer;
+	this->soundEffects["MELEE_SOUND"]->loadFromFile("Resources/Sound Effects/melee.wav");
 
+	this->meleeSound.setBuffer(*this->soundEffects["MELEE_SOUND"]);
+	this->meleeSound.setVolume(10.f);
 	this->pickUpItemSound.setBuffer(*this->soundEffects["PICKUP_SOUND"]);
 	this->pickUpItemSound.setVolume(10.f);
 	this->pickUpBonusItemSound.setBuffer(*this->soundEffects["PICKUP_BONUS_SOUND"]);
@@ -238,7 +242,7 @@ void BossFightState::spawnEnemy()
 void BossFightState::updateInput(const float& dt)
 {
 	this->checkForQuit();
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && this->player->getIsJump() == false)
 	{
 		if (this->shootTimer.getElapsedTime().asSeconds() >= this->player->getShootCD())
 		{
@@ -262,6 +266,13 @@ void BossFightState::updateEnemy(const float& dt)
 	for (auto* enemy : this->enemies)
 	{
 		enemy->update(this->player, dt);
+		if (this->player->getGlobalBounds().intersects(enemy->getGlobalBounds()) && enemy->getType() == "BOSS")
+		{
+			if (this->player->getIsFaceRight())
+				this->player->move(dt, -1.f, 0.f);
+			else
+				this->player->move(dt, 1.f, 0.f);
+		}
 		if (enemy->getType() == "BOSS" && enemy->getHp() <= enemy->getMaxHp() / 2 && !this->isSpawn)
 		{
 			this->enemies.push_back(new Enemy(this->textures["ENEMY"], "SOLDIER", rand() % 600 + int(this->window->getSize().x / 2.f + static_cast<int>(this->view->getCenter().x)), rand() % 41 + 500));
@@ -280,7 +291,7 @@ void BossFightState::updateEnemy(const float& dt)
 				this->enemies.erase(this->enemies.begin() + temp);
 				temp--;
 			}
-			if (enemy->getIsDeath() && enemy->getType() == "BOSS")
+			else if (enemy->getIsDeath() && enemy->getType() == "BOSS")
 			{
 				this->endgame = true;
 				this->states->pop();
@@ -322,7 +333,7 @@ void BossFightState::updateCollision(const float& dt)
 				this->collisionTimer.restart();
 			}
 		}
-		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))
+		else
 		{
 			this->player->setOnGround(0);
 		}
@@ -338,6 +349,24 @@ void BossFightState::updateCollision(const float& dt)
 		}
 	}
 	counter++;
+	//Check the collision between PLAYER and ENEMIES
+	for (auto* enemy : this->enemies)
+	{
+		if (this->player->getGlobalBounds().intersects(enemy->getGlobalBounds()) && enemy->getHp() > 0 && enemy->getType() == "SOLDIER")
+		{
+			if (this->meleeCooldown.getElapsedTime().asSeconds() >= 3.f)
+			{
+				this->player->Melee();
+				this->meleeSound.play();
+				this->meleeCooldown.restart();
+				enemy->takeDmg(3);
+				if (enemy->getHp() <= 0)
+				{
+					this->player->addScore(enemy->getPoint());
+				}
+			}
+		}
+	}
 }
 
 void BossFightState::updateItemsCollision(const float& dt)
@@ -348,7 +377,7 @@ void BossFightState::updateItemsCollision(const float& dt)
 		if (item->getGlobalBounds().intersects(this->player->getGlobalBounds()) && this->player->getHp() < this->player->getMaxHp() && item->getType() == "HEAL")
 		{
 			delete this->items.at(itemCounter);
-			this->player->heal(1);
+			this->player->setHP(this->player->getMaxHp());
 			this->items.erase(this->items.begin() + itemCounter);
 			this->pickUpItemSound.play();
 			--itemCounter;
@@ -400,8 +429,8 @@ void BossFightState::updateBullet(const float& dt)
 				if (enemy->getHp() == 0)
 				{
 					this->player->addScore(enemy->getPoint());
-					if (enemy->getIsDrop())
-						this->items.push_back(new Item(this->textures["HEALTH"], "HEAL", enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));
+					/*if (enemy->getIsDrop())
+						this->items.push_back(new Item(this->textures["HEALTH"], "HEAL", enemy->getPosition().x, enemy->getPosition().y + enemy->getGlobalBounds().height - 40.f));*/
 					//	if (enemy->getIsDeath())
 					//	{
 					//		delete this->enemies.at(temp);
@@ -431,7 +460,9 @@ void BossFightState::updateGUI(const float& dt)
 
 	this->bossHpBarOutline.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 40.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 30.f);
 	this->bossHpBar.setPosition(this->view->getCenter().x - this->window->getSize().x / 2.f + 40.f, this->view->getCenter().y + this->window->getSize().y / 2.f - 30.f);
-	this->bossHpBar.setSize(sf::Vector2f(this->enemies.at(0)->getHp() * 30.f, 20.f));
+	if(!this->enemies.empty())
+		this->bossHpBar.setSize(sf::Vector2f(this->enemies.at(0)->getHp() * 30.f, 20.f));
+	else this->bossHpBar.setSize(sf::Vector2f(0 * 30.f, 20.f));
 
 	this->scoreText.setString(std::to_string(this->player->getScore()));
 	this->scoreText.setPosition(this->view->getCenter().x + this->window->getSize().x / 2.f - this->scoreText.getGlobalBounds().width - 20.f, 10.f);

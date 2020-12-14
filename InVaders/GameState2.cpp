@@ -48,15 +48,15 @@ void GameState2::initPlatform()
 	this->platforms.push_back(new Platform(sf::Vector2f(1644.f, 846.f), sf::Vector2f(124, 26), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(1250.f, 1072.f), sf::Vector2f(124, 40), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(1644.f, 1744.f), sf::Vector2f(124, 26), "stairL"));
-	this->platforms.push_back(new Platform(sf::Vector2f(1644.f, 1294.f), sf::Vector2f(124, 26), "stairL"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1644.f, 1292.f), sf::Vector2f(124, 26), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(1259.f, 1518.f), sf::Vector2f(124, 26), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(1010.f, 1182.f), sf::Vector2f(253.f, 562.f), "floor"));
 	this->platforms.push_back(new Platform(sf::Vector2f(1133.f, 1152.f), sf::Vector2f(131.f, 36.f), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(1201.f, 1095.f), sf::Vector2f(60.f, 46.f), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(824.f, 1736.f), sf::Vector2f(310.f, 122.f), "floor"));
-	this->platforms.push_back(new Platform(sf::Vector2f(1770.f, 1294.f), sf::Vector2f(257.f, 619.f), "floor"));
-	this->platforms.push_back(new Platform(sf::Vector2f(2000.f, 1294.f), sf::Vector2f(1283.f, 131.f), "floor"));
-	this->platforms.push_back(new Platform(sf::Vector2f(3307.f, 1297.f), sf::Vector2f(261.f, 613.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(1770.f, 1292.f), sf::Vector2f(257.f, 619.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(2000.f, 1292.f), sf::Vector2f(1283.f, 131.f), "floor"));
+	this->platforms.push_back(new Platform(sf::Vector2f(3307.f, 1292.f), sf::Vector2f(261.f, 613.f), "floor"));
 	this->platforms.push_back(new Platform(sf::Vector2f(3564.f, 1520.f), sf::Vector2f(130.f, 53.f), "floor"));
 	this->platforms.push_back(new Platform(sf::Vector2f(3945.f, 1743.f), sf::Vector2f(130.f, 53.f), "floor"));
 	this->platforms.push_back(new Platform(sf::Vector2f(3948.f, 1292.f), sf::Vector2f(136.f, 53.f), "floor"));
@@ -136,7 +136,6 @@ void GameState2::initPlatform()
 	this->platforms.push_back(new Platform(sf::Vector2f(6832.f, 585.f), sf::Vector2f(78.f, 57.f), "stairL"));
 	this->platforms.push_back(new Platform(sf::Vector2f(5290.f, 630.f), sf::Vector2f(1665.f, 217.f), "floor"));
 	this->platforms.push_back(new Platform(sf::Vector2f(5356.f, 583.f), sf::Vector2f(61.f, 50.f), "stairR"));
-	this->platforms.push_back(new Platform(sf::Vector2f(5424.f, 563.f), sf::Vector2f(31.f, 50.f), "stairR"));
 	this->platforms.push_back(new Platform(sf::Vector2f(5293.f, 533.f), sf::Vector2f(31.f, 50.f), "stairR"));
 	this->platforms.push_back(new Platform(sf::Vector2f(5261.f, 505.f), sf::Vector2f(31.f, 50.f), "stairR"));
 	this->platforms.push_back(new Platform(sf::Vector2f(4614.f, 472.f), sf::Vector2f(645.f, 237.f), "stairR"));
@@ -222,7 +221,11 @@ void GameState2::initSoundEffects()
 	this->soundEffects["PICKUP_HEALTH"]->loadFromFile("Resources/Sound Effects/pick_up_item.wav");
 	this->soundEffects["DOOR_OPEN"] = new sf::SoundBuffer;
 	this->soundEffects["DOOR_OPEN"]->loadFromFile("Resources/Sound Effects/door_lock.wav");
-
+	this->soundEffects["MELEE_SOUND"] = new sf::SoundBuffer;
+	this->soundEffects["MELEE_SOUND"]->loadFromFile("Resources/Sound Effects/melee.wav");
+	
+	this->meleeSound.setBuffer(*this->soundEffects["MELEE_SOUND"]);
+	this->meleeSound.setVolume(10.f);
 	this->pickUpCoinSound.setBuffer(*this->soundEffects["PICKUP_COIN"]);
 	this->pickUpCoinSound.setVolume(10.f);
 	this->pickUpPooSound.setBuffer(*this->soundEffects["PICKUP_POO"]);
@@ -265,7 +268,7 @@ void GameState2::initPlayer()
 
 void GameState2::initEnemy()
 {
-	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 1710.f, 382.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 2348.f, 477.f));
 	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 88.f, 2045.f));
 	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 347.f, 2040.f));
 	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 3131.f, 2096.f));
@@ -278,6 +281,12 @@ void GameState2::initEnemy()
 	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 6550.f, 2119.f));
 	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 6703.f, 2119.f));
 	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 9850.f, 2100.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 4722.f, 2091.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 9950.f, 485.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 11854.f, 485.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 11484.f, 485.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 2708.f, 1196.f));
+	this->enemies.push_back(new Enemy(this->textures["SNIPER"], "SNIPER", 9679.f, 1195.f));
 }
 
 void GameState2::initItem()
@@ -311,8 +320,8 @@ void GameState2::initItem()
 	this->items.push_back(new Item(this->textures["POO"], "POO", 1560, 2135));
 	this->items.push_back(new Item(this->textures["POO"], "POO", 1610, 2135));
 	this->items.push_back(new Item(this->textures["POO"], "POO", 7686, 2193));
-	this->items.push_back(new Item(this->textures["CHICKEN"], "CHICKEN", 1857, 1238));
 	this->items.push_back(new Item(this->textures["CHICKEN"], "CHICKEN", 3647, 295));
+	this->items.push_back(new Item(this->textures["CHICKEN"], "CHICKEN", 11702, 1835));
 	this->items.push_back(new Item(this->textures["CHICKEN"], "CHICKEN", 6632, 2020));
 
 
@@ -557,7 +566,7 @@ void GameState2::updateCollision(const float& dt)
 			this->player->onCollision(this->direction, dt);
 			this->player->resetVelocityY();
 		}
-		else if (!Collision::BoundingBoxTest(this->player->getSprite(), platform->getSprite()))
+		else
 		{
 			this->player->setOnGround(0);
 		}
@@ -573,6 +582,24 @@ void GameState2::updateCollision(const float& dt)
 		}
 	}
 	counter++;
+	//Check the collision between PLAYER and ENEMIES
+	for (auto* enemy : this->enemies)
+	{
+		if (this->player->getGlobalBounds().intersects(enemy->getGlobalBounds()) && enemy->getHp() > 0)
+		{
+			if (this->meleeCooldown.getElapsedTime().asSeconds() >= 3.f)
+			{
+				this->player->Melee();
+				this->meleeSound.play();
+				this->meleeCooldown.restart();
+				enemy->takeDmg(3);
+				if (enemy->getHp() <= 0)
+				{
+					this->player->addScore(enemy->getPoint());
+				}
+			}
+		}
+	}
 }
 
 void GameState2::updateItemsCollision(const float& dt)
@@ -609,7 +636,7 @@ void GameState2::updateItemsCollision(const float& dt)
 		{
 			delete this->items.at(itemCounter);
 			this->player->addScore(10);
-			this->player->heal(2);
+			this->player->heal(5);
 			this->items.erase(this->items.begin() + itemCounter);
 			this->pickUpChickenSound.play();
 			--itemCounter;
@@ -659,7 +686,7 @@ void GameState2::updateBullet(const float& dt)
 		{
 			if (bullet->getBounds().intersects(enemy->getGlobalBounds()) && enemy->getHp() > 0)
 			{
-				//std::cout << enemy->getHp() << std::endl;
+				std::cout << enemy->getHp() << std::endl;
 				enemy->takeDmg(1);
 				////if enemy's hp is 0
 				if (enemy->getHp() == 0)

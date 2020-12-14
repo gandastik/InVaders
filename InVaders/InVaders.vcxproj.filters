@@ -51,9 +51,6 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -127,9 +124,6 @@
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bullet.h">
       <Filter>Header Files</Filter>

@@ -51,6 +51,11 @@ Item::Item(sf::Texture* texture, std::string type, float x, float y)
 		this->animationComponent->addAnimation("IDLE", 20.f, 0, 0, 5, 0, 14, 21);
 		this->createHitbox(0, 0, 28, 42);
 	}
+	if (type == "GO")
+	{
+		this->animationComponent->addAnimation("IDLE", 30.f, 0, 0, 3, 0, 33, 31);
+		this->createHitbox(0, 0, 66, 62);
+	}
 }
 
 Item::~Item()
@@ -72,6 +77,8 @@ sf::FloatRect Item::getGlobalBounds()
 	if (this->type == "BONUS")
 		return this->hitbox->getGlobalBounds();
 	if (this->type == "KEY")
+		return this->hitbox->getGlobalBounds();
+	if (this->type == "GO")
 		return this->hitbox->getGlobalBounds();
 	return this->shape.getGlobalBounds();
 }
